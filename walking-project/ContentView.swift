@@ -2,87 +2,319 @@
 //  ContentView.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/01/25.
+//  Created by GMC on 2023/01/25.
 //
 
 import SwiftUI
 import CoreData
 
+// MARK: - Constants
+
 struct ContentView: View {
+    // MARK: - Data Fetch
+    
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Walk_Info.score, ascending: false)],
         animation: .default)
-    private var items: FetchedResults<Item>
-
+    private var walkInfo: FetchedResults<Walk_Info>
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.my_id, ascending: true)],
+        animation: .default)
+    private var myWalk: FetchedResults<My_Walk>
+    
+    // MARK: - Private Properties
+    
+    @State private var currentIndex = 0
+    @State private var currentRank = 0
+    
+    // MARK: - Body
+    
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+        ZStack (alignment: .top) {
+            // MARK: - BG Color
+            GeometryReader { metrics in
+                VStack{
+                    RoundedRectangle(cornerRadius: CGFloat(15), style: .circular)
+                        .frame(height: metrics.size.height * 0.45)
+                        .foregroundColor(Color("MainColor"))
+                        .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.top/*@END_MENU_TOKEN@*/)
                 }
             }
-            Text("Select an item")
+            
+            // MARK: - Foreground
+            
+            GeometryReader { metrics in
+                VStack {
+                    // MARK: - TabView Zone
+                    
+                    TabView(selection: $currentIndex.animation()) {
+                        VStack{
+                            HStack{
+                                Spacer()
+                                Button(action: {
+                                    print("F")
+                                }, label: {
+                                    Image(systemName: "gearshape.fill")
+                                        .foregroundColor(Color("AccentColor"))
+                                        .imageScale(.large)
+                                        .font(.title2)
+                                })
+                            }
+                            HStack{
+                                Text("Point")
+                                    .font(.system(size: 35))
+                                    .fontWeight(.light)
+                                    .padding(.leading, 30.0)
+                                Spacer()
+                            }
+                            if let curPoint = myWalk.first?.current_point {
+                                Text(commaFormatter.string(for: curPoint)!)
+                                    .font(.system(size: 83))
+                                    .italic()
+                                Spacer()
+                            } else {
+                                Text("0")
+                                    .font(.system(size: 83))
+                                    .italic()
+                            }
+                            if let curPoint = myWalk.first?.current_point, curPoint > 10000000 {
+                                Button(action: {
+                                    print("F")
+                                }, label: {
+                                    Image(systemName: "gearshape.fill")
+                                        .foregroundColor(Color("AccentColor"))
+                                        .imageScale(.large)
+                                        .font(.subheadline)
+                                })
+                            }
+                            Spacer()
+
+                        }
+                        .tag(0)
+                        
+                        VStack(alignment: .leading){
+                            Text("Total Walk")
+                                .font(.system(size: 18))
+                                .fontWeight(.thin)
+                            if let totWalk = myWalk.first?.total_walk {
+                                Text(commaFormatter.string(for: totWalk)!)
+                                    .font(.system(size: 35))
+                                    .fontWeight(.light)
+                            } else {
+                                Text("0")
+                                    .font(.system(size: 35))
+                                    .fontWeight(.light)
+                            }
+                            Spacer()
+                            Grid( alignment: .leading){
+                                GridRow{
+                                    Text("Calories")
+                                        .font(.system(size: 18))
+                                        .fontWeight(.thin)
+                                    Divider().overlay(Color("MainColor"))
+                                    Text("Distance")
+                                        .font(.system(size: 18))
+                                        .fontWeight(.thin)
+                                }
+                                GridRow(alignment: .bottom){
+                                    if let calories = myWalk.first?.calories {
+                                        Text(commaFormatter.string(for: calories)!)
+                                            .font(.system(size: 35))
+                                            .italic()
+                                    } else {
+                                        Text("0")
+                                            .font(.system(size: 35))
+                                            .italic()
+                                    }
+                                    Divider().overlay(Color("MainColor"))
+                                    if let dist = myWalk.first?.distance {
+                                        Text(String(dist))
+                                            .font(.system(size: 35))
+                                            .italic()
+                                    } else {
+                                        Text("0.0")
+                                            .font(.system(size: 35))
+                                            .italic()
+                                    }
+                                    Text("km")
+                                        .font(.system(size: 18))
+                                        .italic()
+                                }
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20.0)
+                        .tag(1)
+                    }
+                    .frame(maxHeight: metrics.size.height * 0.27)
+                    .padding(.horizontal)
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .overlay(FancyIndexView(currentIndex: currentIndex), alignment: .top)
+                    
+                    
+                    // MARK: - Ranking Zone
+                    
+                    VStack {
+                        ScrollView{
+                            VStack (spacing: 12) {
+                                ForEach(walkInfo) { info in
+                                    if info.id != myWalk.first?.my_id! {
+                                        HStack{
+                                            VStack(spacing: 0){
+                                                HStack{
+                                                    Text(String(info.rank))
+                                                        .font(.system(size: 18))
+                                                    Spacer()
+                                                }
+                                                HStack{
+                                                    Spacer()
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .frame(width: 50, height: 50)
+                                                        .offset(y: -8)
+                                                }
+                                            }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
+                                            Spacer()
+                                            Text(info.name!).frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
+                                            Spacer()
+                                            Text(commaFormatter.string(for: info.score)!)
+                                                .font(.system(size: 28))
+                                                .multilineTextAlignment(.leading)
+                                                .lineLimit(0)
+                                        }
+                                        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
+                                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                            .fill(rankColor(rank: info.rank))
+                                        )
+                                    }
+                                }
+                            }.frame(maxWidth: .infinity)
+                        }
+                        
+                        ForEach(walkInfo) { info in
+                            if info.id == myWalk.first?.my_id! {
+                                HStack{
+                                    VStack(spacing: 0){
+                                        HStack{
+                                            Text(String(info.rank))
+                                                .font(.system(size: 18))
+                                            Spacer()
+                                        }
+                                        HStack{
+                                            Spacer()
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .frame(width: 50, height: 50)
+                                                .offset(y: -8)
+                                        }
+                                    }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.15)
+                                    Spacer()
+                                    Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
+                                    Spacer()
+                                    if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint > myCur {
+                                        Text(commaFormatter.string(for: myPoint)!)
+                                            .frame(width: metrics.size.width * 0.3)
+                                            .font(.system(size: 28))
+                                            .multilineTextAlignment(.trailing)
+                                    } else if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint < myCur {
+                                        Text(commaFormatter.string(for: myCur)!)
+                                            .frame(width: metrics.size.width * 0.3)
+                                            .font(.system(size: 28))
+                                            .multilineTextAlignment(.trailing)
+                                    } else {
+                                        Text("0")
+                                            .frame(width: metrics.size.width * 0.3)
+                                            .font(.system(size: 28))
+                                            .multilineTextAlignment(.trailing)
+                                    }
+                                }
+                                .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.07)
+                                .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                                .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                    .fill(rankColor(rank: info.rank))
+                                )
+                            }
+                        }
+                    }
+                    .frame(maxWidth: metrics.size.width * 0.85)
+                    .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+                    .cornerRadius(20)
+                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Color.white)
+                    )
+                    .shadow(radius: 5, y: 5)
+                    
+                }
+            }
         }
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+    
+    // MARK: - Private Functions
+    
+    let commaFormatter: NumberFormatter = {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        numberFormatter.maximumFractionDigits = 0
+        return numberFormatter
+    }()
+    
+    func rankColor(rank : Int16) -> Color {
+        switch(rank) {
+        case 1:
+            return Color("Gold")
+        case 2:
+            return Color("Silver")
+        case 3:
+            return Color("Bronze")
+        default:
+            return Color("Default")
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
+    }
+}
+
+struct FancyIndexView: View {
+    
+    // MARK: - Public Properties
+    let currentIndex: Int
+    
+    // MARK: - Drawing Constants
+    
+    private let circleSize: CGFloat = 10
+    private let circleSpacing: CGFloat = 8
+    
+    private let primaryColor = Color.white
+    private let secondaryColor = Color.white.opacity(0.6)
+    
+    private let smallScale: CGFloat = 0.6
+    
+    // MARK: - Body
+    
+    var body: some View {
+        HStack(spacing: circleSpacing) {
+            ForEach(0..<2) { index in
+                if shouldShowIndex(index) {
+                    Circle()
+                        .fill(currentIndex == index ? primaryColor : secondaryColor)
+                        .scaleEffect(currentIndex == index ? 1 : smallScale)
+                        .frame(width: circleSize, height: circleSize)
+                        .transition(AnyTransition.opacity.combined(with: .scale))
+                        .id(index)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    func shouldShowIndex(_ index: Int) -> Bool {
+        ((currentIndex - 1)...(currentIndex + 1)).contains(index)
     }
 }

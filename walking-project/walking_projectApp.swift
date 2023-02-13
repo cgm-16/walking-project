@@ -9,12 +9,12 @@ import SwiftUI
 
 @main
 struct walking_projectApp: App {
-    let persistenceController = PersistenceController.shared
+    let persistenceController = DataManager.shared
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, DataManager.preview.container.viewContext)
         }
     }
 }

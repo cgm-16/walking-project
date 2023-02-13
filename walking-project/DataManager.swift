@@ -1,21 +1,39 @@
 //
-//  Persistence.swift
+//  DataManager.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/01/25.
+//  Created by GMC on 2023/01/25.
 //
 
 import CoreData
 
-struct PersistenceController {
-    static let shared = PersistenceController()
+struct DataManager {
+    static let shared = DataManager()
 
-    static var preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
+    // MARK: - Remove in production - Placeholder only !!!!
+    static var preview: DataManager = {
+        let result = DataManager(inMemory: true)
         let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+        
+        let Names: [String] = ["J.J.Won", "CWK", "J.H.Seong", "S.M.Kim", "C.W.Kim", "G.M.Choi"]
+        let UUIDs: [UUID] = [UUID(), UUID(), UUID(), UUID(), UUID(), UUID()]
+        let scores: [Int64] = [576100, 700000, 710800, 759500, 963200, 1274000]
+        
+        let myWalk = My_Walk(context: viewContext)
+        
+        myWalk.my_id = UUIDs[5]
+        myWalk.calories = 237
+        myWalk.total_walk = 12303
+        myWalk.distance = 13.8
+        myWalk.current_point = 160300
+        
+        
+        for i in 0..<6 {
+            let walkInfo = Walk_Info(context: viewContext)
+            walkInfo.name = Names[i]
+            walkInfo.id = UUIDs[i]
+            walkInfo.score = scores[i]
+            walkInfo.rank = Int16(6-i)
         }
         do {
             try viewContext.save()
