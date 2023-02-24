@@ -7,24 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C100DE6C2995E752001767DE /* form_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C100DE6B2995E752001767DE /* form_Screen.swift */; };
+		C100DE6C2995E752001767DE /* Form_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C100DE6B2995E752001767DE /* Form_Screen.swift */; };
 		C1144173298107CD00B3ACB5 /* walking_projectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1144172298107CD00B3ACB5 /* walking_projectApp.swift */; };
-		C1144175298107CD00B3ACB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1144174298107CD00B3ACB5 /* ContentView.swift */; };
+		C1144175298107CD00B3ACB5 /* Main_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1144174298107CD00B3ACB5 /* Main_Screen.swift */; };
 		C1144177298107CF00B3ACB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1144176298107CF00B3ACB5 /* Assets.xcassets */; };
 		C114417A298107CF00B3ACB5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1144179298107CF00B3ACB5 /* Preview Assets.xcassets */; };
 		C114417C298107CF00B3ACB5 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C114417B298107CF00B3ACB5 /* DataManager.swift */; };
 		C114417F298107CF00B3ACB5 /* walking_project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C114417D298107CF00B3ACB5 /* walking_project.xcdatamodeld */; };
+		C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92229A6144700EEFF97 /* Coupon_Page.swift */; };
+		C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* Home_Screen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C100DE6B2995E752001767DE /* form_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = form_Screen.swift; sourceTree = "<group>"; };
+		C100DE6B2995E752001767DE /* Form_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form_Screen.swift; sourceTree = "<group>"; };
+		C100DE6D299A13BF001767DE /* walking-project.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "walking-project.entitlements"; sourceTree = "<group>"; };
 		C114416F298107CD00B3ACB5 /* walking-project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "walking-project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1144172298107CD00B3ACB5 /* walking_projectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = walking_projectApp.swift; sourceTree = "<group>"; };
-		C1144174298107CD00B3ACB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C1144174298107CD00B3ACB5 /* Main_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main_Screen.swift; sourceTree = "<group>"; };
 		C1144176298107CF00B3ACB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1144179298107CF00B3ACB5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C114417B298107CF00B3ACB5 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		C114417E298107CF00B3ACB5 /* walking_project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = walking_project.xcdatamodel; sourceTree = "<group>"; };
+		C17BF92229A6144700EEFF97 /* Coupon_Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupon_Page.swift; sourceTree = "<group>"; };
+		C17BF92429A615CB00EEFF97 /* Home_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home_Screen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,13 +62,16 @@
 		C1144171298107CD00B3ACB5 /* walking-project */ = {
 			isa = PBXGroup;
 			children = (
+				C100DE6D299A13BF001767DE /* walking-project.entitlements */,
 				C1144172298107CD00B3ACB5 /* walking_projectApp.swift */,
-				C1144174298107CD00B3ACB5 /* ContentView.swift */,
-				C1144176298107CF00B3ACB5 /* Assets.xcassets */,
+				C17BF92429A615CB00EEFF97 /* Home_Screen.swift */,
+				C1144174298107CD00B3ACB5 /* Main_Screen.swift */,
 				C114417B298107CF00B3ACB5 /* DataManager.swift */,
+				C100DE6B2995E752001767DE /* Form_Screen.swift */,
+				C17BF92229A6144700EEFF97 /* Coupon_Page.swift */,
+				C1144176298107CF00B3ACB5 /* Assets.xcassets */,
 				C114417D298107CF00B3ACB5 /* walking_project.xcdatamodeld */,
 				C1144178298107CF00B3ACB5 /* Preview Content */,
-				C100DE6B2995E752001767DE /* form_Screen.swift */,
 			);
 			path = "walking-project";
 			sourceTree = "<group>";
@@ -147,8 +155,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C114417C298107CF00B3ACB5 /* DataManager.swift in Sources */,
-				C1144175298107CD00B3ACB5 /* ContentView.swift in Sources */,
-				C100DE6C2995E752001767DE /* form_Screen.swift in Sources */,
+				C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */,
+				C1144175298107CD00B3ACB5 /* Main_Screen.swift in Sources */,
+				C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */,
+				C100DE6C2995E752001767DE /* Form_Screen.swift in Sources */,
 				C1144173298107CD00B3ACB5 /* walking_projectApp.swift in Sources */,
 				C114417F298107CF00B3ACB5 /* walking_project.xcdatamodeld in Sources */,
 			);
@@ -276,12 +286,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "walking-project/walking-project.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"walking-project/Preview Content\"";
 				DEVELOPMENT_TEAM = 9K9P37S856;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -304,12 +317,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "walking-project/walking-project.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"walking-project/Preview Content\"";
 				DEVELOPMENT_TEAM = 9K9P37S856;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

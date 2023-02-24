@@ -9,12 +9,14 @@ import SwiftUI
 
 @main
 struct walking_projectApp: App {
-    let persistenceController = DataManager.shared
+    let dataManager = DataManager.preview
+    // 위쪽은 placeholder 빌드 용 아래쪽 사용할것
+    // let dataManager = DataManager.shared
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, DataManager.preview.container.viewContext)
+            Home_Screen()
+                .environment(\.managedObjectContext, dataManager.container.viewContext)
         }
     }
 }
