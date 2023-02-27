@@ -1,5 +1,5 @@
 //
-//  Form_Screen.swift
+//  Info_Screen.swift
 //  walking-project
 //
 //  Created by Junwon Jang on 2023/02/10.
