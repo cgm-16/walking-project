@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct Form_Screen: View {
+struct Info_Screen: View {
     var body: some View {
         Text("Coming Soon ;)")
     }
 }
 
-struct Form_Screen_Previews: PreviewProvider {
+struct Info_Screen_Previews: PreviewProvider {
     static var previews: some View {
-        Form_Screen()
+        Info_Screen()
     }
 }

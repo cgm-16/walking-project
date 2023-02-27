@@ -13,7 +13,7 @@
 		C114417A298107CF00B3ACB5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1144179298107CF00B3ACB5 /* Preview Assets.xcassets */; };
 		C114417C298107CF00B3ACB5 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C114417B298107CF00B3ACB5 /* DataManager.swift */; };
 		C114417F298107CF00B3ACB5 /* walking_project.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C114417D298107CF00B3ACB5 /* walking_project.xcdatamodeld */; };
-		C151936A29AC783A0077DE0F /* Form_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C151936929AC783A0077DE0F /* Form_Screen.swift */; };
+		C151936C29AC79100077DE0F /* Info_screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C151936B29AC79100077DE0F /* Info_screen.swift */; };
 		C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92229A6144700EEFF97 /* Coupon_Page.swift */; };
 		C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* Home_Screen.swift */; };
 /* End PBXBuildFile section */
@@ -27,7 +27,7 @@
 		C114417B298107CF00B3ACB5 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		C114417E298107CF00B3ACB5 /* walking_project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = walking_project.xcdatamodel; sourceTree = "<group>"; };
 		C151936629AC713A0077DE0F /* walking-project.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "walking-project.entitlements"; sourceTree = "<group>"; };
-		C151936929AC783A0077DE0F /* Form_Screen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Form_Screen.swift; sourceTree = "<group>"; };
+		C151936B29AC79100077DE0F /* Info_screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info_screen.swift; sourceTree = "<group>"; };
 		C17BF92229A6144700EEFF97 /* Coupon_Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupon_Page.swift; sourceTree = "<group>"; };
 		C17BF92429A615CB00EEFF97 /* Home_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home_Screen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -65,8 +65,8 @@
 				C151936629AC713A0077DE0F /* walking-project.entitlements */,
 				C1144172298107CD00B3ACB5 /* walking_projectApp.swift */,
 				C17BF92429A615CB00EEFF97 /* Home_Screen.swift */,
-				C151936929AC783A0077DE0F /* Form_Screen.swift */,
 				C1144174298107CD00B3ACB5 /* Main_Screen.swift */,
+				C151936B29AC79100077DE0F /* Info_screen.swift */,
 				C114417B298107CF00B3ACB5 /* DataManager.swift */,
 				C17BF92229A6144700EEFF97 /* Coupon_Page.swift */,
 				C1144176298107CF00B3ACB5 /* Assets.xcassets */,
@@ -154,10 +154,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C151936A29AC783A0077DE0F /* Form_Screen.swift in Sources */,
 				C114417C298107CF00B3ACB5 /* DataManager.swift in Sources */,
 				C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */,
 				C1144175298107CD00B3ACB5 /* Main_Screen.swift in Sources */,
+				C151936C29AC79100077DE0F /* Info_screen.swift in Sources */,
 				C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */,
 				C1144173298107CD00B3ACB5 /* walking_projectApp.swift in Sources */,
 				C114417F298107CF00B3ACB5 /* walking_project.xcdatamodeld in Sources */,

@@ -76,7 +76,7 @@ struct Main_Screen: View {
                                         .disabled(true)
                                     }
                                     
-                                    NavigationLink(destination: Form_Screen(), label: {Image(systemName: "gearshape.fill")
+                                    NavigationLink(destination: Info_Screen(), label: {Image(systemName: "gearshape.fill")
                                             .foregroundColor(Color("AccentColor"))
                                             .imageScale(.large)
                                         .font(.title2)})
