@@ -2,13 +2,16 @@
 //  SwiftUIView.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/02/22.
+//  Created by GMC on 2023/02/22.
 //
 
 import SwiftUI
 
 struct Home_Screen: View {
-    
+    //@StateObject private var navigationStore = NavigationStore()
+    @AppStorage("Login") private var isLogin = false
+    //@SceneStorage("navigation") private var navigationData: Data?
+    @State private var isAlreadyLogin = false
     @State var isLoading: Bool = true
     
     var launchScreenView: some View {
@@ -25,7 +28,7 @@ struct Home_Screen: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack /*(path: $navigationStore.path)*/ {
             ZStack (alignment: .bottom) {
                 Color("MainColor").ignoresSafeArea()
                 
@@ -35,7 +38,7 @@ struct Home_Screen: View {
                     Image("TitleImg")
                         .resizable()
                         .scaledToFill()
-                    NavigationLink(destination: Main_Screen(), label: {
+                    NavigationLink(destination: User_Info_Screen(), label: {
                         Image("KkoLogin")
                             .resizable()
                         .scaledToFit()})
@@ -52,6 +55,23 @@ struct Home_Screen: View {
                     withAnimation() {
                         self.isLoading = false
                     }
+                }
+            }
+            .navigationDestination(isPresented: $isAlreadyLogin, destination: {Main_Screen()})
+        }
+        .task {
+            /*
+             if let navigationData {
+                                    navigationStore.restore(from: navigationData)
+                                }
+                                
+                                for await _ in navigationStore.$path.values {
+                                    navigationData = navigationStore.encoded()
+                                }
+             */
+            if isLogin {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    isAlreadyLogin = true
                 }
             }
         }

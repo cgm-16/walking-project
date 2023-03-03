@@ -26,7 +26,6 @@ struct Main_Screen: View {
     private var myWalk: FetchedResults<My_Walk>
     
     // MARK: - Private Properties
-    
     @State private var currentIndex = 0
     @State private var currentRank = 0
 
@@ -76,7 +75,8 @@ struct Main_Screen: View {
                                         .disabled(true)
                                     }
                                     
-                                    NavigationLink(destination: Info_Screen(), label: {Image(systemName: "gearshape.fill")
+                                    NavigationLink(destination: User_Info_Screen(), label: {
+                                        Image(systemName: "gearshape.fill")
                                             .foregroundColor(Color("AccentColor"))
                                             .imageScale(.large)
                                         .font(.title2)})
@@ -88,18 +88,10 @@ struct Main_Screen: View {
                                         .padding(.leading, 30.0)
                                     Spacer()
                                 }
-                                if let curPoint = myWalk.first?.current_point {
-                                    Text(commaFormatter.string(for: curPoint)!)
-                                        .font(.system(size: 83))
-                                        .italic()
-                                    Spacer()
-                                } else {
-                                    Text("0")
-                                        .font(.system(size: 83))
-                                        .italic()
-                                }
+                                Text(commaFormatter.string(for: myWalk.first?.current_point ?? 0) ?? "0")
+                                    .font(.system(size: 83))
+                                    .italic()
                                 Spacer()
-
                             }
                             .tag(0)
                             
@@ -107,15 +99,9 @@ struct Main_Screen: View {
                                 Text("Total Walk")
                                     .font(.system(size: 18))
                                     .fontWeight(.thin)
-                                if let totWalk = myWalk.first?.total_walk {
-                                    Text(commaFormatter.string(for: totWalk)!)
-                                        .font(.system(size: 35))
-                                        .fontWeight(.light)
-                                } else {
-                                    Text("0")
-                                        .font(.system(size: 35))
-                                        .fontWeight(.light)
-                                }
+                                Text(commaFormatter.string(for: myWalk.first?.total_walk ?? 0) ?? "0")
+                                    .font(.system(size: 35))
+                                    .fontWeight(.light)
                                 Spacer()
                                 Grid( alignment: .leading){
                                     GridRow{
@@ -128,25 +114,13 @@ struct Main_Screen: View {
                                             .fontWeight(.thin)
                                     }
                                     GridRow(alignment: .bottom){
-                                        if let calories = myWalk.first?.calories {
-                                            Text(commaFormatter.string(for: calories)!)
-                                                .font(.system(size: 35))
-                                                .italic()
-                                        } else {
-                                            Text("0")
-                                                .font(.system(size: 35))
-                                                .italic()
-                                        }
+                                        Text(commaFormatter.string(for: myWalk.first?.calories ?? 0) ?? "0")
+                                            .font(.system(size: 35))
+                                            .italic()
                                         Divider().overlay(Color("MainColor"))
-                                        if let dist = myWalk.first?.distance {
-                                            Text(String(dist))
-                                                .font(.system(size: 35))
-                                                .italic()
-                                        } else {
-                                            Text("0.0")
-                                                .font(.system(size: 35))
-                                                .italic()
-                                        }
+                                        Text(String(myWalk.first?.distance ?? 0.0))
+                                            .font(.system(size: 35))
+                                            .italic()
                                         Text("km")
                                             .font(.system(size: 18))
                                             .italic()

@@ -2,7 +2,7 @@
 //  walking_projectApp.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/01/25.
+//  Created by GMC on 2023/01/25.
 //
 
 import SwiftUI
