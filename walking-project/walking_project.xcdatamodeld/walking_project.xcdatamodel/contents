@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22C65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Coupon_Info" representedClassName="Coupon_Info" syncable="YES" codeGenerationType="class">
+        <attribute name="coupon_id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="coupon_name" optional="YES" attributeType="String"/>
+        <attribute name="file_name" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+    </entity>
     <entity name="Fever_Times" representedClassName="Fever_Times" syncable="YES" codeGenerationType="class">
         <attribute name="times" optional="YES" attributeType="String"/>
     </entity>

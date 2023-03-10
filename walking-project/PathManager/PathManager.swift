@@ -7,24 +7,45 @@
 
 import Foundation
 import SwiftUI
-@MainActor final class NavigationStore: ObservableObject {
-    @Published var path = NavigationPath()
+
+struct RouterView<T: Hashable, Content: View>: View {
     
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
+    @ObservedObject
+    var router: Router<T>
     
-    func encoded() -> Data? {
-        try? path.codable.map(encoder.encode)
-    }
-    
-    func restore(from data: Data) {
-        do {
-            let codable = try decoder.decode(
-                NavigationPath.CodableRepresentation.self, from: data
-            )
-            path = NavigationPath(codable)
-        } catch {
-            path = NavigationPath()
+    @ViewBuilder var buildView: (T) -> Content
+    var body: some View {
+        NavigationStack(path: $router.paths) {
+            buildView(router.root)
+            .navigationDestination(for: T.self) { path in
+                buildView(path)
+            }
         }
+        .environmentObject(router)
+    }
+}
+
+final class Router<T: Hashable>: ObservableObject {
+    @Published var root: T
+    @Published var paths: [T] = []
+
+    init(root: T) {
+        self.root = root
+    }
+
+    func push(_ path: T) {
+        paths.append(path)
+    }
+
+    func pop() {
+        paths.removeLast()
+    }
+
+    func updateRoot(root: T) {
+        self.root = root
+    }
+
+    func popToRoot(){
+       paths = []
     }
 }

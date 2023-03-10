@@ -15,7 +15,7 @@ struct User_Info_Screen: View {
         animation: .default)
     private var myInfo: FetchedResults<My_Info>
     
-    @AppStorage("Login") private var isLogin = false
+    @EnvironmentObject var router: Router<Path>
     
     @State private var userName: String = ""
     @State private var isFemale: Int = -1
@@ -23,184 +23,181 @@ struct User_Info_Screen: View {
     @State private var userWeight: String = ""
     @State private var tabselection = 1
     @State private var nextBtnDisabled: Bool = true
-    @State private var isPressed = false
     @FocusState private var focusedName: Bool
     @FocusState private var focusedHeight: Bool
     
     var body: some View {
-        NavigationStack {
-            TabView (selection: $tabselection) {
-                VStack {
-                    Spacer().frame(idealHeight:100, maxHeight: 100)
-                    VStack (alignment: .leading) {
+        
+        TabView (selection: $tabselection) {
+            VStack {
+                Spacer().frame(idealHeight:100, maxHeight: 100)
+                VStack (alignment: .leading) {
+                    HStack {
+                        Text("Welcome\n이름을 입력해주세요")
+                            .font(.system(size: 35))
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(2, reservesSpace: true)
+                            .italic()
+                        Spacer()
+                    }
+                    Spacer().frame(idealHeight: 100, maxHeight: 100)
+                    VStack(spacing: 20.0) {
                         HStack {
-                            Text("Welcome\n이름을 입력해주세요")
-                                .font(.system(size: 35))
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(2, reservesSpace: true)
-                                .italic()
+                            Text("Name")
+                                .font(.system(size: 24))
+                                .fontWeight(.thin)
                             Spacer()
                         }
-                        Spacer().frame(idealHeight: 100, maxHeight: 100)
-                        VStack(spacing: 20.0) {
-                            HStack {
-                                Text("Name")
-                                    .font(.system(size: 24))
-                                    .fontWeight(.thin)
-                                Spacer()
+                        TextField("Your Name", text: $userName)
+                            .font(.system(size: 35))
+                            .multilineTextAlignment(.center)
+                            .italic()
+                            .overlay(Rectangle()
+                                .foregroundColor(/*@START_MENU_TOKEN@*/Color("MainColor")/*@END_MENU_TOKEN@*/)
+                                .offset(x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: /*@START_MENU_TOKEN@*/30.0/*@END_MENU_TOKEN@*/)
+                                .frame(height: 3))
+                            .keyboardType(.namePhonePad)
+                            .focused($focusedName)
+                            .onChange(of: userName) {newName in
+                                let value = String(newName.replacingOccurrences(
+                                    of: "\\W", with: "", options: .regularExpression).prefix(12))
+                                if value != newName {
+                                    userName = value
+                                }
                             }
-                            TextField("Your Name", text: $userName)
-                                .font(.system(size: 35))
+                    }
+                }
+                .padding(.horizontal, 35.0)
+                .onAppear{
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        self.focusedName = true
+                    }
+                }
+                
+                Spacer().frame(minHeight: 50, maxHeight: 500)
+                
+                Button(action: {
+                    self.tabselection = 2
+                }, label: {
+                    Text("Next").foregroundColor(Color.white)
+                })
+                .font(.system(size: 22))
+                .italic()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(20.0)
+                .background(Color("MainColor"))
+                .disabled(nextBtnDisabled)
+                .onChange(of: userName) { _ in
+                    if userName.count == 0 {
+                        nextBtnDisabled = true
+                    } else {
+                        nextBtnDisabled = false
+                    }
+                }
+            }
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .tag(1)
+            
+            VStack {
+                VStack (alignment: .leading) {
+                    Spacer().frame(idealHeight: 100, maxHeight: 100)
+                    HStack {
+                        Text("인적사항을\n입력해주세요")
+                            .font(.system(size: 35))
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(2, reservesSpace: true)
+                            .italic()
+                        Spacer()
+                    }
+                    
+                    Spacer().frame(idealHeight: 50, maxHeight: 50)
+                    
+                    VStack(spacing: 20.0) {
+                        HStack {
+                            Text("Sex")
+                                .font(.system(size: 24))
+                                .fontWeight(.thin)
+                            Spacer()
+                        }
+                        
+                        CustomSegmentedControl(preselectedIndex: $isFemale, options: ["Man", "Woman"])
+                    }
+                    
+                    Spacer().frame(idealHeight: 80, maxHeight: 80)
+                    
+                    VStack(spacing: 20.0) {
+                        HStack {
+                            Text("Height / Weight")
+                                .font(.system(size: 24))
+                                .fontWeight(.thin)
+                            Spacer()
+                        }
+                        HStack (alignment: .bottom) {
+                            TextField("", text: $userHeight)
+                                .font(.system(size: 20))
                                 .multilineTextAlignment(.center)
                                 .italic()
-                                .overlay(Rectangle()
-                                    .foregroundColor(/*@START_MENU_TOKEN@*/Color("MainColor")/*@END_MENU_TOKEN@*/)
-                                    .offset(x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: /*@START_MENU_TOKEN@*/30.0/*@END_MENU_TOKEN@*/)
-                                    .frame(height: 3))
-                                .keyboardType(.namePhonePad)
-                                .focused($focusedName)
-                                .onChange(of: userName) {newName in
-                                    let value = String(newName.replacingOccurrences(
-                                        of: "\\W", with: "", options: .regularExpression).prefix(12))
-                                    if value != newName {
-                                        userName = value
+                                .frame(maxWidth: 100, maxHeight: 40)
+                                .overlay(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke(Color("MainColor"), lineWidth: 1)
+                                    )
+                                .keyboardType(.decimalPad)
+                                .focused($focusedHeight)
+                                .onAppear{
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                                        self.focusedHeight = true
                                     }
                                 }
-                        }
-                    }
-                    .padding(.horizontal, 35.0)
-                    .onAppear{
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                            self.focusedName = true
-                        }
-                    }
-                    
-                    Spacer().frame(minHeight: 50, maxHeight: 500)
-                    
-                    Button(action: {
-                        self.tabselection = 2
-                    }, label: {
-                        Text("Next").foregroundColor(Color.white)
-                    })
-                    .font(.system(size: 22))
-                    .italic()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(20.0)
-                    .background(Color("MainColor"))
-                    .disabled(nextBtnDisabled)
-                    .onChange(of: userName) { _ in
-                        if userName.count == 0 {
-                            nextBtnDisabled = true
-                        } else {
-                            nextBtnDisabled = false
-                        }
-                    }
-                }
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .tag(1)
-                
-                VStack {
-                    VStack (alignment: .leading) {
-                        Spacer().frame(idealHeight: 100, maxHeight: 100)
-                        HStack {
-                            Text("인적사항을\n입력해주세요")
-                                .font(.system(size: 35))
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(2, reservesSpace: true)
-                                .italic()
-                            Spacer()
-                        }
-                        
-                        Spacer().frame(idealHeight: 50, maxHeight: 50)
-                        
-                        VStack(spacing: 20.0) {
-                            HStack {
-                                Text("Sex")
-                                    .font(.system(size: 24))
-                                    .fontWeight(.thin)
-                                Spacer()
-                            }
                             
-                            CustomSegmentedControl(preselectedIndex: $isFemale, options: ["Man", "Woman"])
-                        }
-                        
-                        Spacer().frame(idealHeight: 80, maxHeight: 80)
-                        
-                        VStack(spacing: 20.0) {
-                            HStack {
-                                Text("Height / Weight")
-                                    .font(.system(size: 24))
-                                    .fontWeight(.thin)
-                                Spacer()
-                            }
-                            HStack (alignment: .bottom) {
-                                TextField("", text: $userHeight)
-                                    .font(.system(size: 20))
-                                    .multilineTextAlignment(.center)
-                                    .italic()
-                                    .frame(maxWidth: 100, maxHeight: 40)
-                                    .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color("MainColor"), lineWidth: 1)
-                                        )
-                                    .keyboardType(.decimalPad)
-                                    .focused($focusedHeight)
-                                    .onAppear{
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                                            self.focusedHeight = true
-                                        }
-                                    }
-                                
-                                Text ("cm").font(.system(size: 20))
-                                
-                                Spacer()
-                                
-                                TextField("", text: $userWeight)
-                                    .font(.system(size: 20))
-                                    .multilineTextAlignment(.center)
-                                    .italic()
-                                    .frame(maxWidth: 120, maxHeight: 40)
-                                    .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color("MainColor"), lineWidth: 1)
-                                        )
-                                    .keyboardType(.decimalPad)
-                                
-                                Text ("kg").font(.system(size: 20))
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 35.0)
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        isLogin = true
-                        isPressed = true
-                    }, label: {
-                        Text("Submit").foregroundColor(Color.white)
-                        
-                    })
-                    .font(.system(size: 22))
-                    .italic()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(20.0)
-                    .background(Color("MainColor"))
-                    .disabled(nextBtnDisabled)
-                    .onChange(of: userName) { _ in
-                        if userName.count == 0 {
-                            nextBtnDisabled = true
-                        } else {
-                            nextBtnDisabled = false
+                            Text ("cm").font(.system(size: 20))
+                            
+                            Spacer()
+                            
+                            TextField("", text: $userWeight)
+                                .font(.system(size: 20))
+                                .multilineTextAlignment(.center)
+                                .italic()
+                                .frame(maxWidth: 120, maxHeight: 40)
+                                .overlay(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke(Color("MainColor"), lineWidth: 1)
+                                    )
+                                .keyboardType(.decimalPad)
+                            
+                            Text ("kg").font(.system(size: 20))
                         }
                     }
                 }
-                .tag(2)
+                .padding(.horizontal, 35.0)
+                
+                Spacer()
+                
+                Button(action: {
+                    router.push(.Welcome)
+                }, label: {
+                    Text("Submit").foregroundColor(Color.white)
+                    
+                })
+                .font(.system(size: 22))
+                .italic()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(20.0)
+                .background(Color("MainColor"))
+                .disabled(nextBtnDisabled)
+                .onChange(of: userName) { _ in
+                    if userName.count == 0 {
+                        nextBtnDisabled = true
+                    } else {
+                        nextBtnDisabled = false
+                    }
+                }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .animation(.easeIn, value: tabselection)
-            .navigationDestination(isPresented: $isPressed, destination: {Welcome_Screen()})
+            .tag(2)
         }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        .animation(.easeIn, value: tabselection)
+        
     }
 }
 
@@ -244,6 +241,6 @@ struct CustomSegmentedControl: View {
 
 struct User_Info_Screen_Previews: PreviewProvider {
     static var previews: some View {
-        User_Info_Screen()
+        User_Info_Screen().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
     }
 }

@@ -6,73 +6,46 @@
 //
 
 import SwiftUI
+import KakaoSDKAuth
+import KakaoSDKCommon
+import KakaoSDKUser
 
 struct Home_Screen: View {
-    //@StateObject private var navigationStore = NavigationStore()
-    @AppStorage("Login") private var isLogin = false
-    //@SceneStorage("navigation") private var navigationData: Data?
-    @State private var isAlreadyLogin = false
-    @State var isLoading: Bool = true
-    
-    var launchScreenView: some View {
-        
-        ZStack(alignment: .center) {
-            
-            Color("MainColor")
-            .edgesIgnoringSafeArea(.all)
-            
-            Image("TitleImg")
-                .resizable()
-                .scaledToFit()
-        }
-    }
+    @State private var isLogin = false
+    @EnvironmentObject var router: Router<Path>
     
     var body: some View {
-        NavigationStack /*(path: $navigationStore.path)*/ {
-            ZStack (alignment: .bottom) {
-                Color("MainColor").ignoresSafeArea()
+        
+        ZStack (alignment: .bottom) {
+            Color("MainColor").ignoresSafeArea()
+            
+            VStack {
+                Text("Walking\nProject").multilineTextAlignment(.center).font(.system(size: 70))
+                    .offset(y:70)
                 
-                VStack {
-                    Text("Walking\nProject").multilineTextAlignment(.center).font(.system(size: 70))
-                        .offset(y:70)
-                    Image("TitleImg")
-                        .resizable()
-                        .scaledToFill()
-                    NavigationLink(destination: User_Info_Screen(), label: {
-                        Image("KkoLogin")
-                            .resizable()
-                        .scaledToFit()})
-                    .padding(.horizontal)
-                    .offset(y: -30)
-                }
+                Image("TitleImg")
+                    .resizable()
+                    .scaledToFill()
                 
-                if isLoading {
-                    launchScreenView.transition(.identity).zIndex(1)
-                }
-            }
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    withAnimation() {
-                        self.isLoading = false
-                    }
-                }
-            }
-            .navigationDestination(isPresented: $isAlreadyLogin, destination: {Main_Screen()})
-        }
-        .task {
-            /*
-             if let navigationData {
-                                    navigationStore.restore(from: navigationData)
-                                }
+                Button(action: {
+                    UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+                            if let error = error {
+                                print(error)
+                            }
+                            else {
+                                print("loginWithKakaoAccount() success.\nLogging in now")
                                 
-                                for await _ in navigationStore.$path.values {
-                                    navigationData = navigationStore.encoded()
-                                }
-             */
-            if isLogin {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    isAlreadyLogin = true
-                }
+                                router.push(.User)
+                                _ = oauthToken
+                            }
+                        }
+                }, label: {
+                    Image("KkoLogin")
+                        .resizable()
+                    .scaledToFit()
+                })
+                .padding(.horizontal)
+                .offset(y: -30)
             }
         }
     }

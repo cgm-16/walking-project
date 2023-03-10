@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  Main_Screen.swift
 //  walking-project
 //
 //  Created by GMC on 2023/01/25.
@@ -29,244 +29,243 @@ struct Main_Screen: View {
     @State private var currentIndex = 0
     @State private var currentRank = 0
 
+    @EnvironmentObject var router: Router<Path>
+    
     // MARK: - Body
     
     var body: some View {
-        NavigationStack {
-            ZStack (alignment: .top) {
-                // MARK: - BG Color
-                GeometryReader { metrics in
-                    VStack{
-                        RoundedRectangle(cornerRadius: CGFloat(15), style: .circular)
-                            .frame(height: metrics.size.height * 0.45)
-                            .foregroundColor(Color("MainColor"))
-                            .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.top/*@END_MENU_TOKEN@*/)
-                    }
+        ZStack (alignment: .top) {
+            // MARK: - BG Color
+            GeometryReader { metrics in
+                VStack{
+                    RoundedRectangle(cornerRadius: CGFloat(15), style: .circular)
+                        .frame(height: metrics.size.height * 0.45)
+                        .foregroundColor(Color("MainColor"))
+                        .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.top/*@END_MENU_TOKEN@*/)
                 }
-                
-                // MARK: - Foreground
-                
-                GeometryReader { metrics in
-                    VStack {
-                        // MARK: - TabView Zone
-                        TabView(selection: $currentIndex.animation()) {
-                            VStack{
-                                HStack{
-                                    Spacer()
-                                    
-                                    if let curPoint = myWalk.first?.current_point, curPoint > 50000 {
-                                        NavigationLink(destination: Coupon_Page(), label: {
-                                            Image("TicketIcon")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .foregroundColor(Color("AccentColor"))
-                                                .imageScale(.large)
-                                                .font(.title2)
-                                        })
-                                    } else {
-                                        Button(action: {}, label: {
-                                            Image("TicketIconDisabled")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .foregroundColor(Color("AccentColor"))
-                                                .imageScale(.large)
-                                                .font(.title2)
-                                        })
-                                        .disabled(true)
-                                    }
-                                    
-                                    NavigationLink(destination: User_Info_Screen(), label: {
-                                        Image(systemName: "gearshape.fill")
-                                            .foregroundColor(Color("AccentColor"))
-                                            .imageScale(.large)
-                                        .font(.title2)})
-                                }
-                                HStack{
-                                    Text("Point")
-                                        .font(.system(size: 35))
-                                        .fontWeight(.light)
-                                        .padding(.leading, 30.0)
-                                    Spacer()
-                                }
-                                Text(commaFormatter.string(for: myWalk.first?.current_point ?? 0) ?? "0")
-                                    .font(.system(size: 83))
-                                    .italic()
-                                Spacer()
-                            }
-                            .tag(0)
+            }
+            
+            // MARK: - Foreground
+            
+            GeometryReader { metrics in
+                VStack {
+                    // MARK: - TabView Zone
+                    TabView(selection: $currentIndex.animation()) {
+                        VStack{
+                            Spacer()
                             
-                            VStack(alignment: .leading){
-                                Text("Total Walk")
-                                    .font(.system(size: 18))
-                                    .fontWeight(.thin)
-                                Text(commaFormatter.string(for: myWalk.first?.total_walk ?? 0) ?? "0")
+                            HStack{
+                                Spacer()
+                                if let curPoint = myWalk.first?.current_point, curPoint > 50000 {
+                                    Button(action: {router.push(.Coupon)}, label: {
+                                        Image("TicketIcon")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .foregroundColor(Color("AccentColor"))
+                                            .padding(1)
+                                    })
+                                } else {
+                                    Button(action: {}, label: {
+                                        Image("TicketIconDisabled")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .foregroundColor(Color("AccentColor"))
+                                            .padding(1)
+                                    })
+                                    .disabled(true)
+                                }
+                                
+                                NavigationLink(destination: User_Info_Screen(), label: {
+                                    Image(systemName: "gearshape.fill")
+                                        .foregroundColor(Color("AccentColor"))
+                                        .imageScale(.large)
+                                    .font(.title2)})
+                            }
+                            HStack{
+                                Text("Point")
                                     .font(.system(size: 35))
                                     .fontWeight(.light)
-                                Spacer()
-                                Grid( alignment: .leading){
-                                    GridRow{
-                                        Text("Calories")
-                                            .font(.system(size: 18))
-                                            .fontWeight(.thin)
-                                        Divider().overlay(Color("MainColor"))
-                                        Text("Distance")
-                                            .font(.system(size: 18))
-                                            .fontWeight(.thin)
-                                    }
-                                    GridRow(alignment: .bottom){
-                                        Text(commaFormatter.string(for: myWalk.first?.calories ?? 0) ?? "0")
-                                            .font(.system(size: 35))
-                                            .italic()
-                                        Divider().overlay(Color("MainColor"))
-                                        Text(String(myWalk.first?.distance ?? 0.0))
-                                            .font(.system(size: 35))
-                                            .italic()
-                                        Text("km")
-                                            .font(.system(size: 18))
-                                            .italic()
-                                    }
-                                }
+                                    .padding(.leading, 30.0)
                                 Spacer()
                             }
-                            .padding(.horizontal, 20.0)
-                            .tag(1)
+                            Text(commaFormatter.string(for: myWalk.first?.current_point ?? 0) ?? "0")
+                                .font(.system(size: 83))
+                                .italic()
+                            Spacer()
                         }
-                        .frame(maxHeight: metrics.size.height * 0.27)
-                        .padding(.horizontal)
-                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                        .overlay(FancyIndexView(currentIndex: currentIndex), alignment: .top)
+                        .tag(0)
                         
-                        
-                        // MARK: - Ranking Zone
-                        
-                        VStack {
-                            ScrollView{
-                                VStack (spacing: 12) {
-                                    ForEach(walkInfo) { info in
-                                        if info.id != myWalk.first?.my_id! {
-                                            HStack{
-                                                VStack(spacing: 0){
-                                                    HStack{
-                                                        Text(String(info.rank))
-                                                            .font(.system(size: 18))
-                                                        Spacer()
-                                                    }
-                                                    HStack{
-                                                        Spacer()
-                                                        RoundedRectangle(cornerRadius: 20)
-                                                            .frame(width: 50, height: 50)
-                                                            .offset(y: -8)
-                                                    }
-                                                }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
-                                                Spacer()
-                                                Text(info.name!).frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
-                                                Spacer()
-                                                Text(commaFormatter.string(for: info.score)!)
-                                                    .font(.system(size: 28))
-                                                    .multilineTextAlignment(.leading)
-                                                    .lineLimit(0)
-                                            }
-                                            .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
-                                            .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                                            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                                .fill(rankColor(rank: info.rank))
-                                            )
-                                        } else {
-                                            HStack{
-                                                VStack(spacing: 0){
-                                                    HStack{
-                                                        Text(String(info.rank))
-                                                            .font(.system(size: 18))
-                                                        Spacer()
-                                                    }
-                                                    HStack{
-                                                        Spacer()
-                                                        RoundedRectangle(cornerRadius: 20)
-                                                            .frame(width: 50, height: 50)
-                                                            .offset(y: -8)
-                                                    }
-                                                }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
-                                                Spacer()
-                                                Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
-                                                Spacer()
-                                                Text(commaFormatter.string(for: info.score)!)
-                                                    .font(.system(size: 28))
-                                                    .multilineTextAlignment(.leading)
-                                                    .lineLimit(0)
-                                            }
-                                            .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
-                                            .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                                            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                                .fill(rankColor(rank: info.rank))
-                                            )
-                                            .overlay(
-                                                        RoundedRectangle(cornerRadius: 20)
-                                                            .stroke(Color("MainColor"), lineWidth: 1)
-                                            )
-                                        }
-                                    }
-                                }.frame(maxWidth: .infinity)
-                            }
-                            
-                            ForEach(walkInfo) { info in
-                                if info.id == myWalk.first?.my_id! {
-                                    HStack{
-                                        VStack(spacing: 0){
-                                            HStack{
-                                                Text(String(info.rank))
-                                                    .font(.system(size: 18))
-                                                Spacer()
-                                            }
-                                            HStack{
-                                                Spacer()
-                                                RoundedRectangle(cornerRadius: 20)
-                                                    .frame(width: 50, height: 50)
-                                                    .offset(y: -8)
-                                            }
-                                        }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.15)
-                                        Spacer()
-                                        Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
-                                        Spacer()
-                                        if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint > myCur {
-                                            Text(commaFormatter.string(for: myPoint)!)
-                                                .lineLimit(0)
-                                                .font(.system(size: 28))
-                                                .multilineTextAlignment(.trailing)
-                                        } else if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint < myCur {
-                                            Text(commaFormatter.string(for: myCur)!)
-                                                .lineLimit(0)
-                                                .font(.system(size: 28))
-                                                .multilineTextAlignment(.trailing)
-                                        } else {
-                                            Text("0")
-                                                .lineLimit(0)
-                                                .font(.system(size: 28))
-                                                .multilineTextAlignment(.trailing)
-                                        }
-                                    }
-                                    .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.07)
-                                    .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                        .fill(rankColor(rank: info.rank)))
-                                    .overlay(
-                                                RoundedRectangle(cornerRadius: 20)
-                                                    .stroke(Color("MainColor"), lineWidth: 1)
-                                    )
+                        VStack(alignment: .leading){
+                            Spacer()
+                            Text("Total Walk")
+                                .font(.system(size: 18))
+                                .fontWeight(.thin)
+                            Text(commaFormatter.string(for: myWalk.first?.total_walk ?? 0) ?? "0")
+                                .font(.system(size: 35))
+                                .fontWeight(.light)
+                            Spacer()
+                            Grid( alignment: .leading){
+                                GridRow{
+                                    Text("Calories")
+                                        .font(.system(size: 18))
+                                        .fontWeight(.thin)
+                                    Divider().overlay(Color("MainColor"))
+                                    Text("Distance")
+                                        .font(.system(size: 18))
+                                        .fontWeight(.thin)
+                                }
+                                GridRow(alignment: .bottom){
+                                    Text(commaFormatter.string(for: myWalk.first?.calories ?? 0) ?? "0")
+                                        .font(.system(size: 35))
+                                        .italic()
+                                    Divider().overlay(Color("MainColor"))
+                                    Text(String(myWalk.first?.distance ?? 0.0))
+                                        .font(.system(size: 35))
+                                        .italic()
+                                    Text("km")
+                                        .font(.system(size: 18))
+                                        .italic()
                                 }
                             }
+                            Spacer()
                         }
-                        .frame(maxWidth: metrics.size.width * 0.85)
-                        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                        .cornerRadius(20)
-                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .fill(Color.white)
-                        )
-                        .shadow(radius: 5, y: 5)
+                        .padding(.horizontal, 20.0)
+                        .tag(1)
                     }
+                    .frame(maxHeight: metrics.size.height * 0.27)
+                    .padding(.horizontal)
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .overlay(FancyIndexView(currentIndex: currentIndex), alignment: .top)
+                    
+                    
+                    // MARK: - Ranking Zone
+                    
+                    VStack {
+                        ScrollView{
+                            VStack (spacing: 12) {
+                                ForEach(walkInfo) { info in
+                                    if info.id != myWalk.first?.my_id! {
+                                        HStack{
+                                            VStack(spacing: 0){
+                                                HStack{
+                                                    Text(String(info.rank))
+                                                        .font(.system(size: 18))
+                                                    Spacer()
+                                                }
+                                                HStack{
+                                                    Spacer()
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .frame(width: 50, height: 50)
+                                                        .offset(y: -8)
+                                                }
+                                            }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
+                                            Spacer()
+                                            Text(info.name!).frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
+                                            Spacer()
+                                            Text(commaFormatter.string(for: info.score)!)
+                                                .font(.system(size: 28))
+                                                .multilineTextAlignment(.leading)
+                                                .lineLimit(0)
+                                        }
+                                        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
+                                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                            .fill(rankColor(rank: info.rank))
+                                        )
+                                    } else {
+                                        HStack{
+                                            VStack(spacing: 0){
+                                                HStack{
+                                                    Text(String(info.rank))
+                                                        .font(.system(size: 18))
+                                                    Spacer()
+                                                }
+                                                HStack{
+                                                    Spacer()
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .frame(width: 50, height: 50)
+                                                        .offset(y: -8)
+                                                }
+                                            }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
+                                            Spacer()
+                                            Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
+                                            Spacer()
+                                            Text(commaFormatter.string(for: info.score)!)
+                                                .font(.system(size: 28))
+                                                .multilineTextAlignment(.leading)
+                                                .lineLimit(0)
+                                        }
+                                        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
+                                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                            .fill(rankColor(rank: info.rank))
+                                        )
+                                        .overlay(
+                                                    RoundedRectangle(cornerRadius: 20)
+                                                        .stroke(Color("MainColor"), lineWidth: 1)
+                                        )
+                                    }
+                                }
+                            }.frame(maxWidth: .infinity)
+                        }
+                        
+                        ForEach(walkInfo) { info in
+                            if info.id == myWalk.first?.my_id! {
+                                HStack{
+                                    VStack(spacing: 0){
+                                        HStack{
+                                            Text(String(info.rank))
+                                                .font(.system(size: 18))
+                                            Spacer()
+                                        }
+                                        HStack{
+                                            Spacer()
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .frame(width: 50, height: 50)
+                                                .offset(y: -8)
+                                        }
+                                    }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.15)
+                                    Spacer()
+                                    Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
+                                    Spacer()
+                                    if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint > myCur {
+                                        Text(commaFormatter.string(for: myPoint)!)
+                                            .lineLimit(0)
+                                            .font(.system(size: 28))
+                                            .multilineTextAlignment(.trailing)
+                                    } else if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint < myCur {
+                                        Text(commaFormatter.string(for: myCur)!)
+                                            .lineLimit(0)
+                                            .font(.system(size: 28))
+                                            .multilineTextAlignment(.trailing)
+                                    } else {
+                                        Text("0")
+                                            .lineLimit(0)
+                                            .font(.system(size: 28))
+                                            .multilineTextAlignment(.trailing)
+                                    }
+                                }
+                                .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.07)
+                                .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+                                .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                    .fill(rankColor(rank: info.rank)))
+                                .overlay(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .stroke(Color("MainColor"), lineWidth: 1)
+                                )
+                            }
+                        }
+                    }
+                    .frame(maxWidth: metrics.size.width * 0.85)
+                    .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+                    .cornerRadius(20)
+                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Color.white)
+                    )
+                    .shadow(color: .black, radius: 1, y: 1)
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)
     }
     
     // MARK: - Private Functions
@@ -289,12 +288,6 @@ struct Main_Screen: View {
         default:
             return Color("Default")
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        Main_Screen().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
     }
 }
 
@@ -326,5 +319,11 @@ struct FancyIndexView: View {
                     .id(index)
             }
         }
+    }
+}
+
+struct Main_Screen_Previews: PreviewProvider {
+    static var previews: some View {
+        Main_Screen().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
     }
 }
