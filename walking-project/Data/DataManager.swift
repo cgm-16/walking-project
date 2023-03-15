@@ -178,8 +178,10 @@ struct DataManager {
                                     let value = quantity.doubleValue(for: .count())
                                     if isFever {
                                         score += lround(value) * multi
+                                        isFever = false
                                     } else {
                                         score += lround(value)
+                                        isFever = true
                                     }
                                 }
                             }

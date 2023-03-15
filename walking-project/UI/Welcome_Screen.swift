@@ -19,8 +19,9 @@ struct Welcome_Screen: View {
              Spacer()
         }
          .task {
+             router.updateRoot(root: .Main)
              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                 router.updateRoot(root: .Main)
+                 router.popToRoot()
              }
          }
     }
