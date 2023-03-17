@@ -10,9 +10,7 @@ import SwiftUI
 struct User_Info_Screen: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \My_Info.height, ascending: true)],
-        animation: .default)
+    @FetchRequest(entity: My_Info.entity(), sortDescriptors: [], predicate: nil)
     private var myInfo: FetchedResults<My_Info>
     
     @EnvironmentObject var router: Router<Path>
@@ -97,6 +95,11 @@ struct User_Info_Screen: View {
             }
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .tag(1)
+            .onAppear() {
+                if let myInfo = self.myInfo.first {
+                    self.userName = myInfo.name ?? ""
+                }
+            }
             
             VStack {
                 VStack (alignment: .leading) {
@@ -149,6 +152,16 @@ struct User_Info_Screen: View {
                                         self.focusedHeight = true
                                     }
                                 }
+                                .onChange(of: userHeight) {newValue in
+                                    let value = String(newValue.replacingOccurrences(
+                                        of: "[^0-9]", with: "", options: .regularExpression).prefix(3))
+                                    if value == "0" {
+                                        
+                                    }
+                                    if value != newValue {
+                                        userHeight = value
+                                    }
+                                }
                             
                             Text ("cm").font(.system(size: 20))
                             
@@ -163,7 +176,14 @@ struct User_Info_Screen: View {
                                         RoundedRectangle(cornerRadius: 20)
                                             .stroke(Color("MainColor"), lineWidth: 1)
                                     )
-                                .keyboardType(.decimalPad)
+                                .keyboardType(.numberPad)
+                                .onChange(of: userWeight) {newValue in
+                                    let value = String(newValue.replacingOccurrences(
+                                        of: "[^0-9]", with: "", options: .regularExpression).prefix(3))
+                                    if value != newValue {
+                                        userWeight = value
+                                    }
+                                }
                             
                             Text ("kg").font(.system(size: 20))
                         }
@@ -174,6 +194,7 @@ struct User_Info_Screen: View {
                 Spacer()
                 
                 Button(action: {
+                    saveMyInfo()
                     router.push(.Welcome)
                 }, label: {
                     Text("Submit").foregroundColor(Color.white)
@@ -194,10 +215,37 @@ struct User_Info_Screen: View {
                 }
             }
             .tag(2)
+            .onAppear() {
+                if let myInfo = self.myInfo.first {
+                    self.isFemale = Int(myInfo.isFemale)
+                    self.userHeight = myInfo.height == 0 ? "" : "\(myInfo.height)"
+                    self.userWeight = myInfo.weight == 0 ? "" : "\(myInfo.weight)"
+                }
+            }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .animation(.easeIn, value: tabselection)
         
+    }
+    
+    private func saveMyInfo() {
+        if let myInfo = self.myInfo.first {
+            myInfo.name = self.userName
+            myInfo.isFemale = Int16(self.isFemale)
+            myInfo.height = Int16(self.userHeight) ?? 0
+            myInfo.weight = Int16(self.userWeight) ?? 0
+        } else {
+            let newMyInfo = My_Info(context: viewContext)
+            newMyInfo.name = self.userName
+            newMyInfo.isFemale = Int16(self.isFemale)
+            newMyInfo.height = Int16(self.userHeight) ?? 0
+            newMyInfo.weight = Int16(self.userWeight) ?? 0
+        }
+        do {
+            try self.viewContext.save()
+        } catch {
+            print("Error saving myInfo: \(error.localizedDescription)")
+        }
     }
 }
 

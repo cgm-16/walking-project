@@ -15,9 +15,7 @@ struct walking_projectApp: App {
         KakaoSDK.initSDK(appKey: "0e11e3b537767121ca1c53fa63ec72c6")
     }
     
-    let dataManager = DataManager.preview
-    // 위쪽은 placeholder 빌드 용 아래쪽 사용할것
-    // let dataManager = DataManager.shared
+    let dataManager = DataManager.healthDataManager
 
     var body: some Scene {
         WindowGroup {

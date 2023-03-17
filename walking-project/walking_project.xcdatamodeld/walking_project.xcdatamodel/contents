@@ -8,13 +8,13 @@
     <entity name="Fever_Times" representedClassName="Fever_Times" syncable="YES" codeGenerationType="class">
         <attribute name="times" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="My_Info" representedClassName="My_Info" syncable="YES" codeGenerationType="class">
+    <entity name="My_Info" representedClassName="My_Info" syncable="YES">
         <attribute name="height" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isFemale" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isFemale" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="weight" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="weight" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
-    <entity name="My_Walk" representedClassName="My_Walk" syncable="YES" codeGenerationType="class">
+    <entity name="My_Walk" representedClassName="My_Walk" syncable="YES">
         <attribute name="calories" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="current_point" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>

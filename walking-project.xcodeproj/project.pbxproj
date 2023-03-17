@@ -21,6 +21,10 @@
 		C12D571829B871B200ADE5F9 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = C12D571729B871B200ADE5F9 /* KakaoSDKUser */; };
 		C12D571B29B876C700ADE5F9 /* Launch_Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C12D571A29B876C700ADE5F9 /* Launch_Screen.storyboard */; };
 		C151936C29AC79100077DE0F /* User_Info_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C151936B29AC79100077DE0F /* User_Info_Screen.swift */; };
+		C155A48529C44003009C539B /* My_Walk+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48329C44003009C539B /* My_Walk+CoreDataClass.swift */; };
+		C155A48629C44003009C539B /* My_Walk+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48429C44003009C539B /* My_Walk+CoreDataProperties.swift */; };
+		C155A48929C44653009C539B /* My_Info+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48729C44653009C539B /* My_Info+CoreDataClass.swift */; };
+		C155A48A29C44653009C539B /* My_Info+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48829C44653009C539B /* My_Info+CoreDataProperties.swift */; };
 		C156898C29B01D2700A547B5 /* Welcome_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C156898B29B01D2700A547B5 /* Welcome_Screen.swift */; };
 		C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92229A6144700EEFF97 /* Coupon_Page.swift */; };
 		C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* Home_Screen.swift */; };
@@ -42,6 +46,10 @@
 		C12D571A29B876C700ADE5F9 /* Launch_Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch_Screen.storyboard; sourceTree = "<group>"; };
 		C151936629AC713A0077DE0F /* walking-project.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "walking-project.entitlements"; sourceTree = "<group>"; };
 		C151936B29AC79100077DE0F /* User_Info_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User_Info_Screen.swift; sourceTree = "<group>"; };
+		C155A48329C44003009C539B /* My_Walk+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Walk+CoreDataClass.swift"; sourceTree = "<group>"; };
+		C155A48429C44003009C539B /* My_Walk+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Walk+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		C155A48729C44653009C539B /* My_Info+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Info+CoreDataClass.swift"; sourceTree = "<group>"; };
+		C155A48829C44653009C539B /* My_Info+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Info+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		C156898B29B01D2700A547B5 /* Welcome_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome_Screen.swift; sourceTree = "<group>"; };
 		C17BF92229A6144700EEFF97 /* Coupon_Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupon_Page.swift; sourceTree = "<group>"; };
 		C17BF92429A615CB00EEFF97 /* Home_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home_Screen.swift; sourceTree = "<group>"; };
@@ -124,6 +132,17 @@
 			path = PathManager;
 			sourceTree = "<group>";
 		};
+		C155A48229C43FB5009C539B /* NSManagedObj */ = {
+			isa = PBXGroup;
+			children = (
+				C155A48729C44653009C539B /* My_Info+CoreDataClass.swift */,
+				C155A48829C44653009C539B /* My_Info+CoreDataProperties.swift */,
+				C155A48329C44003009C539B /* My_Walk+CoreDataClass.swift */,
+				C155A48429C44003009C539B /* My_Walk+CoreDataProperties.swift */,
+			);
+			path = NSManagedObj;
+			sourceTree = "<group>";
+		};
 		C156898D29B023DB00A547B5 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +160,7 @@
 		C156898E29B0241F00A547B5 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				C155A48229C43FB5009C539B /* NSManagedObj */,
 				C114417B298107CF00B3ACB5 /* DataManager.swift */,
 			);
 			path = Data;
@@ -233,9 +253,13 @@
 				C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */,
 				C156898C29B01D2700A547B5 /* Welcome_Screen.swift in Sources */,
 				C1144175298107CD00B3ACB5 /* Main_Screen.swift in Sources */,
+				C155A48A29C44653009C539B /* My_Info+CoreDataProperties.swift in Sources */,
+				C155A48629C44003009C539B /* My_Walk+CoreDataProperties.swift in Sources */,
 				C151936C29AC79100077DE0F /* User_Info_Screen.swift in Sources */,
 				C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */,
+				C155A48529C44003009C539B /* My_Walk+CoreDataClass.swift in Sources */,
 				C1D09F1729BB29B700B52C08 /* Start_View.swift in Sources */,
+				C155A48929C44653009C539B /* My_Info+CoreDataClass.swift in Sources */,
 				C1144173298107CD00B3ACB5 /* walking_projectApp.swift in Sources */,
 				C1281FF029B1B76200CEC987 /* PathManager.swift in Sources */,
 				C114417F298107CF00B3ACB5 /* walking_project.xcdatamodeld in Sources */,

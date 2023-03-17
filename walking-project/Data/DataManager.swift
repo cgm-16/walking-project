@@ -58,61 +58,91 @@ struct DataManager {
     }()
 
     static var healthDataManager: DataManager = {
+        print ("########### starting data manager")
         let result = DataManager(inMemory: false)
         let viewContext = result.container.viewContext
-        let myWalk = My_Walk(context: viewContext)
         let healthStore = HKHealthStore()
         let dataTypes = Set([HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
-                            HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!])
-
+                            HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
+                             HKObjectType.quantityType(forIdentifier: .stepCount)!])
+        print("########## isdata?? \(HKHealthStore.isHealthDataAvailable())")
         if HKHealthStore.isHealthDataAvailable() {
-            let multi = 2
-            let energyBurned = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)!
-            let stepCount = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)!
-            let totalDistance = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceWalkingRunning)!
+            healthStore.requestAuthorization(toShare: [], read: dataTypes) { (success, error) in
+                if !success {
+                    fatalError("Unresolved error \(error.debugDescription)")
+                }
+            }
+            let FEVERMULTI = 2
+            let STEPSTOPOINTS = 100
+            let energyBurned = HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)!
+            let stepCount = HKSampleType.quantityType(forIdentifier: .stepCount)!
+            let totalDistance = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
             let calendar = NSCalendar.current
             let now = Date()
-            let components = calendar.dateComponents([.year, .month, .day], from: now)
-            let startDate = calendar.date(from: components)!
+            let startDate = calendar.startOfDay(for: now)
             let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
             let today = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-            let interval = DateComponents(minute: 1)
+            let auto = NSPredicate(format: "metadata.%K != YES", HKMetadataKeyWasUserEntered)
+            let autoAndToday = NSCompoundPredicate(type: .and, subpredicates: [today, auto])
+            let interval = DateComponents(minute: 5)
             
-            let energyQuery = HKStatisticsQuery(quantityType: energyBurned, quantitySamplePredicate: today, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
+            let energyQuery = HKStatisticsQuery(quantityType: energyBurned, quantitySamplePredicate: autoAndToday, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
                 
                 guard let statistics = statisticsOrNil else {
                     // Handle any errors here.
                     return
                 }
                 
-                let sum = statistics.sumQuantity()!
-                myWalk.calories = Int64(lround(sum.doubleValue(for: HKUnit.largeCalorie())))
+                let sum = statistics.sumQuantity() ?? .init(unit: .largeCalorie(), doubleValue: .zero)
+                if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
+                    myWalk.calories = Int64(lround(sum.doubleValue(for: HKUnit.largeCalorie())))
+                } else {
+                 let myWalk = My_Walk(context: viewContext)
+                    myWalk.calories = Int64(lround(sum.doubleValue(for: HKUnit.largeCalorie())))
+                }
+                
             }
             
-            let stepQuery = HKStatisticsQuery(quantityType: stepCount, quantitySamplePredicate: today, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
+            healthStore.execute(energyQuery)
+            
+            
+            let stepQuery = HKStatisticsQuery(quantityType: stepCount, quantitySamplePredicate: autoAndToday, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
                 
                 guard let statistics = statisticsOrNil else {
                     // Handle any errors here.
                     return
                 }
                 
-                let sum = statistics.sumQuantity()!
-                myWalk.total_walk = Int64(lround(sum.doubleValue(for: .count())))
-                
+                let sum = statistics.sumQuantity() ?? .init(unit: .count(), doubleValue: .zero)
+                if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
+                    myWalk.total_walk = Int64(lround(sum.doubleValue(for: .count())))
+                } else {
+                    let myWalk = My_Walk(context: viewContext)
+                    myWalk.total_walk = Int64(lround(sum.doubleValue(for: .count())))
+                }
             }
             
-            let distQuery = HKStatisticsQuery(quantityType: totalDistance, quantitySamplePredicate: today, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
+            healthStore.execute(stepQuery)
+            
+            let distQuery = HKStatisticsQuery(quantityType: totalDistance, quantitySamplePredicate: autoAndToday, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
                 
                 guard let statistics = statisticsOrNil else {
                     // Handle any errors here.
                     return
                 }
                 
-                let sum = statistics.sumQuantity()!
-                myWalk.distance = sum.doubleValue(for: .meterUnit(with: .kilo))
+                let sum = statistics.sumQuantity() ?? .init(unit: .meterUnit(with: .kilo), doubleValue: .zero)
+                if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
+                    myWalk.distance = sum.doubleValue(for: .meterUnit(with: .kilo))
+                } else {
+                    let myWalk = My_Walk(context: viewContext)
+                    myWalk.distance = sum.doubleValue(for: .meterUnit(with: .kilo))
+                }
             }
             
-            let pointQuery = HKStatisticsCollectionQuery(quantityType: stepCount, quantitySamplePredicate: nil, anchorDate: startDate, intervalComponents: interval)
+            healthStore.execute(distQuery)
+            
+            let pointQuery = HKStatisticsCollectionQuery(quantityType: stepCount, quantitySamplePredicate: auto, anchorDate: startDate, intervalComponents: interval)
             
             pointQuery.initialResultsHandler = {
                 query, results, error in
@@ -146,8 +176,13 @@ struct DataManager {
                             if let quantity = statistics.sumQuantity() {
                                 let value = quantity.doubleValue(for: .count())
                                 score += lround(value)
-                                myWalk.current_point = Int64(score)
                             }
+                        }
+                        if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
+                            myWalk.current_point = Int64(score * STEPSTOPOINTS)
+                        } else {
+                            let myWalk = My_Walk(context: viewContext)
+                            myWalk.current_point = Int64(score * STEPSTOPOINTS)
                         }
                     } else {
                         var score = 0
@@ -177,7 +212,7 @@ struct DataManager {
                                 if let quantity = statistics.sumQuantity() {
                                     let value = quantity.doubleValue(for: .count())
                                     if isFever {
-                                        score += lround(value) * multi
+                                        score += lround(value) * FEVERMULTI
                                         isFever = false
                                     } else {
                                         score += lround(value)
@@ -186,12 +221,19 @@ struct DataManager {
                                 }
                             }
                         }
-                        myWalk.current_point = Int64(score)
+                        if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
+                            myWalk.current_point = Int64(score * STEPSTOPOINTS)
+                        } else {
+                            let myWalk = My_Walk(context: viewContext)
+                            myWalk.current_point = Int64(score * STEPSTOPOINTS)
+                        }
                     }
                     
                 } catch {
                 }
             }
+            
+            healthStore.execute(pointQuery)
         } else {
             healthStore.requestAuthorization(toShare: [], read: dataTypes) { (success, error) in
                 if !success {
