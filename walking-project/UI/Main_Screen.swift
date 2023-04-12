@@ -126,11 +126,11 @@ struct Main_Screen: View {
                                         .fontWeight(.thin)
                                 }
                                 GridRow(alignment: .bottom){
-                                    Text(commaFormatter.string(for: myWalk.first?.calories ?? 0) ?? "0")
+                                    Text(String(((myWalk.first?.calories ?? 0) * 10).rounded()/10))
                                         .font(.system(size: 35))
                                         .italic()
                                     Divider().overlay(Color("MainColor"))
-                                    Text(String(myWalk.first?.distance ?? 0.0))
+                                    Text(String(((myWalk.first?.distance ?? 0) * 100).rounded()/100))
                                         .font(.system(size: 35))
                                         .italic()
                                     Text("km")

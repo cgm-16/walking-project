@@ -77,6 +77,7 @@ struct DataManager {
             }
             let FEVERMULTI = 2
             let STEPSTOPOINTS = 100
+            let CALORIEPERSTEPMULTI = 0.0053
             let energyBurned = HKSampleType.quantityType(forIdentifier: .activeEnergyBurned)!
             let stepCount = HKSampleType.quantityType(forIdentifier: .stepCount)!
             let totalDistance = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
@@ -89,29 +90,7 @@ struct DataManager {
             let autoAndToday = NSCompoundPredicate(type: .and, subpredicates: [today, auto])
             let interval = DateComponents(minute: 5)
             
-            let cal: Int64 = 0
-            let dist: Double = 0
-            let walk: Int64 = 0
-            let point: Int64 = 0
-            
-            let energyQuery = HKStatisticsQuery(quantityType: energyBurned, quantitySamplePredicate: autoAndToday, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
-                
-                guard let statistics = statisticsOrNil else {
-                    // Handle any errors here.
-                    return
-                }
-                
-                let sum = statistics.sumQuantity() ?? .init(unit: .largeCalorie(), doubleValue: .zero)
-                if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
-                    myWalk.calories = Int64(lround(sum.doubleValue(for: HKUnit.largeCalorie())))
-                } else {
-                 let myWalk = My_Walk(context: viewContext)
-                    myWalk.calories = Int64(lround(sum.doubleValue(for: HKUnit.largeCalorie())))
-                }
-                
-            }
-            
-            let stepQuery = HKStatisticsQuery(quantityType: stepCount, quantitySamplePredicate: today, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
+            let stepEnergyQuery = HKStatisticsQuery(quantityType: stepCount, quantitySamplePredicate: today, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
                 
                 guard let statistics = statisticsOrNil else {
                     // Handle any errors here.
@@ -119,11 +98,15 @@ struct DataManager {
                 }
                 
                 let sum = statistics.sumQuantity() ?? .init(unit: .count(), doubleValue: .zero)
+                let myInfo = try? viewContext.fetch(My_Info.fetchRequest()).first
+                let weight = Double(myInfo?.weight ?? 0)
                 if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
                     myWalk.total_walk = Int64(lround(sum.doubleValue(for: .count())))
+                    myWalk.calories = sum.doubleValue(for: .count()) * weight * CALORIEPERSTEPMULTI
                 } else {
                     let myWalk = My_Walk(context: viewContext)
                     myWalk.total_walk = Int64(lround(sum.doubleValue(for: .count())))
+                    myWalk.calories = sum.doubleValue(for: .count()) * weight * CALORIEPERSTEPMULTI
                 }
                 
                 do {
@@ -260,9 +243,8 @@ struct DataManager {
                     fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
                 }
             }
-            
-            healthStore.execute(energyQuery)
-            healthStore.execute(stepQuery)
+
+            healthStore.execute(stepEnergyQuery)
             healthStore.execute(distQuery)
             healthStore.execute(pointQuery)
         } else {

@@ -16,7 +16,7 @@ extension My_Walk {
         return NSFetchRequest<My_Walk>(entityName: "My_Walk")
     }
 
-    @NSManaged public var calories: Int64
+    @NSManaged public var calories: Double
     @NSManaged public var current_point: Int64
     @NSManaged public var distance: Double
     @NSManaged public var my_id: String
