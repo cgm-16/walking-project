@@ -16,11 +16,13 @@ struct Main_Screen: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Walk_Info.score, ascending: false)],
+        entity: Walk_Info.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Walk_Info.rank, ascending: true)],
         animation: .default)
     private var walkInfo: FetchedResults<Walk_Info>
     
     @FetchRequest(
+        entity: My_Walk.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.my_id, ascending: true)],
         animation: .default)
     private var myWalk: FetchedResults<My_Walk>
@@ -56,7 +58,16 @@ struct Main_Screen: View {
                             
                             HStack{
                                 Spacer()
-                                if let curPoint = myWalk.first?.current_point, curPoint > 50000 {
+                                #if DEBUG
+                                Button(action: {router.push(.Coupon)}, label: {
+                                    Image("TicketIcon")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(Color("AccentColor"))
+                                        .padding(1)
+                                })
+                                #endif
+                                if let curPoint = myWalk.first?.current_point, curPoint > 50000, checkCoupon() {
                                     Button(action: {router.push(.Coupon)}, label: {
                                         Image("TicketIcon")
                                             .resizable()
@@ -75,7 +86,7 @@ struct Main_Screen: View {
                                     .disabled(true)
                                 }
                                 
-                                NavigationLink(destination: User_Info_Screen(), label: {
+                                Button(action: {router.push(.User)}, label: {
                                     Image(systemName: "gearshape.fill")
                                         .foregroundColor(Color("AccentColor"))
                                         .imageScale(.large)
@@ -142,75 +153,20 @@ struct Main_Screen: View {
                     
                     VStack {
                         ScrollView{
-                            VStack (spacing: 12) {
+                            VStack(spacing: 12) {
                                 ForEach(walkInfo) { info in
-                                    if info.id != myWalk.first?.my_id! {
-                                        HStack{
-                                            VStack(spacing: 0){
-                                                HStack{
-                                                    Text(String(info.rank))
-                                                        .font(.system(size: 18))
-                                                    Spacer()
-                                                }
-                                                HStack{
-                                                    Spacer()
-                                                    RoundedRectangle(cornerRadius: 20)
-                                                        .frame(width: 50, height: 50)
-                                                        .offset(y: -8)
-                                                }
-                                            }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
-                                            Spacer()
-                                            Text(info.name!).frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
-                                            Spacer()
-                                            Text(commaFormatter.string(for: info.score)!)
-                                                .font(.system(size: 28))
-                                                .multilineTextAlignment(.leading)
-                                                .lineLimit(0)
-                                        }
-                                        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
-                                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                            .fill(rankColor(rank: info.rank))
-                                        )
+                                    if info.id != myWalk.first?.my_id {
+                                        WalkInfoView(info: info, metrics: metrics, isCurrentUser: false)
                                     } else {
-                                        HStack{
-                                            VStack(spacing: 0){
-                                                HStack{
-                                                    Text(String(info.rank))
-                                                        .font(.system(size: 18))
-                                                    Spacer()
-                                                }
-                                                HStack{
-                                                    Spacer()
-                                                    RoundedRectangle(cornerRadius: 20)
-                                                        .frame(width: 50, height: 50)
-                                                        .offset(y: -8)
-                                                }
-                                            }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
-                                            Spacer()
-                                            Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
-                                            Spacer()
-                                            Text(commaFormatter.string(for: info.score)!)
-                                                .font(.system(size: 28))
-                                                .multilineTextAlignment(.leading)
-                                                .lineLimit(0)
-                                        }
-                                        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
-                                        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-                                        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                            .fill(rankColor(rank: info.rank))
-                                        )
-                                        .overlay(
-                                                    RoundedRectangle(cornerRadius: 20)
-                                                        .stroke(Color("MainColor"), lineWidth: 1)
-                                        )
+                                        WalkInfoView(info: info, metrics: metrics, isCurrentUser: true)
                                     }
                                 }
-                            }.frame(maxWidth: .infinity)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                         
                         ForEach(walkInfo) { info in
-                            if info.id == myWalk.first?.my_id! {
+                            if info.id == myWalk.first?.my_id {
                                 HStack{
                                     VStack(spacing: 0){
                                         HStack{
@@ -220,29 +176,37 @@ struct Main_Screen: View {
                                         }
                                         HStack{
                                             Spacer()
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .frame(width: 50, height: 50)
-                                                .offset(y: -8)
+                                            if let imageURL = info.imgURL, let url = URL(string: imageURL) {
+                                                AsyncImage(url: url) { image in
+                                                    image
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .cornerRadius(20)
+                                                        .frame(width: 50, height: 50)
+                                                        .offset(y: -8)
+                                                } placeholder: {
+                                                    ProgressView()
+                                                }
+                                            } else {
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .frame(width: 50, height: 50)
+                                                    .offset(y: -8)
+                                            }
                                         }
                                     }.frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.15)
-                                    Spacer()
+                                    Spacer().frame(width: 5)
                                     Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
                                     Spacer()
-                                    if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint > myCur {
-                                        Text(commaFormatter.string(for: myPoint)!)
+                                    if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint >= myCur {
+                                        Text(commaFormatter.string(for: myPoint) ?? "0")
                                             .lineLimit(0)
                                             .font(.system(size: 28))
-                                            .multilineTextAlignment(.trailing)
+                                            .multilineTextAlignment(.leading)
                                     } else if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint < myCur {
-                                        Text(commaFormatter.string(for: myCur)!)
+                                        Text(commaFormatter.string(for: myCur) ?? "0")
                                             .lineLimit(0)
                                             .font(.system(size: 28))
-                                            .multilineTextAlignment(.trailing)
-                                    } else {
-                                        Text("0")
-                                            .lineLimit(0)
-                                            .font(.system(size: 28))
-                                            .multilineTextAlignment(.trailing)
+                                            .multilineTextAlignment(.leading)
                                     }
                                 }
                                 .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.07)
@@ -267,29 +231,88 @@ struct Main_Screen: View {
             }
         }
     }
-    
-    // MARK: - Private Functions
-    
-    let commaFormatter: NumberFormatter = {
-        let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = .decimal
-        numberFormatter.maximumFractionDigits = 0
-        return numberFormatter
-    }()
-    
-    func rankColor(rank : Int16) -> Color {
-        switch(rank) {
-        case 1:
-            return Color("Gold")
-        case 2:
-            return Color("Silver")
-        case 3:
-            return Color("Bronze")
-        default:
-            return Color("Default")
-        }
+}
+
+let commaFormatter: NumberFormatter = {
+    let numberFormatter = NumberFormatter()
+    numberFormatter.numberStyle = .decimal
+    numberFormatter.maximumFractionDigits = 0
+    return numberFormatter
+}()
+
+func rankColor(rank : Int16) -> Color {
+    switch(rank) {
+    case 1:
+        return Color("Gold")
+    case 2:
+        return Color("Silver")
+    case 3:
+        return Color("Bronze")
+    default:
+        return Color("Default")
     }
 }
+
+struct WalkInfoView: View {
+    let info: Walk_Info
+    let metrics: GeometryProxy
+    let isCurrentUser: Bool
+    
+    var body: some View {
+        HStack {
+            VStack(spacing: 0) {
+                HStack {
+                    Text(String(info.rank))
+                        .font(.system(size: 18))
+                    Spacer()
+                }
+                HStack {
+                    Spacer()
+                    if let imageURL = info.imgURL, let url = URL(string: imageURL) {
+                        AsyncImage(url: url) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .cornerRadius(20)
+                                .frame(width: 50, height: 50)
+                                .offset(y: -8)
+                        } placeholder: {
+                            ProgressView()
+                        }
+                    } else {
+                        RoundedRectangle(cornerRadius: 20)
+                            .frame(width: 50, height: 50)
+                            .offset(y: -8)
+                    }
+                }
+            }
+            .frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
+            
+            Spacer().frame(width: 5)
+            
+            Text(isCurrentUser ? "Me" : info.name ?? "")
+                .frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
+            
+            Spacer()
+            
+            Text(commaFormatter.string(for: info.score) ?? "0")
+                .font(.system(size: 28))
+                .multilineTextAlignment(.leading)
+                .lineLimit(0)
+        }
+        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
+        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
+        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(rankColor(rank: info.rank)))
+        .overlay(isCurrentUser ?
+                 RoundedRectangle(cornerRadius: 20)
+            .stroke(Color("MainColor"), lineWidth: 1) :
+                    nil)
+    }
+    
+    
+}
+
 
 struct FancyIndexView: View {
     

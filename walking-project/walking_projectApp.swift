@@ -8,6 +8,17 @@
 import SwiftUI
 import KakaoSDKCommon
 import KakaoSDKAuth
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        return true
+    }
+}
+
 
 @main
 struct walking_projectApp: App {
@@ -15,7 +26,9 @@ struct walking_projectApp: App {
         KakaoSDK.initSDK(appKey: "0e11e3b537767121ca1c53fa63ec72c6")
     }
     
-    let dataManager = DataManager.healthDataManager
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    let dataManager = DataManager.shared
 
     var body: some Scene {
         WindowGroup {

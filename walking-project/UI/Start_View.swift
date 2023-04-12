@@ -12,7 +12,7 @@ import KakaoSDKCommon
 
 struct Start_View: View {
     @ObservedObject
-    var router = Router<Path>(root: .Home)
+    var router = Router<Path>(root: .Main)
 
     var body: some View {
         RouterView(router: router) { path in
@@ -29,19 +29,23 @@ struct Start_View: View {
                 UserApi.shared.accessTokenInfo { (_, error) in
                     if let error = error {
                         if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
-                            //로그인 필요
+                            router.updateRoot(root: .Home)
+                            router.popToRoot()
                         }
                         else {
-                            //기타 에러
+                            dump(error)
                         }
                     }
                     else {
-                        router.updateRoot(root: .Main)
+                        scoreSync()
+                        runOnceEveryFiveMin()
+                        loadFeverAndCoupon()
                     }
                 }
             }
             else {
-                //로그인 필요
+                router.updateRoot(root: .Home)
+                router.popToRoot()
             }
         }
     }

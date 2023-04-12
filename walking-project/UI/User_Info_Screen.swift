@@ -16,11 +16,10 @@ struct User_Info_Screen: View {
     @EnvironmentObject var router: Router<Path>
     
     @State private var userName: String = ""
-    @State private var isFemale: Int = -1
-    @State private var userHeight: String = ""
-    @State private var userWeight: String = ""
+    @State private var userData = UserData(isFemale: -1, userWeight: "", userHeight: "")
     @State private var tabselection = 1
     @State private var nextBtnDisabled: Bool = true
+    @State private var submitBtnDisabled: Bool = true
     @FocusState private var focusedName: Bool
     @FocusState private var focusedHeight: Bool
     
@@ -95,11 +94,6 @@ struct User_Info_Screen: View {
             }
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .tag(1)
-            .onAppear() {
-                if let myInfo = self.myInfo.first {
-                    self.userName = myInfo.name ?? ""
-                }
-            }
             
             VStack {
                 VStack (alignment: .leading) {
@@ -123,7 +117,7 @@ struct User_Info_Screen: View {
                             Spacer()
                         }
                         
-                        CustomSegmentedControl(preselectedIndex: $isFemale, options: ["Man", "Woman"])
+                        CustomSegmentedControl(preselectedIndex: $userData.isFemale, options: ["Man", "Woman"])
                     }
                     
                     Spacer().frame(idealHeight: 80, maxHeight: 80)
@@ -136,7 +130,7 @@ struct User_Info_Screen: View {
                             Spacer()
                         }
                         HStack (alignment: .bottom) {
-                            TextField("", text: $userHeight)
+                            TextField("", text: $userData.userHeight)
                                 .font(.system(size: 20))
                                 .multilineTextAlignment(.center)
                                 .italic()
@@ -152,14 +146,14 @@ struct User_Info_Screen: View {
                                         self.focusedHeight = true
                                     }
                                 }
-                                .onChange(of: userHeight) {newValue in
+                                .onChange(of: userData.userHeight) {newValue in
                                     let value = String(newValue.replacingOccurrences(
                                         of: "[^0-9]", with: "", options: .regularExpression).prefix(3))
                                     if value == "0" {
-                                        
+                                        userData.userHeight = ""
                                     }
                                     if value != newValue {
-                                        userHeight = value
+                                        userData.userHeight = value
                                     }
                                 }
                             
@@ -167,7 +161,7 @@ struct User_Info_Screen: View {
                             
                             Spacer()
                             
-                            TextField("", text: $userWeight)
+                            TextField("", text: $userData.userWeight)
                                 .font(.system(size: 20))
                                 .multilineTextAlignment(.center)
                                 .italic()
@@ -177,11 +171,14 @@ struct User_Info_Screen: View {
                                             .stroke(Color("MainColor"), lineWidth: 1)
                                     )
                                 .keyboardType(.numberPad)
-                                .onChange(of: userWeight) {newValue in
+                                .onChange(of: userData.userWeight) {newValue in
                                     let value = String(newValue.replacingOccurrences(
                                         of: "[^0-9]", with: "", options: .regularExpression).prefix(3))
+                                    if value == "0" {
+                                        userData.userWeight = ""
+                                    }
                                     if value != newValue {
-                                        userWeight = value
+                                        userData.userWeight = value
                                     }
                                 }
                             
@@ -195,7 +192,6 @@ struct User_Info_Screen: View {
                 
                 Button(action: {
                     saveMyInfo()
-                    router.push(.Welcome)
                 }, label: {
                     Text("Submit").foregroundColor(Color.white)
                     
@@ -205,46 +201,52 @@ struct User_Info_Screen: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(20.0)
                 .background(Color("MainColor"))
-                .disabled(nextBtnDisabled)
-                .onChange(of: userName) { _ in
-                    if userName.count == 0 {
-                        nextBtnDisabled = true
+                .disabled(submitBtnDisabled)
+                .onChange(of: userData) { _ in
+                    if userData.isFemale == -1 || userData.userHeight == "" || userData.userWeight == "" {
+                        submitBtnDisabled = true
                     } else {
-                        nextBtnDisabled = false
+                        submitBtnDisabled = false
                     }
                 }
             }
             .tag(2)
-            .onAppear() {
-                if let myInfo = self.myInfo.first {
-                    self.isFemale = Int(myInfo.isFemale)
-                    self.userHeight = myInfo.height == 0 ? "" : "\(myInfo.height)"
-                    self.userWeight = myInfo.weight == 0 ? "" : "\(myInfo.weight)"
-                }
-            }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .animation(.easeIn, value: tabselection)
-        
+        .task {
+            self.userName = self.myInfo.first?.name ?? ""
+            self.userData.isFemale = Int(self.myInfo.first?.isFemale ?? -1)
+            self.userData.userHeight = self.myInfo.first?.height.description ?? ""
+            self.userData.userWeight = self.myInfo.first?.weight.description ?? ""
+        }
     }
     
     private func saveMyInfo() {
         if let myInfo = self.myInfo.first {
             myInfo.name = self.userName
-            myInfo.isFemale = Int16(self.isFemale)
-            myInfo.height = Int16(self.userHeight) ?? 0
-            myInfo.weight = Int16(self.userWeight) ?? 0
+            myInfo.isFemale = Int16(self.userData.isFemale)
+            myInfo.height = Int16(self.userData.userHeight) ?? 0
+            myInfo.weight = Int16(self.userData.userWeight) ?? 0
+            do {
+                try self.viewContext.save()
+                router.pop()
+            } catch {
+                print("Error saving myInfo: \(error.localizedDescription)")
+            }
+            
         } else {
             let newMyInfo = My_Info(context: viewContext)
             newMyInfo.name = self.userName
-            newMyInfo.isFemale = Int16(self.isFemale)
-            newMyInfo.height = Int16(self.userHeight) ?? 0
-            newMyInfo.weight = Int16(self.userWeight) ?? 0
-        }
-        do {
-            try self.viewContext.save()
-        } catch {
-            print("Error saving myInfo: \(error.localizedDescription)")
+            newMyInfo.isFemale = Int16(self.userData.isFemale)
+            newMyInfo.height = Int16(self.userData.userHeight) ?? 0
+            newMyInfo.weight = Int16(self.userData.userWeight) ?? 0
+            do {
+                try self.viewContext.save()
+                router.push(.Welcome)
+            } catch {
+                print("Error saving myInfo: \(error.localizedDescription)")
+            }
         }
     }
 }
@@ -285,6 +287,12 @@ struct CustomSegmentedControl: View {
                 .stroke(Color("MainColor"), lineWidth: 1)
         )
     }
+}
+
+struct UserData: Equatable {
+    var isFemale: Int
+    var userWeight: String
+    var userHeight: String
 }
 
 struct User_Info_Screen_Previews: PreviewProvider {

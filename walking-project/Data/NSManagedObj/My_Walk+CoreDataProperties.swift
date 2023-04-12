@@ -19,7 +19,7 @@ extension My_Walk {
     @NSManaged public var calories: Int64
     @NSManaged public var current_point: Int64
     @NSManaged public var distance: Double
-    @NSManaged public var my_id: UUID?
+    @NSManaged public var my_id: String
     @NSManaged public var total_walk: Int64
 
 }
