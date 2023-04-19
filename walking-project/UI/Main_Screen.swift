@@ -59,7 +59,18 @@ struct Main_Screen: View {
                             HStack{
                                 Spacer()
                                 #if DEBUG
-                                Button(action: {router.push(.Coupon)}, label: {
+                                Button(action: {
+                                    resetCoupon()
+                                }, label: {
+                                    Image(systemName: "eraser.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(Color("AccentColor"))
+                                        .padding(1)
+                                })
+                                Button(action: {
+                                    router.push(.Coupon)
+                                }, label: {
                                     Image("TicketIcon")
                                         .resizable()
                                         .scaledToFit()

@@ -39,8 +39,9 @@ struct Welcome_Screen: View {
              myName = myInfo.first?.name ?? ""
              
              router.updateRoot(root: .Main)
+             firstTimeSetup()
              DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                 firstTimeSetup()
+                 scoreSync()
              }
              
              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {

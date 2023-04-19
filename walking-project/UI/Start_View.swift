@@ -37,9 +37,9 @@ struct Start_View: View {
                         }
                     }
                     else {
+                        loadFeverAndCoupon()
                         scoreSync()
                         runOnceEveryFiveMin()
-                        loadFeverAndCoupon()
                     }
                 }
             }
