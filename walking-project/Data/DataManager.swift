@@ -109,7 +109,7 @@ func healthDataSync() {
         }
         let FEVERMULTI = 2
         let STEPSTOPOINTS = 100
-        let CALORIEPERSTEPMULTI = 0.0053
+        let CALORIEPERSTEPMULTI = 0.00053
         let stepCount = HKSampleType.quantityType(forIdentifier: .stepCount)!
         let totalDistance = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
         let cal = NSCalendar.current
