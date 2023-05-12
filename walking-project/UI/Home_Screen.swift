@@ -20,7 +20,9 @@ struct Home_Screen: View {
             Color("MainColor").ignoresSafeArea()
             
             VStack {
-                Text("Walking\nProject").multilineTextAlignment(.center).font(.customFont(.home, size: 80))
+                Text("Walking\nProject")
+                    .font(.customFont(.home, size: 80))
+                    .multilineTextAlignment(.center)
                     .offset(y:70)
                     .foregroundColor(Color("MainTxtColor"))
                 

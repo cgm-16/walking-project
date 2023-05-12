@@ -15,7 +15,8 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>CoffeeHealing-1GrKe.ttf</string>
+		<string>CoffeeHealing.ttf</string>
+		<string>CoffeeHealingItalic.ttf</string>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
