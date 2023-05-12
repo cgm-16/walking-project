@@ -34,6 +34,8 @@
 		C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* Home_Screen.swift */; };
 		C197725129B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197724F29B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg */; };
 		C197725229B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197725029B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg */; };
+		C1ABA2592A0CE41700011DA3 /* CoffeeHealingItalic-RpP6o.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1ABA2572A0CE41600011DA3 /* CoffeeHealingItalic-RpP6o.ttf */; };
+		C1ABA25A2A0CE41700011DA3 /* CoffeeHealing-1GrKe.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1ABA2582A0CE41600011DA3 /* CoffeeHealing-1GrKe.ttf */; };
 		C1D09F1729BB29B700B52C08 /* Start_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D09F1629BB29B700B52C08 /* Start_View.swift */; };
 		C1F2D8B929CEF0E400796CCC /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C1F2D8B829CEF0E400796CCC /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
@@ -61,6 +63,8 @@
 		C17BF92429A615CB00EEFF97 /* Home_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home_Screen.swift; sourceTree = "<group>"; };
 		C197724F29B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = KakaoTalk_20230309_170111877.jpg; sourceTree = "<group>"; };
 		C197725029B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = KakaoTalk_20230226_222948198.jpg; sourceTree = "<group>"; };
+		C1ABA2572A0CE41600011DA3 /* CoffeeHealingItalic-RpP6o.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoffeeHealingItalic-RpP6o.ttf"; sourceTree = "<group>"; };
+		C1ABA2582A0CE41600011DA3 /* CoffeeHealing-1GrKe.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "CoffeeHealing-1GrKe.ttf"; path = "../../../../../Downloads/coffee-healing-font/CoffeeHealing-1GrKe.ttf"; sourceTree = "<group>"; };
 		C1D09F1629BB29B700B52C08 /* Start_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Start_View.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -177,6 +181,16 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		C183DDE229F26F83005573BA /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				C183DDE529F27014005573BA /* FontManager.swift */,
+				C1ABA2582A0CE41600011DA3 /* CoffeeHealing-1GrKe.ttf */,
+				C1ABA2572A0CE41600011DA3 /* CoffeeHealingItalic-RpP6o.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -253,6 +267,8 @@
 				C197725129B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg in Resources */,
 				C114417A298107CF00B3ACB5 /* Preview Assets.xcassets in Resources */,
 				C197725229B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg in Resources */,
+				C1ABA25A2A0CE41700011DA3 /* CoffeeHealing-1GrKe.ttf in Resources */,
+				C1ABA2592A0CE41700011DA3 /* CoffeeHealingItalic-RpP6o.ttf in Resources */,
 				C12D571B29B876C700ADE5F9 /* Launch_Screen.storyboard in Resources */,
 				C1144177298107CF00B3ACB5 /* Assets.xcassets in Resources */,
 				C1437F9D29CB092800138BBC /* GoogleService-Info.plist in Resources */,

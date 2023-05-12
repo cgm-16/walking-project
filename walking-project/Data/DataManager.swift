@@ -28,7 +28,7 @@ struct DataManager {
         let myWalk = My_Walk(context: viewContext)
         
         myWalk.my_id = "AAAAA"
-        myWalk.calories = 237
+        myWalk.calories = 1237
         myWalk.total_walk = 12303
         myWalk.distance = 13.8
         myWalk.current_point = 160300

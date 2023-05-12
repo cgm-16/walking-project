@@ -20,12 +20,14 @@ struct Home_Screen: View {
             Color("MainColor").ignoresSafeArea()
             
             VStack {
-                Text("Walking\nProject").multilineTextAlignment(.center).font(.system(size: 70))
+                Text("Walking\nProject").multilineTextAlignment(.center).font(.customFont(.home, size: 80))
                     .offset(y:70)
+                    .foregroundColor(Color("MainTxtColor"))
                 
                 Image("TitleImg")
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
+                    .padding(.vertical, 60.0)
                 
                 Button(action: {
                     UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
@@ -45,7 +47,7 @@ struct Home_Screen: View {
                     .scaledToFit()
                 })
                 .padding(.horizontal)
-                .offset(y: -30)
+                .offset(y: -70)
             }
         }
     }

@@ -58,6 +58,7 @@ struct Main_Screen: View {
                             
                             HStack{
                                 Spacer()
+                                /*
                                 #if DEBUG
                                 Button(action: {
                                     resetCoupon()
@@ -78,12 +79,13 @@ struct Main_Screen: View {
                                         .padding(1)
                                 })
                                 #endif
-                                if let curPoint = myWalk.first?.current_point, curPoint > 50000, checkCoupon() {
+                                 */
+                                if let curPoint = myWalk.first?.current_point, curPoint > 30000, checkCoupon() {
                                     Button(action: {router.push(.Coupon)}, label: {
                                         Image("TicketIcon")
                                             .resizable()
                                             .scaledToFit()
-                                            .foregroundColor(Color("AccentColor"))
+                                            .frame(width: 45, height: 45)
                                             .padding(1)
                                     })
                                 } else {
@@ -91,28 +93,32 @@ struct Main_Screen: View {
                                         Image("TicketIconDisabled")
                                             .resizable()
                                             .scaledToFit()
+                                            .frame(width: 45, height: 45)
                                             .foregroundColor(Color("AccentColor"))
                                             .padding(1)
                                     })
                                     .disabled(true)
                                 }
-                                
+                                Spacer().frame(width: 10)
                                 Button(action: {router.push(.User)}, label: {
                                     Image(systemName: "gearshape.fill")
-                                        .foregroundColor(Color("AccentColor"))
+                                        .foregroundColor(Color("MainTxtColor"))
                                         .imageScale(.large)
                                     .font(.title2)})
+                                Spacer().frame(width: 15)
                             }
                             HStack{
                                 Text("Point")
                                     .font(.system(size: 35))
                                     .fontWeight(.light)
                                     .padding(.leading, 30.0)
+                                    .foregroundColor(Color("MainTxtColor"))
                                 Spacer()
                             }
                             Text(commaFormatter.string(for: myWalk.first?.current_point ?? 0) ?? "0")
                                 .font(.system(size: 83))
                                 .italic()
+                                .foregroundColor(Color("MainTxtColor"))
                             Spacer()
                         }
                         .tag(0)
@@ -122,31 +128,43 @@ struct Main_Screen: View {
                             Text("Total Walk")
                                 .font(.system(size: 18))
                                 .fontWeight(.thin)
+                                .foregroundColor(Color("MainTxtColor"))
+                            
                             Text(commaFormatter.string(for: myWalk.first?.total_walk ?? 0) ?? "0")
                                 .font(.system(size: 35))
                                 .fontWeight(.light)
+                                .foregroundColor(Color("MainTxtColor"))
                             Spacer()
                             Grid( alignment: .leading){
                                 GridRow{
                                     Text("Calories")
                                         .font(.system(size: 18))
                                         .fontWeight(.thin)
+                                        .foregroundColor(Color("MainTxtColor"))
                                     Divider().overlay(Color("MainColor"))
                                     Text("Distance")
                                         .font(.system(size: 18))
                                         .fontWeight(.thin)
+                                        .foregroundColor(Color("MainTxtColor"))
                                 }
                                 GridRow(alignment: .bottom){
                                     Text(String(((myWalk.first?.calories ?? 0) * 10).rounded()/10))
-                                        .font(.system(size: 35))
+                                        .fixedSize()
+                                        .font(.customFont(.main, size: 35))
                                         .italic()
+                                        .foregroundColor(Color("MainTxtColor"))
+                                    
                                     Divider().overlay(Color("MainColor"))
+                                    
                                     Text(String(((myWalk.first?.distance ?? 0) * 100).rounded()/100))
-                                        .font(.system(size: 35))
+                                        .fixedSize()
+                                        .font(.customFont(.main, size: 35))
                                         .italic()
+                                        .foregroundColor(Color("MainTxtColor"))
                                     Text("km")
                                         .font(.system(size: 18))
                                         .italic()
+                                        .foregroundColor(Color("MainTxtColor"))
                                 }
                             }
                             Spacer()
