@@ -94,6 +94,8 @@ struct User_Info_Screen: View {
             }
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .tag(1)
+            .contentShape(Rectangle())
+            .simultaneousGesture(DragGesture())
             
             VStack {
                 VStack (alignment: .leading) {
@@ -211,6 +213,8 @@ struct User_Info_Screen: View {
                 }
             }
             .tag(2)
+            .contentShape(Rectangle())
+            .simultaneousGesture(DragGesture())
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .animation(.easeIn, value: tabselection)

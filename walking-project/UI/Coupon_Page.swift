@@ -10,6 +10,12 @@ import KakaoSDKUser
 import CoreData
 
 struct Coupon_Page: View {
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Fever_Times.times, ascending: true)],
+        animation: .default)
+    private var feverTimes: FetchedResults<Fever_Times>
+    // TODO: Delete later
+    
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
@@ -75,28 +81,35 @@ struct Coupon_Page: View {
                         }
                     }
                 }
-
-                Button("Logout") {
-                    UserApi.shared.logout {(error) in
-                        if let error = error {
-                            print(error)
-                        }
-                        else {
-                            do {
-                                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "My_Info")
-                                let objects = try viewContext.fetch(fetchRequest) as? [NSManagedObject] ?? []
-                                for object in objects {
-                                    viewContext.delete(object)
+                HStack {
+                    Button("Logout") {
+                        UserApi.shared.logout {(error) in
+                            if let error = error {
+                                print(error)
+                            }
+                            else {
+                                do {
+                                    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "My_Info")
+                                    let objects = try viewContext.fetch(fetchRequest) as? [NSManagedObject] ?? []
+                                    for object in objects {
+                                        viewContext.delete(object)
+                                    }
+                                    try viewContext.save()
+                                } catch {
+                                    fatalError("Failed to save changes: \(error)")
                                 }
-                                try viewContext.save()
-                            } catch {
-                                fatalError("Failed to save changes: \(error)")
+                                print("logout() success.")
+                                router.updateRoot(root: .Home)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                    router.popToRoot()
+                                }
                             }
-                            print("logout() success.")
-                            router.updateRoot(root: .Home)
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                router.popToRoot()
-                            }
+                        }
+                    }
+                    
+                    VStack {
+                        ForEach(feverTimes) { info in
+                            Text(info.times ?? "")
                         }
                     }
                 }

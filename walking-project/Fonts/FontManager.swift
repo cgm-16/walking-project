@@ -18,7 +18,7 @@ extension Font {
         var value: String {
             switch self {
             case .home:
-                return "Coffee Healing Italic"
+                return "Luckiest Guy Regular"
             case .main:
                 return ""
             case .coupon:

@@ -58,7 +58,6 @@ struct Main_Screen: View {
                             
                             HStack{
                                 Spacer()
-                                /*
                                 #if DEBUG
                                 Button(action: {
                                     resetCoupon()
@@ -79,7 +78,6 @@ struct Main_Screen: View {
                                         .padding(1)
                                 })
                                 #endif
-                                 */
                                 if let curPoint = myWalk.first?.current_point, curPoint > 30000, checkCoupon() {
                                     Button(action: {router.push(.Coupon)}, label: {
                                         Image("TicketIcon")

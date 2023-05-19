@@ -112,7 +112,7 @@ func healthDataSync() {
         let CALORIEPERSTEPMULTI = 0.00053
         let stepCount = HKSampleType.quantityType(forIdentifier: .stepCount)!
         let totalDistance = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
-        let cal = NSCalendar.current
+        let cal = Calendar.current
         let now = Date()
         let startDate = cal.startOfDay(for: now)
         let endDate = cal.date(byAdding: .day, value: 1, to: startDate)!
@@ -197,21 +197,20 @@ func healthDataSync() {
             
             if let feverTimes = try? viewContext.fetch(Fever_Times.fetchRequest()), !feverTimes.isEmpty {
                 var score = 0
-                var dateTimes : [Date] = [startDate]
+                var dateTimes : [Date] = [startDate, now]
                 
                 // Example : "15:20-16:20"
                 for row in feverTimes {
                     if let times = row.times {
                         for timeStr in times.split(separator: "-") {
                             let timeEle = timeStr.split(separator: ":", maxSplits: 1)
-                            if let dt = cal.date(bySettingHour: Int(timeEle[0]) ?? -1, minute: Int(timeEle[1]) ?? -1, second: 0, of: now) {
+                            if let dt = cal.date(bySettingHour: Int(timeEle[0]) ?? -1, minute: Int(timeEle[1]) ?? -1, second: 0, of: now), dt <= now {
                                 dateTimes.append(dt)
                             }
                         }
                     }
                 }
-                dateTimes.append(now)
-                
+                dateTimes = dateTimes.sorted()
                 // Enumerate over all the statistics objects between the start and end dates.
                 for i in 0..<dateTimes.count-1 {
                     statsCollection.enumerateStatistics(from: dateTimes[i], to: dateTimes[i+1])
@@ -250,6 +249,7 @@ func healthDataSync() {
             }
             
             do {
+                scoreSync()
                 try viewContext.save()
             } catch {
                 let nsError = error as NSError
@@ -343,7 +343,6 @@ public func scoreSync() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
     
-    healthDataSync()
     var name : String = ""
     var score : Int = 0
     
@@ -473,6 +472,7 @@ func loadFeverAndCoupon() {
             }
             
             do {
+                healthDataSync()
                 try viewContext.save()
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
@@ -517,20 +517,6 @@ func loadFeverAndCoupon() {
     
 }
 
-public func runOnceADay() {
-    let defaults = UserDefaults.standard
-    let lastRunDate = defaults.object(forKey: "lastRunDate") as? Date ?? Date.distantPast
-    
-    let calendar = Calendar.current
-    let today = calendar.startOfDay(for: Date())
-    let lastRunDay = calendar.startOfDay(for: lastRunDate)
-    
-    if today > lastRunDay {
-        loadFeverAndCoupon()
-        
-        defaults.set(today, forKey: "lastRunDate")
-    }
-}
 
 public func runOnceEveryFiveMin() {
     let timer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in

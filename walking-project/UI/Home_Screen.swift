@@ -22,6 +22,7 @@ struct Home_Screen: View {
             VStack {
                 Text("Walking\nProject")
                     .font(.customFont(.home, size: 80))
+                    .lineSpacing(15)
                     .multilineTextAlignment(.center)
                     .offset(y:70)
                     .foregroundColor(Color("MainTxtColor"))

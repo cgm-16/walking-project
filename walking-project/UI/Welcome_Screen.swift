@@ -41,7 +41,7 @@ struct Welcome_Screen: View {
              router.updateRoot(root: .Main)
              firstTimeSetup()
              DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                 scoreSync()
+                 loadFeverAndCoupon()
              }
              
              DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
