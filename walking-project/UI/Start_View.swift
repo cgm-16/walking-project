@@ -18,7 +18,7 @@ struct Start_View: View {
         RouterView(router: router) { path in
             switch path {
             case .Home: Home_Screen()
-            case .Main : Main_Screen()
+            case .Main : Main_Screen().navigationBarBackButtonHidden()
             case .User : User_Info_Screen()
             case .Welcome : Welcome_Screen()
             case .Coupon : Coupon_Page()
