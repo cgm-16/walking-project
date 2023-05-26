@@ -13,14 +13,14 @@ struct Welcome_Screen: View {
     @FetchRequest(entity: My_Info.entity(), sortDescriptors: [], predicate: nil)
     private var myInfo: FetchedResults<My_Info>
     
-    @State private var myName : String = ""
-    @State private var mySex : String = ""
+    @State private var name : String = ""
+    @State private var pronoun : String = ""
     
     var body: some View {
          VStack (spacing: 80) {
              Spacer()
              Text("Login Complete!").font(.system(size: 24, weight: .thin))
-             Text("Welcome\n\(mySex)\(myName)!").font(.system(size: 43, weight: .medium))
+             Text("Welcome\n\(pronoun)\(name)!").font(.system(size: 43, weight: .medium))
                  .multilineTextAlignment(.center)
              Spacer()
         }
@@ -28,15 +28,15 @@ struct Welcome_Screen: View {
              if let sex = myInfo.first?.isFemale {
                  switch sex {
                  case 0:
-                     mySex = "Mr. "
+                     pronoun = "Mr. "
                  case 1:
-                     mySex = "Ms. "
+                     pronoun = "Ms. "
                  default:
-                     mySex = ""
+                     pronoun = ""
                  }
              }
              
-             myName = myInfo.first?.name ?? ""
+             name = myInfo.first?.name ?? ""
              
              router.updateRoot(root: .Main)
              firstTimeSetup()
