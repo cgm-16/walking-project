@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  Home_Screen.swift
 //  walking-project
 //
 //  Created by GMC on 2023/02/22.
@@ -9,6 +9,7 @@ import SwiftUI
 import KakaoSDKAuth
 import KakaoSDKCommon
 import KakaoSDKUser
+import AuthenticationServices
 
 struct Home_Screen: View {
     @State private var isLogin = false
@@ -33,7 +34,20 @@ struct Home_Screen: View {
                     .padding(.vertical, 60.0)
                 
                 Button(action: {
-                    UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+                    if (UserApi.isKakaoTalkLoginAvailable()) {
+                        UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+                            if let error = error {
+                                print(error)
+                            }
+                            else {
+                                print("loginWithKakaoTalk() success.")
+                                
+                                router.push(.User)
+                                _ = oauthToken
+                            }
+                        }
+                    } else {
+                        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
                             if let error = error {
                                 print(error)
                             }
@@ -44,13 +58,19 @@ struct Home_Screen: View {
                                 _ = oauthToken
                             }
                         }
+                    }
                 }, label: {
                     Image("KkoLogin")
                         .resizable()
                     .scaledToFit()
                 })
                 .padding(.horizontal)
-                .offset(y: -70)
+                .offset(y: -10)
+            }
+        }
+        .task {
+            Task{
+                await HKRequestAuth()
             }
         }
     }

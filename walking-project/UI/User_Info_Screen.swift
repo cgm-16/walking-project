@@ -2,8 +2,9 @@
 //  User_Info_Screen.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/02/10.
+//  Created by GMC on 2023/02/10.
 //
+
 
 import SwiftUI
 

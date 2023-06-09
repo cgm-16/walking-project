@@ -94,190 +94,6 @@ struct DataManager {
     }
 }
 
-func healthDataSync() {
-    let viewContext = DataManager.shared.viewContext
-    let healthStore = DataManager.shared.healthstore
-    
-    let dataTypes = Set([HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
-                         HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
-                         HKObjectType.quantityType(forIdentifier: .stepCount)!])
-    if HKHealthStore.isHealthDataAvailable() {
-        healthStore.requestAuthorization(toShare: [], read: dataTypes) { (success, error) in
-            if !success {
-                fatalError("Unresolved error \(error.debugDescription)")
-            }
-        }
-        let FEVERMULTI = 2
-        let STEPSTOPOINTS = 100
-        let CALORIEPERSTEPMULTI = 0.00053
-        let stepCount = HKSampleType.quantityType(forIdentifier: .stepCount)!
-        let totalDistance = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
-        let cal = Calendar.current
-        let now = Date()
-        let startDate = cal.startOfDay(for: now)
-        let endDate = cal.date(byAdding: .day, value: 1, to: startDate)!
-        let today = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
-        let auto = NSPredicate(format: "metadata.%K != YES", HKMetadataKeyWasUserEntered)
-        let autoAndToday = NSCompoundPredicate(type: .and, subpredicates: [today, auto])
-        let interval = DateComponents(minute: 5)
-        
-        let stepEnergyQuery = HKStatisticsQuery(quantityType: stepCount, quantitySamplePredicate: today, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
-            
-            guard let statistics = statisticsOrNil else {
-                // Handle any errors here.
-                return
-            }
-            
-            let sum = statistics.sumQuantity() ?? .init(unit: .count(), doubleValue: .zero)
-            let myInfo = try? viewContext.fetch(My_Info.fetchRequest()).first
-            let weight = Double(myInfo?.weight ?? 0)
-            if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
-                myWalk.total_walk = Int64(lround(sum.doubleValue(for: .count())))
-                myWalk.calories = sum.doubleValue(for: .count()) * weight * CALORIEPERSTEPMULTI
-            } else {
-                let myWalk = My_Walk(context: viewContext)
-                myWalk.total_walk = Int64(lround(sum.doubleValue(for: .count())))
-                myWalk.calories = sum.doubleValue(for: .count()) * weight * CALORIEPERSTEPMULTI
-            }
-            
-            do {
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-        
-        let distQuery = HKStatisticsQuery(quantityType: totalDistance, quantitySamplePredicate: autoAndToday, options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
-            
-            guard let statistics = statisticsOrNil else {
-                // Handle any errors here.
-                return
-            }
-            
-            let sum = statistics.sumQuantity() ?? .init(unit: .meterUnit(with: .kilo), doubleValue: .zero)
-            if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
-                myWalk.distance = sum.doubleValue(for: .meterUnit(with: .kilo))
-            } else {
-                let myWalk = My_Walk(context: viewContext)
-                myWalk.distance = sum.doubleValue(for: .meterUnit(with: .kilo))
-            }
-            
-            do {
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-        
-        let pointQuery = HKStatisticsCollectionQuery(quantityType: stepCount, quantitySamplePredicate: today, anchorDate: startDate, intervalComponents: interval)
-        
-        pointQuery.initialResultsHandler = {
-            query, results, error in
-            
-            // Handle errors here.
-            if let error = error as? HKError {
-                switch (error.code) {
-                case .errorDatabaseInaccessible:
-                    // HealthKit couldn't access the database because the device is locked.
-                    return
-                default:
-                    // Handle other HealthKit errors here.
-                    return
-                }
-            }
-            
-            guard let statsCollection = results else {
-                // You should only hit this case if you have an unhandled error. Check for bugs
-                // in your code that creates the query, or explicitly handle the error.
-                assertionFailure("")
-                return
-            }
-            
-            if let feverTimes = try? viewContext.fetch(Fever_Times.fetchRequest()), !feverTimes.isEmpty {
-                var score = 0
-                var dateTimes : [Date] = [startDate, now]
-                
-                // Example : "15:20-16:20"
-                for row in feverTimes {
-                    if let times = row.times {
-                        for timeStr in times.split(separator: "-") {
-                            let timeEle = timeStr.split(separator: ":", maxSplits: 1)
-                            if let dt = cal.date(bySettingHour: Int(timeEle[0]) ?? -1, minute: Int(timeEle[1]) ?? -1, second: 0, of: now), dt <= now {
-                                dateTimes.append(dt)
-                            }
-                        }
-                    }
-                }
-                dateTimes = dateTimes.sorted()
-                // Enumerate over all the statistics objects between the start and end dates.
-                for i in 0..<dateTimes.count-1 {
-                    statsCollection.enumerateStatistics(from: dateTimes[i], to: dateTimes[i+1])
-                    { (statistics, stop) in
-                        if let quantity = statistics.sumQuantity() {
-                            let value = quantity.doubleValue(for: .count())
-                            if i%2==1 {
-                                score += lround(value) * FEVERMULTI
-                            } else {
-                                score += lround(value)
-                            }
-                        }
-                    }
-                }
-                if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
-                    myWalk.current_point = Int64(score * STEPSTOPOINTS)
-                } else {
-                    let myWalk = My_Walk(context: viewContext)
-                    myWalk.current_point = Int64(score * STEPSTOPOINTS)
-                }
-            } else {
-                var score = 0
-                statsCollection.enumerateStatistics(from: startDate, to: now)
-                { (statistics, stop) in
-                    if let quantity = statistics.sumQuantity() {
-                        let value = quantity.doubleValue(for: .count())
-                        score += lround(value)
-                    }
-                }
-                if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
-                    myWalk.current_point = Int64(score * STEPSTOPOINTS)
-                } else {
-                    let myWalk = My_Walk(context: viewContext)
-                    myWalk.current_point = Int64(score * STEPSTOPOINTS)
-                }
-            }
-            
-            do {
-                scoreSync()
-                try viewContext.save()
-            } catch {
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-        
-        healthStore.execute(stepEnergyQuery)
-        healthStore.execute(distQuery)
-        healthStore.execute(pointQuery)
-    } else {
-        healthStore.requestAuthorization(toShare: [], read: dataTypes) { (success, error) in
-            if !success {
-                fatalError("Unresolved error \(error.debugDescription)")
-            }
-        }
-    }
-    
-    do {
-        try viewContext.save()
-    } catch {
-        // Replace this implementation with code to handle the error appropriately.
-        // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-        let nsError = error as NSError
-        fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-    }
-}
-
 public func firstTimeSetup() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
@@ -339,7 +155,7 @@ public func firstTimeSetup() {
     }
 }
 
-public func scoreSync() {
+func scoreSync() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
     
@@ -351,7 +167,7 @@ public func scoreSync() {
     }
     
     if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
-        score = Int(myWalk.current_point)
+        score = Int(myWalk.current_point+myWalk.cum_walked)
     }
     
     UserApi.shared.me() { (user, error) in
@@ -415,41 +231,41 @@ public func scoreSync() {
             if let document = document, document.exists {
                 if let friendUuids: [String] = document.get("friend-uuids") as? [String] {
                     db.collection("scoreboard")
-                        .whereField("uuid", in: friendUuids)
-                        .order(by: "score", descending: true)
-                        .limit(to: 20)
-                        .getDocuments() { (querySnapshot, err) in
-                            if let err = err {
-                                print("Error getting documents: \(err)")
-                            } else {
-                                var rank: Int16 = 1
-                                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Walk_Info")
-                                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-                                try! viewContext.executeAndMergeChanges(using: deleteRequest)
-                                viewContext.reset()
-                                
-                                for document in querySnapshot!.documents {
-                                    let dat = document.data()
-                                    let entityDescription = NSEntityDescription.entity(forEntityName: "Walk_Info", in: viewContext)!
-                                    let walkInfo = Walk_Info(entity: entityDescription, insertInto: viewContext)
-                                    walkInfo.setValue(rank, forKey: "rank")
-                                    walkInfo.setValue(dat["score"] as? Int64 ?? 0, forKey: "score")
-                                    walkInfo.setValue(dat["name"] as? String ?? "", forKey: "name")
-                                    walkInfo.setValue(dat["uuid"] as? String ?? "", forKey: "id")
-                                    walkInfo.setValue(dat["imgURL"] as? String ?? "", forKey: "imgURL")
-                                    rank += 1
-                                }
-                                
-                                do {
-                                    try viewContext.save()
-                                } catch {
-                                    // Replace this implementation with code to handle the error appropriately.
-                                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                                    let nsError = error as NSError
-                                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-                                }
+                    .whereField("uuid", in: friendUuids)
+                    .order(by: "score", descending: true)
+                    .limit(to: 20)
+                    .getDocuments() { (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            var rank: Int16 = 1
+                            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Walk_Info")
+                            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                            try! viewContext.executeAndMergeChanges(using: deleteRequest)
+                            viewContext.reset()
+                            
+                            for document in querySnapshot!.documents {
+                                let dat = document.data()
+                                let entityDescription = NSEntityDescription.entity(forEntityName: "Walk_Info", in: viewContext)!
+                                let walkInfo = Walk_Info(entity: entityDescription, insertInto: viewContext)
+                                walkInfo.setValue(rank, forKey: "rank")
+                                walkInfo.setValue(dat["score"] as? Int64 ?? 0, forKey: "score")
+                                walkInfo.setValue(dat["name"] as? String ?? "", forKey: "name")
+                                walkInfo.setValue(dat["uuid"] as? String ?? "", forKey: "id")
+                                walkInfo.setValue(dat["imgURL"] as? String ?? "", forKey: "imgURL")
+                                rank += 1
+                            }
+                            
+                            do {
+                                try viewContext.save()
+                            } catch {
+                                // Replace this implementation with code to handle the error appropriately.
+                                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                                let nsError = error as NSError
+                                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
                             }
                         }
+                    }
                 }
             }
         }
@@ -517,8 +333,7 @@ func loadFeverAndCoupon() {
     
 }
 
-
-public func runOnceEveryFiveMin() {
+func runOnceEveryFiveMin() {
     let timer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in
         DispatchQueue.global().async {
             scoreSync()
@@ -527,7 +342,7 @@ public func runOnceEveryFiveMin() {
     RunLoop.current.add(timer, forMode: .common)
 }
 
-public func checkCoupon() -> Bool {
+func checkCoupon() -> Bool {
     let defaults = UserDefaults.standard
     let lastRunDate = defaults.object(forKey: "lastCouponDate") as? Date ?? Date.distantPast
     
@@ -542,7 +357,7 @@ public func checkCoupon() -> Bool {
     }
 }
 
-public func resetCoupon() {
+func resetCoupon() {
     UserDefaults.standard.set(Date.distantPast, forKey: "lastCouponDate")
 }
 

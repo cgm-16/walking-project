@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>calc_cum</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -13,16 +17,23 @@
 			</array>
 		</dict>
 	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>CoffeeHealing.ttf</string>
 		<string>CoffeeHealingItalic.ttf</string>
 		<string>LuckiestGuy-Regular.ttf</string>
 	</array>
-	<key>LSApplicationQueriesSchemes</key>
+	<key>UIBackgroundModes</key>
 	<array>
-		<string>kakaokompassauth</string>
-		<string>kakaolink</string>
+		<string>fetch</string>
+		<string>processing</string>
 	</array>
 </dict>
 </plist>
