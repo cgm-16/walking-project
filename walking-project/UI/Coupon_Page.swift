@@ -2,7 +2,7 @@
 //  SwiftUIView.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/02/22.
+//  Created by GMC on 2023/02/22.
 //
 
 import SwiftUI
@@ -10,6 +10,11 @@ import KakaoSDKUser
 import CoreData
 
 struct Coupon_Page: View {
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.cum_walked, ascending: true)],
+        animation: .default)
+    private var myWalk: FetchedResults<My_Walk>
+    // TODO: Delete later
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Fever_Times.times, ascending: true)],
         animation: .default)
@@ -112,6 +117,8 @@ struct Coupon_Page: View {
                             Text(info.times ?? "")
                         }
                     }
+                    
+                    Text(myWalk.first?.cum_walked.description ?? "yesterday no walked")
                 }
             }
             .tabViewStyle(.page)

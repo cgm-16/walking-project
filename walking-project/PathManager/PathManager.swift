@@ -2,7 +2,7 @@
 //  PathManager.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/03/03.
+//  Created by GMC on 2023/03/03.
 //
 
 import Foundation

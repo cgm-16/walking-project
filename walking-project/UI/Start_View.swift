@@ -1,8 +1,8 @@
 //
-//  ContentView.swift
+//  Start_View.swift
 //  walking-project
 //
-//  Created by Junwon Jang on 2023/03/10.
+//  Created by GMC on 2023/03/10.
 //
 
 import SwiftUI
