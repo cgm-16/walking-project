@@ -24,6 +24,7 @@ struct StartView: View {
             case .User : UserInfoView()
             case .Welcome : WelcomeView()
             case .Coupon : CouponView()
+            case .Settings : SettingsView()
             }
         }
         .onAppear() {
@@ -55,14 +56,6 @@ struct StartView: View {
             }
         }
     }
-}
-
-enum Path {
-    case Home
-    case Main
-    case User
-    case Welcome
-    case Coupon
 }
 
 struct Start_View_Previews: PreviewProvider {

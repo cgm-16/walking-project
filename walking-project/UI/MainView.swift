@@ -98,7 +98,7 @@ struct MainView: View {
                                     .disabled(true)
                                 }
                                 Spacer().frame(width: 10)
-                                Button(action: {router.push(.User)}, label: {
+                                Button(action: {router.push(.Settings)}, label: {
                                     Image(systemName: "gearshape.fill")
                                         .foregroundColor(Color("MainTxtColor"))
                                         .imageScale(.large)

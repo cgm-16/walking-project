@@ -51,3 +51,12 @@ final class Router<T: Hashable>: ObservableObject {
        paths = []
     }
 }
+
+enum Path {
+    case Home
+    case Main
+    case User
+    case Welcome
+    case Coupon
+    case Settings
+}

@@ -13,6 +13,7 @@ extension Font {
         case home
         case main
         case coupon
+        case settings
         case button
         
         var value: String {
@@ -22,6 +23,8 @@ extension Font {
             case .main:
                 return ""
             case .coupon:
+                return ""
+            case .settings:
                 return ""
             case .button:
                 return ""
