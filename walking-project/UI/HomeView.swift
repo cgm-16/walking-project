@@ -1,5 +1,5 @@
 //
-//  Home_Screen.swift
+//  HomeView.swift
 //  walking-project
 //
 //  Created by GMC on 2023/02/22.
@@ -11,7 +11,7 @@ import KakaoSDKCommon
 import KakaoSDKUser
 import AuthenticationServices
 
-struct Home_Screen: View {
+struct HomeView: View {
     @State private var isLogin = false
     @EnvironmentObject var router: Router<Path>
     
@@ -78,6 +78,6 @@ struct Home_Screen: View {
 
 struct Home_Screen_Previews: PreviewProvider {
     static var previews: some View {
-        Home_Screen()
+        HomeView()
     }
 }

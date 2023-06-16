@@ -1,5 +1,5 @@
 //
-//  User_Info_Screen.swift
+//  UserInfoView.swift
 //  walking-project
 //
 //  Created by GMC on 2023/02/10.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct User_Info_Screen: View {
+struct UserInfoView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(entity: My_Info.entity(), sortDescriptors: [], predicate: nil)
@@ -219,7 +219,7 @@ struct User_Info_Screen: View {
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .animation(.easeIn, value: tabselection)
-        .task {
+        .onAppear() {
             self.userName = self.myInfo.first?.name ?? ""
             self.userData.isFemale = Int(self.myInfo.first?.isFemale ?? -1)
             self.userData.userHeight = self.myInfo.first?.height.description ?? ""
@@ -302,6 +302,6 @@ struct UserData: Equatable {
 
 struct User_Info_Screen_Previews: PreviewProvider {
     static var previews: some View {
-        User_Info_Screen().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
+        UserInfoView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
     }
 }

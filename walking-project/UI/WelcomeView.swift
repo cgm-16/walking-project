@@ -1,5 +1,5 @@
 //
-//  Welcome_Screen.swift
+//  WelcomeScreen.swift
 //  walking-project
 //
 //  Created by GMC on 2023/03/02.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Welcome_Screen: View {
+struct WelcomeView: View {
     @EnvironmentObject var router: Router<Path>
     
     @FetchRequest(entity: My_Info.entity(), sortDescriptors: [], predicate: nil)
@@ -53,6 +53,6 @@ struct Welcome_Screen: View {
 
 struct Welcome_Screen_Previews: PreviewProvider {
     static var previews: some View {
-        Welcome_Screen()
+        WelcomeView()
     }
 }

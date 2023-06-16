@@ -1,5 +1,5 @@
 //
-//  Start_View.swift
+//  StartßView.swift
 //  walking-project
 //
 //  Created by GMC on 2023/03/10.
@@ -10,7 +10,7 @@ import KakaoSDKAuth
 import KakaoSDKUser
 import KakaoSDKCommon
 
-struct Start_View: View {
+struct StartView: View {
     //Note: Scene Phase has some dumb bug when in App level and makes the router not work
     @Environment(\.scenePhase) private var scenePhase
     @ObservedObject
@@ -19,11 +19,11 @@ struct Start_View: View {
     var body: some View {
         RouterView(router: router) { path in
             switch path {
-            case .Home: Home_Screen()
-            case .Main : Main_Screen().navigationBarBackButtonHidden()
-            case .User : User_Info_Screen()
-            case .Welcome : Welcome_Screen()
-            case .Coupon : Coupon_Page()
+            case .Home: HomeView()
+            case .Main : MainView().navigationBarBackButtonHidden()
+            case .User : UserInfoView()
+            case .Welcome : WelcomeView()
+            case .Coupon : CouponView()
             }
         }
         .onAppear() {
@@ -67,6 +67,6 @@ enum Path {
 
 struct Start_View_Previews: PreviewProvider {
     static var previews: some View {
-        Start_View()
+        StartView()
     }
 }

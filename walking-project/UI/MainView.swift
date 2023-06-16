@@ -1,5 +1,5 @@
 //
-//  Main_Screen.swift
+//  MainView.swift
 //  walking-project
 //
 //  Created by GMC on 2023/01/25.
@@ -10,7 +10,7 @@ import CoreData
 
 // MARK: - Constants
 
-struct Main_Screen: View {
+struct MainView: View {
     // MARK: - Data Fetch
     
     @Environment(\.managedObjectContext) private var viewContext
@@ -374,6 +374,6 @@ struct FancyIndexView: View {
 
 struct Main_Screen_Previews: PreviewProvider {
     static var previews: some View {
-        Main_Screen().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
+        MainView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  CouponView.swift
 //  walking-project
 //
 //  Created by GMC on 2023/02/22.
@@ -9,7 +9,7 @@ import SwiftUI
 import KakaoSDKUser
 import CoreData
 
-struct Coupon_Page: View {
+struct CouponView: View {
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.cum_walked, ascending: true)],
         animation: .default)
@@ -130,6 +130,6 @@ struct Coupon_Page: View {
 
 struct Coupon_Page_Previews: PreviewProvider {
     static var previews: some View {
-        Coupon_Page().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
+        CouponView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
     }
 }

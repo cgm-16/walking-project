@@ -11,7 +11,7 @@
 		C11237302A29D44900AC1329 /* walking_projectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C112372F2A29D44900AC1329 /* walking_projectTests.swift */; };
 		C11237382A2A264300AC1329 /* HealthDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11237372A2A264300AC1329 /* HealthDataManager.swift */; };
 		C1144173298107CD00B3ACB5 /* walking_projectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1144172298107CD00B3ACB5 /* walking_projectApp.swift */; };
-		C1144175298107CD00B3ACB5 /* Main_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1144174298107CD00B3ACB5 /* Main_Screen.swift */; };
+		C1144175298107CD00B3ACB5 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1144174298107CD00B3ACB5 /* MainView.swift */; };
 		C1144177298107CF00B3ACB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1144176298107CF00B3ACB5 /* Assets.xcassets */; };
 		C114417A298107CF00B3ACB5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1144179298107CF00B3ACB5 /* Preview Assets.xcassets */; };
 		C114417C298107CF00B3ACB5 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C114417B298107CF00B3ACB5 /* DataManager.swift */; };
@@ -21,23 +21,24 @@
 		C12D571429B871B200ADE5F9 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C12D571329B871B200ADE5F9 /* KakaoSDKAuth */; };
 		C12D571629B871B200ADE5F9 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C12D571529B871B200ADE5F9 /* KakaoSDKCommon */; };
 		C12D571829B871B200ADE5F9 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = C12D571729B871B200ADE5F9 /* KakaoSDKUser */; };
-		C12D571B29B876C700ADE5F9 /* Launch_Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C12D571A29B876C700ADE5F9 /* Launch_Screen.storyboard */; };
+		C12D571B29B876C700ADE5F9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C12D571A29B876C700ADE5F9 /* LaunchScreen.storyboard */; };
+		C12DB5EA2A3C56B6006F0578 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12DB5E92A3C56B6006F0578 /* SettingsView.swift */; };
 		C13E3CF82A209EF300E77E21 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C13E3CF72A209EF300E77E21 /* FirebaseAuth */; };
 		C1437F9D29CB092800138BBC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C1437F9C29CB092800138BBC /* GoogleService-Info.plist */; };
 		C1437FA029CB09F500138BBC /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C1437F9F29CB09F500138BBC /* FirebaseAnalytics */; };
-		C151936C29AC79100077DE0F /* User_Info_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C151936B29AC79100077DE0F /* User_Info_Screen.swift */; };
+		C151936C29AC79100077DE0F /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C151936B29AC79100077DE0F /* UserInfoView.swift */; };
 		C15408232A275563005DB9DF /* BGDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15408222A275563005DB9DF /* BGDataManager.swift */; };
 		C155A48529C44003009C539B /* My_Walk+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48329C44003009C539B /* My_Walk+CoreDataClass.swift */; };
 		C155A48629C44003009C539B /* My_Walk+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48429C44003009C539B /* My_Walk+CoreDataProperties.swift */; };
 		C155A48929C44653009C539B /* My_Info+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48729C44653009C539B /* My_Info+CoreDataClass.swift */; };
 		C155A48A29C44653009C539B /* My_Info+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48829C44653009C539B /* My_Info+CoreDataProperties.swift */; };
-		C156898C29B01D2700A547B5 /* Welcome_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C156898B29B01D2700A547B5 /* Welcome_Screen.swift */; };
-		C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92229A6144700EEFF97 /* Coupon_Page.swift */; };
-		C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* Home_Screen.swift */; };
+		C156898C29B01D2700A547B5 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C156898B29B01D2700A547B5 /* WelcomeView.swift */; };
+		C17BF92329A6144700EEFF97 /* CouponView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92229A6144700EEFF97 /* CouponView.swift */; };
+		C17BF92529A615CB00EEFF97 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* HomeView.swift */; };
 		C18FA91F2A17586500B7A60B /* LuckiestGuy-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C18FA91E2A17586500B7A60B /* LuckiestGuy-Regular.ttf */; };
 		C197725129B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197724F29B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg */; };
 		C197725229B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197725029B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg */; };
-		C1D09F1729BB29B700B52C08 /* Start_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D09F1629BB29B700B52C08 /* Start_View.swift */; };
+		C1D09F1729BB29B700B52C08 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D09F1629BB29B700B52C08 /* StartView.swift */; };
 		C1D398692A0E572300C7DF4D /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D398682A0E572300C7DF4D /* FontManager.swift */; };
 		C1D3986A2A0E5B8500C7DF4D /* CoffeeHealing.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1D398672A0E570F00C7DF4D /* CoffeeHealing.ttf */; };
 		C1D3986B2A0E5B8800C7DF4D /* CoffeeHealingItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1D398662A0E570F00C7DF4D /* CoffeeHealingItalic.ttf */; };
@@ -60,29 +61,30 @@
 		C11237372A2A264300AC1329 /* HealthDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataManager.swift; sourceTree = "<group>"; };
 		C114416F298107CD00B3ACB5 /* walking-project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "walking-project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1144172298107CD00B3ACB5 /* walking_projectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = walking_projectApp.swift; sourceTree = "<group>"; };
-		C1144174298107CD00B3ACB5 /* Main_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main_Screen.swift; sourceTree = "<group>"; };
+		C1144174298107CD00B3ACB5 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		C1144176298107CF00B3ACB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1144179298107CF00B3ACB5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C114417B298107CF00B3ACB5 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		C114417E298107CF00B3ACB5 /* walking_project.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = walking_project.xcdatamodel; sourceTree = "<group>"; };
 		C1281FEF29B1B76200CEC987 /* PathManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathManager.swift; sourceTree = "<group>"; };
 		C12D571929B8729200ADE5F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		C12D571A29B876C700ADE5F9 /* Launch_Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch_Screen.storyboard; sourceTree = "<group>"; };
+		C12D571A29B876C700ADE5F9 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C12DB5E92A3C56B6006F0578 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C1437F9C29CB092800138BBC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C151936629AC713A0077DE0F /* walking-project.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "walking-project.entitlements"; sourceTree = "<group>"; };
-		C151936B29AC79100077DE0F /* User_Info_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User_Info_Screen.swift; sourceTree = "<group>"; };
+		C151936B29AC79100077DE0F /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		C15408222A275563005DB9DF /* BGDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BGDataManager.swift; sourceTree = "<group>"; };
 		C155A48329C44003009C539B /* My_Walk+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Walk+CoreDataClass.swift"; sourceTree = "<group>"; };
 		C155A48429C44003009C539B /* My_Walk+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Walk+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		C155A48729C44653009C539B /* My_Info+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Info+CoreDataClass.swift"; sourceTree = "<group>"; };
 		C155A48829C44653009C539B /* My_Info+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "My_Info+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		C156898B29B01D2700A547B5 /* Welcome_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome_Screen.swift; sourceTree = "<group>"; };
-		C17BF92229A6144700EEFF97 /* Coupon_Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupon_Page.swift; sourceTree = "<group>"; };
-		C17BF92429A615CB00EEFF97 /* Home_Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home_Screen.swift; sourceTree = "<group>"; };
+		C156898B29B01D2700A547B5 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		C17BF92229A6144700EEFF97 /* CouponView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponView.swift; sourceTree = "<group>"; };
+		C17BF92429A615CB00EEFF97 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		C18FA91E2A17586500B7A60B /* LuckiestGuy-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LuckiestGuy-Regular.ttf"; sourceTree = "<group>"; };
 		C197724F29B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = KakaoTalk_20230309_170111877.jpg; sourceTree = "<group>"; };
 		C197725029B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = KakaoTalk_20230226_222948198.jpg; sourceTree = "<group>"; };
-		C1D09F1629BB29B700B52C08 /* Start_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Start_View.swift; sourceTree = "<group>"; };
+		C1D09F1629BB29B700B52C08 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		C1D398662A0E570F00C7DF4D /* CoffeeHealingItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CoffeeHealingItalic.ttf; sourceTree = "<group>"; };
 		C1D398672A0E570F00C7DF4D /* CoffeeHealing.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CoffeeHealing.ttf; sourceTree = "<group>"; };
 		C1D398682A0E572300C7DF4D /* FontManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
@@ -198,13 +200,14 @@
 		C156898D29B023DB00A547B5 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				C1D09F1629BB29B700B52C08 /* Start_View.swift */,
-				C17BF92429A615CB00EEFF97 /* Home_Screen.swift */,
-				C1144174298107CD00B3ACB5 /* Main_Screen.swift */,
-				C151936B29AC79100077DE0F /* User_Info_Screen.swift */,
-				C156898B29B01D2700A547B5 /* Welcome_Screen.swift */,
-				C17BF92229A6144700EEFF97 /* Coupon_Page.swift */,
-				C12D571A29B876C700ADE5F9 /* Launch_Screen.storyboard */,
+				C1D09F1629BB29B700B52C08 /* StartView.swift */,
+				C17BF92429A615CB00EEFF97 /* HomeView.swift */,
+				C1144174298107CD00B3ACB5 /* MainView.swift */,
+				C151936B29AC79100077DE0F /* UserInfoView.swift */,
+				C156898B29B01D2700A547B5 /* WelcomeView.swift */,
+				C17BF92229A6144700EEFF97 /* CouponView.swift */,
+				C12D571A29B876C700ADE5F9 /* LaunchScreen.storyboard */,
+				C12DB5E92A3C56B6006F0578 /* SettingsView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -338,7 +341,7 @@
 				C18FA91F2A17586500B7A60B /* LuckiestGuy-Regular.ttf in Resources */,
 				C114417A298107CF00B3ACB5 /* Preview Assets.xcassets in Resources */,
 				C197725229B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg in Resources */,
-				C12D571B29B876C700ADE5F9 /* Launch_Screen.storyboard in Resources */,
+				C12D571B29B876C700ADE5F9 /* LaunchScreen.storyboard in Resources */,
 				C1144177298107CF00B3ACB5 /* Assets.xcassets in Resources */,
 				C1D3986A2A0E5B8500C7DF4D /* CoffeeHealing.ttf in Resources */,
 				C1437F9D29CB092800138BBC /* GoogleService-Info.plist in Resources */,
@@ -361,15 +364,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				C114417C298107CF00B3ACB5 /* DataManager.swift in Sources */,
-				C17BF92529A615CB00EEFF97 /* Home_Screen.swift in Sources */,
-				C156898C29B01D2700A547B5 /* Welcome_Screen.swift in Sources */,
-				C1144175298107CD00B3ACB5 /* Main_Screen.swift in Sources */,
+				C12DB5EA2A3C56B6006F0578 /* SettingsView.swift in Sources */,
+				C17BF92529A615CB00EEFF97 /* HomeView.swift in Sources */,
+				C156898C29B01D2700A547B5 /* WelcomeView.swift in Sources */,
+				C1144175298107CD00B3ACB5 /* MainView.swift in Sources */,
 				C155A48A29C44653009C539B /* My_Info+CoreDataProperties.swift in Sources */,
 				C155A48629C44003009C539B /* My_Walk+CoreDataProperties.swift in Sources */,
-				C151936C29AC79100077DE0F /* User_Info_Screen.swift in Sources */,
-				C17BF92329A6144700EEFF97 /* Coupon_Page.swift in Sources */,
+				C151936C29AC79100077DE0F /* UserInfoView.swift in Sources */,
+				C17BF92329A6144700EEFF97 /* CouponView.swift in Sources */,
 				C155A48529C44003009C539B /* My_Walk+CoreDataClass.swift in Sources */,
-				C1D09F1729BB29B700B52C08 /* Start_View.swift in Sources */,
+				C1D09F1729BB29B700B52C08 /* StartView.swift in Sources */,
 				C11237382A2A264300AC1329 /* HealthDataManager.swift in Sources */,
 				C1D398692A0E572300C7DF4D /* FontManager.swift in Sources */,
 				C155A48929C44653009C539B /* My_Info+CoreDataClass.swift in Sources */,
@@ -562,12 +566,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "walking-project/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = Launch_Screen.storyboard;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
@@ -597,12 +601,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "walking-project/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "걸음수 데이터 측정을 의해 데이터 접근 권한이 필요합니다.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = Launch_Screen.storyboard;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;

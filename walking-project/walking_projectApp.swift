@@ -33,7 +33,7 @@ struct walking_projectApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Start_View()
+            StartView()
                 .environment(\.managedObjectContext, dataManager.container.viewContext)
                 .onOpenURL(perform: { url in
                                 if (AuthApi.isKakaoTalkLoginUrl(url)) {
