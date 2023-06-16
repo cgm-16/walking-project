@@ -28,9 +28,9 @@ struct walking_projectApp: App {
     }
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @Environment(\.scenePhase) private var phase
-    
+
     let dataManager = DataManager.shared
+    
     var body: some Scene {
         WindowGroup {
             Start_View()
@@ -40,11 +40,6 @@ struct walking_projectApp: App {
                                     AuthController.handleOpenUrl(url: url)
                                 }
                             })
-        }
-        .onChange(of: phase) { newPhase in
-            if newPhase == .background {
-                scheduleCumWalked()
-            }
         }
         .backgroundTask(.appRefresh("calc_cum")) {
             await calcCum()

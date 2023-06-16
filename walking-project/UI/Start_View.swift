@@ -11,6 +11,8 @@ import KakaoSDKUser
 import KakaoSDKCommon
 
 struct Start_View: View {
+    //Note: Scene Phase has some dumb bug when in App level and makes the router not work
+    @Environment(\.scenePhase) private var scenePhase
     @ObservedObject
     var router = Router<Path>(root: .Main)
 
@@ -24,7 +26,7 @@ struct Start_View: View {
             case .Coupon : Coupon_Page()
             }
         }
-        .task {
+        .onAppear() {
             if (AuthApi.hasToken()) {
                 UserApi.shared.accessTokenInfo { (_, error) in
                     if let error = error {
@@ -45,6 +47,11 @@ struct Start_View: View {
             else {
                 router.updateRoot(root: .Home)
                 router.popToRoot()
+            }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .background {
+                scheduleCumWalked()
             }
         }
     }

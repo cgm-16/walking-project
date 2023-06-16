@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 struct RouterView<T: Hashable, Content: View>: View {
     
     @ObservedObject
@@ -25,6 +26,7 @@ struct RouterView<T: Hashable, Content: View>: View {
     }
 }
 
+@MainActor
 final class Router<T: Hashable>: ObservableObject {
     @Published var root: T
     @Published var paths: [T] = []
