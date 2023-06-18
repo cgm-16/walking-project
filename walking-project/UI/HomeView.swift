@@ -15,6 +15,34 @@ struct HomeView: View {
     @State private var isLogin = false
     @EnvironmentObject var router: Router<Path>
     
+    private func kkoLoginAction() {
+        if (UserApi.isKakaoTalkLoginAvailable()) {
+            UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("loginWithKakaoTalk() success.")
+                    
+                    router.push(.User)
+                    _ = oauthToken
+                }
+            }
+        } else {
+            UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("loginWithKakaoAccount() success.\nLogging in now")
+                    
+                    router.push(.User)
+                    _ = oauthToken
+                }
+            }
+        }
+    }
+    
     var body: some View {
         
         ZStack (alignment: .bottom) {
@@ -34,44 +62,33 @@ struct HomeView: View {
                     .padding(.vertical, 60.0)
                 
                 Button(action: {
-                    if (UserApi.isKakaoTalkLoginAvailable()) {
-                        UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
-                            if let error = error {
-                                print(error)
-                            }
-                            else {
-                                print("loginWithKakaoTalk() success.")
-                                
-                                router.push(.User)
-                                _ = oauthToken
-                            }
-                        }
-                    } else {
-                        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
-                            if let error = error {
-                                print(error)
-                            }
-                            else {
-                                print("loginWithKakaoAccount() success.\nLogging in now")
-                                
-                                router.push(.User)
-                                _ = oauthToken
-                            }
-                        }
-                    }
+                    kkoLoginAction()
                 }, label: {
                     Image("KkoLogin")
-                        .resizable()
+                    .resizable()
                     .scaledToFit()
+                    .padding(.horizontal, 20)
                 })
-                .padding(.horizontal)
-                .offset(y: -10)
+                
+                Spacer().frame(height: 20)
+                
+                SignInWithAppleButton(.signIn) { request in
+                    request.requestedScopes = [.fullName, .email]
+                } onCompletion: { result in
+                    switch result {
+                    case .success(let authResults):
+                        print("Authorisation successful")
+                    case .failure(let error):
+                        print("Authorisation failed: \(error.localizedDescription)")
+                    }
+                }
+                .signInWithAppleButtonStyle(.whiteOutline)
+                .frame(height: 60)
+                .padding(.horizontal, 20)
             }
         }
         .task {
-            Task{
-                await HKRequestAuth()
-            }
+            await HKRequestAuth()
         }
     }
 }
