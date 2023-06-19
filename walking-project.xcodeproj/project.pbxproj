@@ -206,8 +206,8 @@
 				C151936B29AC79100077DE0F /* UserInfoView.swift */,
 				C156898B29B01D2700A547B5 /* WelcomeView.swift */,
 				C17BF92229A6144700EEFF97 /* CouponView.swift */,
-				C12D571A29B876C700ADE5F9 /* LaunchScreen.storyboard */,
 				C12DB5E92A3C56B6006F0578 /* SettingsView.swift */,
+				C12D571A29B876C700ADE5F9 /* LaunchScreen.storyboard */,
 			);
 			path = UI;
 			sourceTree = "<group>";

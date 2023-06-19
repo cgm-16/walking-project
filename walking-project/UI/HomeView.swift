@@ -10,41 +10,76 @@ import KakaoSDKAuth
 import KakaoSDKCommon
 import KakaoSDKUser
 import AuthenticationServices
+import FirebaseAuth
 
 struct HomeView: View {
     @State private var isLogin = false
     @EnvironmentObject var router: Router<Path>
     
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        var randomBytes = [UInt8](repeating: 0, count: length)
+        let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+        if errorCode != errSecSuccess {
+            fatalError(
+                "Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)"
+            )
+        }
+        
+        let charset: [Character] =
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        
+        let nonce = randomBytes.map { byte in
+            // Pick a random character from the set, wrapping around if needed.
+            charset[Int(byte) % charset.count]
+        }
+        
+        return String(nonce)
+    }
+    
     private func kkoLoginAction() {
-        if (UserApi.isKakaoTalkLoginAvailable()) {
-            UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
-                if let error = error {
-                    print(error)
-                }
-                else {
-                    print("loginWithKakaoTalk() success.")
-                    
-                    router.push(.User)
-                    _ = oauthToken
+        var token: OAuthToken?
+        let nonce = randomNonceString()
+        
+        Task {
+            token = try? await withCheckedThrowingContinuation { continuation in
+                if (UserApi.isKakaoTalkLoginAvailable()) {
+                    UserApi.shared.loginWithKakaoTalk(nonce: nonce) {(oauthToken, error) in
+                        if let error = error {
+                            continuation.resume(throwing: error)
+                        }
+                        else {
+                            print("loginWithKakaoTalk() success.")
+                            continuation.resume(returning: oauthToken)
+                        }
+                    }
+                } else {
+                    UserApi.shared.loginWithKakaoAccount(nonce: nonce) {(oauthToken, error) in
+                        if let error = error {
+                            continuation.resume(throwing: error)
+                        }
+                        else {
+                            print("loginWithKakaoAccount() success.\nLogging in now")
+                            continuation.resume(returning: oauthToken)
+                        }
+                    }
                 }
             }
-        } else {
-            UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
-                if let error = error {
-                    print(error)
+            
+            guard let token = token, let idToken = token.idToken else {
+                UserApi.shared.logout { (error) in
+                    if let error = error {
+                        print(error)
+                    }
                 }
-                else {
-                    print("loginWithKakaoAccount() success.\nLogging in now")
-                    
-                    router.push(.User)
-                    _ = oauthToken
-                }
+                return
             }
+            
+            router.push(.User)
         }
     }
     
     var body: some View {
-        
         ZStack (alignment: .bottom) {
             Color("MainColor").ignoresSafeArea()
             

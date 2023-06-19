@@ -87,31 +87,6 @@ struct CouponView: View {
                     }
                 }
                 HStack {
-                    Button("Logout") {
-                        UserApi.shared.logout {(error) in
-                            if let error = error {
-                                print(error)
-                            }
-                            else {
-                                do {
-                                    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "My_Info")
-                                    let objects = try viewContext.fetch(fetchRequest) as? [NSManagedObject] ?? []
-                                    for object in objects {
-                                        viewContext.delete(object)
-                                    }
-                                    try viewContext.save()
-                                } catch {
-                                    fatalError("Failed to save changes: \(error)")
-                                }
-                                print("logout() success.")
-                                router.updateRoot(root: .Home)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                    router.popToRoot()
-                                }
-                            }
-                        }
-                    }
-                    
                     VStack {
                         ForEach(feverTimes) { info in
                             Text(info.times ?? "")

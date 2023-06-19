@@ -16,6 +16,30 @@ struct StartView: View {
     @ObservedObject
     var router = Router<Path>(root: .Main)
 
+    private func checkKakaoToken() {
+        if (AuthApi.hasToken()) {
+            UserApi.shared.accessTokenInfo { (_, error) in
+                if let error = error {
+                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
+                        router.updateRoot(root: .Home)
+                        router.popToRoot()
+                    }
+                    else {
+                        dump(error)
+                    }
+                }
+                else {
+                    loadFeverAndCoupon()
+                    runOnceEveryFiveMin()
+                }
+            }
+        }
+        else {
+            router.updateRoot(root: .Home)
+            router.popToRoot()
+        }
+    }
+    
     var body: some View {
         RouterView(router: router) { path in
             switch path {
@@ -28,27 +52,7 @@ struct StartView: View {
             }
         }
         .onAppear() {
-            if (AuthApi.hasToken()) {
-                UserApi.shared.accessTokenInfo { (_, error) in
-                    if let error = error {
-                        if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
-                            router.updateRoot(root: .Home)
-                            router.popToRoot()
-                        }
-                        else {
-                            dump(error)
-                        }
-                    }
-                    else {
-                        loadFeverAndCoupon()
-                        runOnceEveryFiveMin()
-                    }
-                }
-            }
-            else {
-                router.updateRoot(root: .Home)
-                router.popToRoot()
-            }
+            checkKakaoToken()
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .background {

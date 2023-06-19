@@ -45,6 +45,7 @@ struct PromptView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var router: Router<Path>
     @Binding var isShown: Bool
+    @State private var didLogout = false
     
     let screenSize = UIScreen.main.bounds
     
@@ -84,6 +85,7 @@ struct PromptView: View {
                 .background(.white, in: RoundedRectangle(cornerRadius: 15))
             }
             .ignoresSafeArea()
+            .alert("탈퇴 완료.", isPresented: $didLogout, actions: {})
         }
     }
     
@@ -104,8 +106,9 @@ struct PromptView: View {
                     fatalError("Failed to save changes: \(error)")
                 }
                 print("logout() success.")
+                didLogout = true
                 router.updateRoot(root: .Home)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     router.popToRoot()
                 }
             }

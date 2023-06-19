@@ -16,6 +16,14 @@
 				<string>kakao0e11e3b537767121ca1c53fa63ec72c6</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-407395250375-ios-231d44cb8d3c00e0004ee2</string>
+			</array>
+		</dict>
 	</array>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
