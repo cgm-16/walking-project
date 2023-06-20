@@ -5,6 +5,7 @@
 //  Created by GMC on 2023/02/22.
 //
 
+import CryptoKit
 import SwiftUI
 import KakaoSDKAuth
 import KakaoSDKCommon
@@ -37,9 +38,20 @@ struct HomeView: View {
         return String(nonce)
     }
     
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+        
+        return hashString
+    }
+    
     private func kkoLoginAction() {
         var token: OAuthToken?
-        let nonce = randomNonceString()
+        let rawNonce = randomNonceString()
+        let nonce = sha256(rawNonce)
         
         Task {
             token = try? await withCheckedThrowingContinuation { continuation in
@@ -67,6 +79,31 @@ struct HomeView: View {
             }
             
             guard let token = token, let idToken = token.idToken else {
+                UserApi.shared.logout { (error) in
+                    if let error = error {
+                        print(error)
+                    }
+                }
+                return
+            }
+            
+            let credential = OAuthProvider.credential(
+                withProviderID: "oidc.kakao",  // As registered in Firebase console.
+                idToken: idToken,  // ID token from OpenID Connect flow.
+                rawNonce: rawNonce
+            )
+            
+            let authResult : AuthDataResult? = try? await withCheckedThrowingContinuation { continuation in
+                Auth.auth().signIn(with: credential) { authResult, error in
+                    if error != nil {
+                        continuation.resume(throwing: error!)
+                        return
+                    }
+                    continuation.resume(returning: authResult)
+                }
+            }
+            
+            guard let result = authResult else {
                 UserApi.shared.logout { (error) in
                     if let error = error {
                         print(error)

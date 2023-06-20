@@ -24,7 +24,7 @@ struct WelcomeView: View {
                  .multilineTextAlignment(.center)
              Spacer()
         }
-         .task {
+         .onAppear() {
              if let sex = myInfo.first?.isFemale {
                  switch sex {
                  case 0:
@@ -37,10 +37,10 @@ struct WelcomeView: View {
              }
              
              name = myInfo.first?.name ?? ""
-             
              router.updateRoot(root: .Main)
              firstTimeSetup()
              loadFeverAndCoupon()
+             runOnceEveryFiveMin()
              
              DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                  router.popToRoot()

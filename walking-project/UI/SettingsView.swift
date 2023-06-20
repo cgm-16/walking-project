@@ -8,6 +8,7 @@
 import SwiftUI
 import KakaoSDKUser
 import CoreData
+import FirebaseAuth
 
 struct SettingsView: View {
     @EnvironmentObject var router: Router<Path>
@@ -105,6 +106,7 @@ struct PromptView: View {
                 } catch {
                     fatalError("Failed to save changes: \(error)")
                 }
+                Auth.auth().currentUser?.delete()
                 print("logout() success.")
                 didLogout = true
                 router.updateRoot(root: .Home)
