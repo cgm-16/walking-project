@@ -43,10 +43,10 @@ struct StartView: View {
     var body: some View {
         RouterView(router: router) { path in
             switch path {
-            case .Home: HomeView()
+            case .Home: HomeView().navigationBarBackButtonHidden()
             case .Main : MainView().navigationBarBackButtonHidden()
             case .User : UserInfoView()
-            case .Welcome : WelcomeView()
+            case .Welcome : WelcomeView().navigationBarBackButtonHidden()
             case .Coupon : CouponView()
             case .Settings : SettingsView()
             }
