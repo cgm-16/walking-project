@@ -33,6 +33,14 @@ struct CouponView: View {
     @State private var isVisibleConfirm: Bool = false
     @State private var isVisibleAlert: Bool = false
     
+    private func couponUseAction() {
+        let defaults = UserDefaults.standard
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        defaults.set(today, forKey: "lastCouponDate")
+        router.popToRoot()
+    }
+    
     var body: some View {
         GeometryReader { metrics in
             TabView {
@@ -70,11 +78,7 @@ struct CouponView: View {
                             })
                             .confirmationDialog("정말로 쿠폰을 사용하시겠습니까?", isPresented: $isVisibleConfirm, titleVisibility: .visible) {
                                 Button("쿠폰 사용", role: .destructive) {
-                                    let defaults = UserDefaults.standard
-                                    let calendar = Calendar.current
-                                    let today = calendar.startOfDay(for: Date())
-                                    defaults.set(today, forKey: "lastCouponDate")
-                                    router.popToRoot()
+                                    couponUseAction()
                                 }
                             }
                             .alert("쿠폰을 사용할 수 없습니다.", isPresented: $isVisibleAlert) {}
