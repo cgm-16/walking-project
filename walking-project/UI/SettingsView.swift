@@ -91,7 +91,7 @@ struct PromptView: View {
     }
     
     private func logout() {
-        UserApi.shared.logout { (error) in
+        UserApi.shared.unlink { (error) in
             if let error = error {
                 print(error)
             }
@@ -107,7 +107,6 @@ struct PromptView: View {
                     fatalError("Failed to save changes: \(error)")
                 }
                 Auth.auth().currentUser?.delete()
-                print("logout() success.")
                 didLogout = true
                 router.updateRoot(root: .Home)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
