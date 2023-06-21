@@ -30,6 +30,7 @@ struct RouterView<T: Hashable, Content: View>: View {
 final class Router<T: Hashable>: ObservableObject {
     @Published var root: T
     @Published var paths: [T] = []
+    @Published var loginAccount: LoginType?
 
     init(root: T) {
         self.root = root
@@ -59,4 +60,9 @@ enum Path {
     case Welcome
     case Coupon
     case Settings
+}
+
+enum LoginType {
+    case Apple
+    case Kakao
 }

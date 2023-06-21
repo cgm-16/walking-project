@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
-import KakaoSDKUser
 import CoreData
+import AuthenticationServices
+import KakaoSDKUser
 import FirebaseAuth
 
 struct SettingsView: View {
@@ -91,28 +92,47 @@ struct PromptView: View {
     }
     
     private func logout() {
-        UserApi.shared.unlink { (error) in
-            if let error = error {
-                print(error)
-            }
-            else {
-                do {
-                    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "My_Info")
-                    let objects = try viewContext.fetch(fetchRequest) as? [NSManagedObject] ?? []
-                    for object in objects {
-                        viewContext.delete(object)
+        if router.loginAccount == .Kakao {
+            UserApi.shared.unlink { (error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    do {
+                        let myInfoFetchReq = NSFetchRequest<NSFetchRequestResult>(entityName: "My_Info")
+                        let myInfoObj = try viewContext.fetch(myInfoFetchReq) as? [NSManagedObject] ?? []
+                        for object in myInfoObj {
+                            viewContext.delete(object)
+                        }
+                        try viewContext.save()
+                    } catch {
+                        fatalError("Failed to save changes: \(error)")
                     }
-                    try viewContext.save()
-                } catch {
-                    fatalError("Failed to save changes: \(error)")
-                }
-                Auth.auth().currentUser?.delete()
-                didLogout = true
-                router.updateRoot(root: .Home)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    router.popToRoot()
                 }
             }
+        } else if router.loginAccount == .Apple {
+            do {
+                let myInfoFetchReq = NSFetchRequest<NSFetchRequestResult>(entityName: "My_Info")
+                let myInfoObj = try viewContext.fetch(myInfoFetchReq) as? [NSManagedObject] ?? []
+                for object in myInfoObj {
+                    viewContext.delete(object)
+                }
+                let loginFetchReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Login_Info")
+                let loginObj = try viewContext.fetch(loginFetchReq) as? [NSManagedObject] ?? []
+                for object in loginObj {
+                    viewContext.delete(object)
+                }
+                try viewContext.save()
+            } catch {
+                fatalError("Failed to save changes: \(error)")
+            }
+        }
+        
+        Auth.auth().currentUser?.delete()
+        didLogout = true
+        router.updateRoot(root: .Home)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            router.popToRoot()
         }
     }
 }

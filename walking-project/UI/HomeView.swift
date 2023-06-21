@@ -17,6 +17,12 @@ struct HomeView: View {
     @State private var isLogin = false
     @EnvironmentObject var router: Router<Path>
     
+    @FetchRequest(
+        entity: Login_Info.entity(),
+        sortDescriptors: [],
+        animation: .default)
+    private var loginfo: FetchedResults<Login_Info>
+    
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
         var randomBytes = [UInt8](repeating: 0, count: length)
@@ -116,6 +122,41 @@ struct HomeView: View {
         }
     }
     
+    private func appleLoginView() -> some View {
+        let rawNonce = randomNonceString()
+        let nonce = sha256(rawNonce)
+        
+        return SignInWithAppleButton(.signIn) { request in
+            request.requestedScopes = [.fullName, .email]
+            request.nonce = nonce
+        } onCompletion: { result in
+            switch result {
+            case .success(let authResults):
+                print("Authorisation successful")
+                if let appleIDCredential = authResults.credential as? ASAuthorizationAppleIDCredential, let token = appleIDCredential.identityToken, let tokenString = String(data: token, encoding: .utf8) {
+                    let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokenString, rawNonce: rawNonce)
+                    Auth.auth().signIn(with: credential) { authResult, error in
+                        if error != nil {
+                            print(error!)
+                        }
+                        print("apple login success")
+                        router.push(.User)
+                    }
+                    if let login = loginfo.first {
+                        login.appleUID = appleIDCredential.user
+                    } else {
+                        
+                    }
+                }
+            case .failure(let error):
+                print("Authorisation failed: \(error.localizedDescription)")
+            }
+        }
+        .signInWithAppleButtonStyle(.whiteOutline)
+        .frame(height: 60)
+        .padding(.horizontal, 20)
+    }
+    
     var body: some View {
         ZStack (alignment: .bottom) {
             Color("MainColor").ignoresSafeArea()
@@ -144,19 +185,7 @@ struct HomeView: View {
                 
                 Spacer().frame(height: 20)
                 
-                SignInWithAppleButton(.signIn) { request in
-                    request.requestedScopes = [.fullName, .email]
-                } onCompletion: { result in
-                    switch result {
-                    case .success(let authResults):
-                        print("Authorisation successful")
-                    case .failure(let error):
-                        print("Authorisation failed: \(error.localizedDescription)")
-                    }
-                }
-                .signInWithAppleButtonStyle(.whiteOutline)
-                .frame(height: 60)
-                .padding(.horizontal, 20)
+                appleLoginView()
             }
         }
         .task {

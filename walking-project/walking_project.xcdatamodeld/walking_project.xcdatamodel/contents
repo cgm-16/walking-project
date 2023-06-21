@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Coupon_Info" representedClassName="Coupon_Info" syncable="YES" codeGenerationType="class">
         <attribute name="coupon_discount" optional="YES" attributeType="String"/>
         <attribute name="coupon_id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -8,6 +8,9 @@
     </entity>
     <entity name="Fever_Times" representedClassName="Fever_Times" syncable="YES" codeGenerationType="class">
         <attribute name="times" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Login_Info" representedClassName="Login_Info" syncable="YES" codeGenerationType="class">
+        <attribute name="appleUID" optional="YES" attributeType="String"/>
     </entity>
     <entity name="My_Info" representedClassName="My_Info" syncable="YES">
         <attribute name="height" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -26,7 +29,7 @@
     <entity name="Walk_Info" representedClassName="Walk_Info" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="imgURL" optional="YES" attributeType="String"/>
-        <attribute name="name" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="rank" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
