@@ -5,8 +5,9 @@
 //  Created by GMC on 2023/02/10.
 //
 
-
 import SwiftUI
+import Combine
+import UIKit
 
 struct UserInfoView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -21,6 +22,7 @@ struct UserInfoView: View {
     @State private var tabselection = 1
     @State private var nextBtnDisabled: Bool = true
     @State private var submitBtnDisabled: Bool = true
+    @State var isKeyboardPresented = false
     @FocusState private var focusedName: Bool
     @FocusState private var focusedHeight: Bool
     
@@ -28,7 +30,10 @@ struct UserInfoView: View {
         
         TabView (selection: $tabselection) {
             VStack {
-                Spacer().frame(idealHeight:100, maxHeight: 100)
+                if !isKeyboardPresented {
+                    Spacer().frame(height: 100)
+                }
+                
                 VStack (alignment: .leading) {
                     HStack {
                         Text("Welcome\n이름을 입력해주세요")
@@ -72,7 +77,7 @@ struct UserInfoView: View {
                     }
                 }
                 
-                Spacer().frame(minHeight: 50, maxHeight: 500)
+                Spacer().frame(minHeight: 0, maxHeight: 500)
                 
                 Button(action: {
                     self.tabselection = 2
@@ -100,7 +105,11 @@ struct UserInfoView: View {
             
             VStack {
                 VStack (alignment: .leading) {
-                    Spacer().frame(idealHeight: 100, maxHeight: 100)
+                    
+                    if !isKeyboardPresented {
+                        Spacer().frame(height: 100)
+                    }
+                    
                     HStack {
                         Text("인적사항을\n입력해주세요")
                             .font(.system(size: 35))
@@ -220,10 +229,16 @@ struct UserInfoView: View {
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .animation(.easeIn, value: tabselection)
         .onAppear() {
+            nextBtnDisabled = myInfo.isEmpty
+            submitBtnDisabled = myInfo.isEmpty
+            
             self.userName = self.myInfo.first?.name ?? ""
             self.userData.isFemale = Int(self.myInfo.first?.isFemale ?? -1)
             self.userData.userHeight = self.myInfo.first?.height.description ?? ""
             self.userData.userWeight = self.myInfo.first?.weight.description ?? ""
+        }
+        .onReceive(keyboardPublisher) { value in
+            isKeyboardPresented = value
         }
     }
     
@@ -298,6 +313,23 @@ struct UserData: Equatable {
     var isFemale: Int
     var userWeight: String
     var userHeight: String
+}
+
+extension View {
+    var keyboardPublisher: AnyPublisher<Bool, Never> {
+        Publishers
+            .Merge(
+                NotificationCenter
+                    .default
+                    .publisher(for: UIResponder.keyboardWillShowNotification)
+                    .map { _ in true },
+                NotificationCenter
+                    .default
+                    .publisher(for: UIResponder.keyboardWillHideNotification)
+                    .map { _ in false })
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
 }
 
 struct User_Info_Screen_Previews: PreviewProvider {
