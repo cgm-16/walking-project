@@ -224,13 +224,13 @@ struct MainView: View {
                                     Spacer().frame(width: 5)
                                     Text("Me").frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
                                     Spacer()
-                                    if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint >= myCur {
-                                        Text(commaFormatter.string(for: myPoint) ?? "0")
+                                    if let myCur = myWalk.first?.current_point, info.score >= myCur {
+                                        Text(commaFormatter.string(for: info.score) ?? "0")
                                             .lineLimit(0)
                                             .font(.system(size: 28))
                                             .multilineTextAlignment(.leading)
-                                    } else if let myPoint = info.score, let myCur = myWalk.first?.current_point, myPoint < myCur {
-                                        Text(commaFormatter.string(for: myCur) ?? "0")
+                                    } else if let myCur = myWalk.first?.current_point, info.score < myCur {
+                                        Text(commaFormatter.string(for: info.score) ?? "0")
                                             .lineLimit(0)
                                             .font(.system(size: 28))
                                             .multilineTextAlignment(.leading)
