@@ -22,6 +22,7 @@ struct UserInfoView: View {
     @State private var tabselection = 1
     @State private var nextBtnDisabled: Bool = true
     @State private var submitBtnDisabled: Bool = true
+    @State private var isButtonPressed: Bool = false
     @State var isKeyboardPresented = false
     @State private var isPopupShown = false
     @FocusState private var focusedName: Bool
@@ -204,11 +205,16 @@ struct UserInfoView: View {
                 Spacer()
                 
                 Button(action: {
+                    isButtonPressed = true
                     saveMyInfo()
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+                        isButtonPressed = false
+                    }
                 }, label: {
                     Text("Submit").foregroundColor(Color.white)
                     
                 })
+                .allowsHitTesting(!isButtonPressed)
                 .font(.system(size: 22))
                 .italic()
                 .frame(maxWidth: .infinity, alignment: .center)
