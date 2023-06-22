@@ -99,6 +99,17 @@ public func firstTimeSetup() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
     
+    // To check if there is Kakao Token
+    if (AuthApi.hasToken()) {
+        UserApi.shared.accessTokenInfo { (_, error) in
+            if let error = error {
+                return
+            }
+        }
+    } else {
+        return
+    }
+    
     UserApi.shared.me() { (user, error) in
         if let error = error {
             print(error)
@@ -162,6 +173,7 @@ func scoreSync() {
         score = Int(myWalk.current_point+myWalk.cum_walked)
     }
     
+    // To check if there is Kakao Token
     if (AuthApi.hasToken()) {
         UserApi.shared.accessTokenInfo { (_, error) in
             if let error = error {

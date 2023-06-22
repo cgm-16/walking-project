@@ -16,6 +16,7 @@ import FirebaseAuth
 struct HomeView: View {
     @State private var isLogin = false
     @EnvironmentObject var router: Router<Path>
+    @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
         entity: Login_Info.entity(),
@@ -118,6 +119,7 @@ struct HomeView: View {
                 return
             }
             
+            router.setLoginType(type: .Kakao)
             router.push(.User)
         }
     }
@@ -140,12 +142,20 @@ struct HomeView: View {
                             print(error!)
                         }
                         print("apple login success")
+                        if let login = loginfo.first {
+                            login.appleUID = appleIDCredential.user
+                            
+                        } else {
+                            let newLogin = Login_Info(context: viewContext)
+                            newLogin.appleUID = appleIDCredential.user
+                        }
+                        do {
+                            try self.viewContext.save()
+                        } catch {
+                            print("Error saving myInfo: \(error.localizedDescription)")
+                        }
+                        router.setLoginType(type: .Apple)
                         router.push(.User)
-                    }
-                    if let login = loginfo.first {
-                        login.appleUID = appleIDCredential.user
-                    } else {
-                        
                     }
                 }
             case .failure(let error):

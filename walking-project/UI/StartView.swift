@@ -25,17 +25,21 @@ struct StartView: View {
     private var loginfo: FetchedResults<Login_Info>
     
     private func checkFirebaseLogin() -> LoginType? {
+        var type : LoginType? = nil
         if let users = Auth.auth().currentUser?.providerData {
             for i in users {
+                print("*********", i.providerID, "***********")
                 if i.providerID == "oidc.kakao" {
-                    router.loginAccount = .Kakao
+                    router.setLoginType(type: .Kakao)
+                    type = .Kakao
                     break
                 } else if i.providerID == "apple.com" {
-                    router.loginAccount = .Apple
+                    router.setLoginType(type: .Apple)
+                    type = .Apple
                 }
             }
         }
-        return router.loginAccount
+        return type
     }
     
     private func checkKakaoToken() {
@@ -63,6 +67,8 @@ struct StartView: View {
             router.popToRoot()
             return
         }
+        
+        print(userID, "**************")
         
         let provider = ASAuthorizationAppleIDProvider()
         

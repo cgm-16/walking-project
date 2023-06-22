@@ -37,19 +37,33 @@ final class Router<T: Hashable>: ObservableObject {
     }
 
     func push(_ path: T) {
-        paths.append(path)
+        DispatchQueue.main.async {
+            self.paths.append(path)
+        }
     }
 
     func pop() {
-        paths.removeLast()
+        DispatchQueue.main.async {
+            self.paths.removeLast()
+        }
     }
 
     func updateRoot(root: T) {
-        self.root = root
+        DispatchQueue.main.async {
+            self.root = root
+        }
     }
 
     func popToRoot(){
-       paths = []
+        DispatchQueue.main.async {
+            self.paths = []
+        }
+    }
+    
+    func setLoginType(type: LoginType) {
+        DispatchQueue.main.async {
+            self.loginAccount = type
+        }
     }
 }
 
