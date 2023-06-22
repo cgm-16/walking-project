@@ -97,7 +97,7 @@ struct StartView: View {
             case .Home: HomeView().navigationBarBackButtonHidden()
             case .Main : MainView().navigationBarBackButtonHidden()
             case .AppleMain : MainAppleView().navigationBarBackButtonHidden()
-            case .User : UserInfoView()
+            case .User : UserInfoView().navigationBarBackButtonHidden()
             case .Welcome : WelcomeView().navigationBarBackButtonHidden()
             case .Coupon : CouponView()
             case .Settings : SettingsView()

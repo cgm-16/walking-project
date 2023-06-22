@@ -37,7 +37,7 @@ struct SettingsView: View {
                 }
             )
             Spacer()
-        }.overlay() {
+        }.overlay {
             DeleteAccPromptView(isShown: $isPromptShown.animation())
         }
     }
@@ -53,6 +53,8 @@ struct DeleteAccPromptView: View {
         if isShown {
             ZStack {
                 Color("PromptBG")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(true)
                 VStack (spacing: 33) {
                     Text("탈퇴하면 현재 계정의\n데이터가 모두 소실됩니다.\n\n정말로 탈퇴하시겠습니까?")
                         .font(.customFont(.settings, size: 22))

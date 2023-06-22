@@ -23,6 +23,7 @@ struct UserInfoView: View {
     @State private var nextBtnDisabled: Bool = true
     @State private var submitBtnDisabled: Bool = true
     @State var isKeyboardPresented = false
+    @State private var isPopupShown = false
     @FocusState private var focusedName: Bool
     @FocusState private var focusedHeight: Bool
     
@@ -240,6 +241,9 @@ struct UserInfoView: View {
         .onReceive(keyboardPublisher) { value in
             isKeyboardPresented = value
         }
+        .overlay {
+            ConfirmChangePopup(isShown: $isPopupShown, userName: $userName)
+        }
     }
     
     private func saveMyInfo() {
@@ -250,7 +254,7 @@ struct UserInfoView: View {
             myInfo.weight = Int16(self.userData.userWeight) ?? 0
             do {
                 try self.viewContext.save()
-                router.pop()
+                isPopupShown.toggle()
             } catch {
                 print("Error saving myInfo: \(error.localizedDescription)")
             }
@@ -267,6 +271,44 @@ struct UserInfoView: View {
             } catch {
                 print("Error saving myInfo: \(error.localizedDescription)")
             }
+        }
+    }
+}
+
+struct ConfirmChangePopup: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var router: Router<Path>
+    @Binding var isShown: Bool
+    @Binding var userName : String
+    @State private var didLogout = false
+    
+    var body: some View {
+        if isShown {
+            ZStack {
+                Color("PromptBG")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(true)
+                VStack (spacing: 33) {
+                    Text("\(userName)님\n수정이 완료되었습니다.")
+                        .font(.customFont(.settings, size: 24))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(10)
+                    
+                    Button (
+                        action: {
+                            router.popToRoot()
+                        }, label: {
+                            Text("확인")
+                                .font(.customFont(.settings, size: 20))
+                                .frame(width: 124, height: 47)
+                                .background(Color("MainColor"), in: RoundedRectangle(cornerRadius: 15))
+                        }
+                    )
+                }
+                .frame(width: 320, height: 260)
+                .background(.white, in: RoundedRectangle(cornerRadius: 15))
+            }
+            .ignoresSafeArea()
         }
     }
 }
