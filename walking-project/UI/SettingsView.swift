@@ -13,7 +13,7 @@ import FirebaseAuth
 
 struct SettingsView: View {
     @EnvironmentObject var router: Router<Path>
-    @State private var isShown = false
+    @State private var isPromptShown = false
     var body: some View {
         VStack (spacing: 0) {
             Text("설정").font(.customFont(.settings, size: 32))
@@ -28,7 +28,7 @@ struct SettingsView: View {
             Button (
                 action:
                     {
-                        isShown.toggle()
+                        isPromptShown.toggle()
                     }, label: {
                         Text("계정 탈퇴")
                             .font(.customFont(.settings, size: 20))
@@ -38,12 +38,12 @@ struct SettingsView: View {
             )
             Spacer()
         }.overlay() {
-            PromptView(isShown: $isShown.animation())
+            DeleteAccPromptView(isShown: $isPromptShown.animation())
         }
     }
 }
 
-struct PromptView: View {
+struct DeleteAccPromptView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var router: Router<Path>
     @Binding var isShown: Bool
