@@ -75,7 +75,8 @@ struct StartView: View {
             switch credentialState {
             case .authorized:
                 print("User is already signed in with Apple")
-                //TODO: Make GuestView!!!
+                router.updateRoot(root: .AppleMain)
+                router.popToRoot()
             case .revoked:
                 print("User's Apple Sign In credentials have been revoked")
                 router.updateRoot(root: .Home)

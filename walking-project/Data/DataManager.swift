@@ -9,6 +9,7 @@ import CoreData
 import HealthKit
 import KakaoSDKTalk
 import KakaoSDKUser
+import KakaoSDKAuth
 import FirebaseFirestore
 
 struct DataManager {
@@ -161,9 +162,20 @@ func scoreSync() {
         score = Int(myWalk.current_point+myWalk.cum_walked)
     }
     
+    if (AuthApi.hasToken()) {
+        UserApi.shared.accessTokenInfo { (_, error) in
+            if let error = error {
+                return
+            }
+        }
+    } else {
+        return
+    }
+    
     UserApi.shared.me() { (user, error) in
         if let error = error {
             print(error)
+            return
         }
         else {
             if let userInfo = user, let uid = userInfo.id, let profile = user?.kakaoAccount?.profile?.thumbnailImageUrl?.absoluteString {

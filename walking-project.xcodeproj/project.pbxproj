@@ -26,6 +26,7 @@
 		C13E3CF82A209EF300E77E21 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C13E3CF72A209EF300E77E21 /* FirebaseAuth */; };
 		C1437F9D29CB092800138BBC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C1437F9C29CB092800138BBC /* GoogleService-Info.plist */; };
 		C1437FA029CB09F500138BBC /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C1437F9F29CB09F500138BBC /* FirebaseAnalytics */; };
+		C14451EC2A43F91C003B01CD /* MainAppleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14451EB2A43F91C003B01CD /* MainAppleView.swift */; };
 		C151936C29AC79100077DE0F /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C151936B29AC79100077DE0F /* UserInfoView.swift */; };
 		C15408232A275563005DB9DF /* BGDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15408222A275563005DB9DF /* BGDataManager.swift */; };
 		C155A48529C44003009C539B /* My_Walk+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C155A48329C44003009C539B /* My_Walk+CoreDataClass.swift */; };
@@ -71,6 +72,7 @@
 		C12D571A29B876C700ADE5F9 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C12DB5E92A3C56B6006F0578 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C1437F9C29CB092800138BBC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C14451EB2A43F91C003B01CD /* MainAppleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppleView.swift; sourceTree = "<group>"; };
 		C151936629AC713A0077DE0F /* walking-project.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "walking-project.entitlements"; sourceTree = "<group>"; };
 		C151936B29AC79100077DE0F /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		C15408222A275563005DB9DF /* BGDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BGDataManager.swift; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				C1D09F1629BB29B700B52C08 /* StartView.swift */,
 				C17BF92429A615CB00EEFF97 /* HomeView.swift */,
 				C1144174298107CD00B3ACB5 /* MainView.swift */,
+				C14451EB2A43F91C003B01CD /* MainAppleView.swift */,
 				C151936B29AC79100077DE0F /* UserInfoView.swift */,
 				C156898B29B01D2700A547B5 /* WelcomeView.swift */,
 				C17BF92229A6144700EEFF97 /* CouponView.swift */,
@@ -369,6 +372,7 @@
 				C156898C29B01D2700A547B5 /* WelcomeView.swift in Sources */,
 				C1144175298107CD00B3ACB5 /* MainView.swift in Sources */,
 				C155A48A29C44653009C539B /* My_Info+CoreDataProperties.swift in Sources */,
+				C14451EC2A43F91C003B01CD /* MainAppleView.swift in Sources */,
 				C155A48629C44003009C539B /* My_Walk+CoreDataProperties.swift in Sources */,
 				C151936C29AC79100077DE0F /* UserInfoView.swift in Sources */,
 				C17BF92329A6144700EEFF97 /* CouponView.swift in Sources */,

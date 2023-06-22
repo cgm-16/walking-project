@@ -37,7 +37,14 @@ struct WelcomeView: View {
              }
              
              name = myInfo.first?.name ?? ""
-             router.updateRoot(root: .Main)
+             switch router.loginAccount {
+             case .Apple:
+                 router.updateRoot(root: .AppleMain)
+             case .Kakao:
+                 router.updateRoot(root: .Main)
+             case nil:
+                 router.updateRoot(root: .Main)
+             }
              firstTimeSetup()
              loadFeverAndCoupon()
              runOnceEveryFiveMin()
