@@ -10,17 +10,6 @@ import KakaoSDKUser
 import CoreData
 
 struct CouponView: View {
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.cum_walked, ascending: true)],
-        animation: .default)
-    private var myWalk: FetchedResults<My_Walk>
-    // TODO: Delete later
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Fever_Times.times, ascending: true)],
-        animation: .default)
-    private var feverTimes: FetchedResults<Fever_Times>
-    // TODO: Delete later
-    
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
@@ -89,15 +78,6 @@ struct CouponView: View {
                             .offset(y: 50)
                         }
                     }
-                }
-                HStack {
-                    VStack {
-                        ForEach(feverTimes) { info in
-                            Text(info.times ?? "")
-                        }
-                    }
-                    
-                    Text(myWalk.first?.cum_walked.description ?? "yesterday no walked")
                 }
             }
             .tabViewStyle(.page)
