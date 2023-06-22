@@ -27,7 +27,6 @@ struct StartView: View {
     private func checkFirebaseLogin() -> LoginType? {
         if let users = Auth.auth().currentUser?.providerData {
             for i in users {
-                print(i.providerID, "****************")
                 if i.providerID == "oidc.kakao" {
                     router.loginAccount = .Kakao
                     break
@@ -96,6 +95,7 @@ struct StartView: View {
             switch path {
             case .Home: HomeView().navigationBarBackButtonHidden()
             case .Main : MainView().navigationBarBackButtonHidden()
+            case .AppleMain : MainAppleView().navigationBarBackButtonHidden()
             case .User : UserInfoView()
             case .Welcome : WelcomeView().navigationBarBackButtonHidden()
             case .Coupon : CouponView()
