@@ -38,12 +38,12 @@ struct SettingsView: View {
             )
             Spacer()
         }.overlay() {
-            PromptView(isShown: $isShown.animation())
+            DeleteAccPromptView(isShown: $isShown.animation())
         }
     }
 }
 
-struct PromptView: View {
+struct DeleteAccPromptView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var router: Router<Path>
     @Binding var isShown: Bool
