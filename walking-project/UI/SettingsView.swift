@@ -49,8 +49,6 @@ struct PromptView: View {
     @Binding var isShown: Bool
     @State private var didLogout = false
     
-    let screenSize = UIScreen.main.bounds
-    
     var body: some View {
         if isShown {
             ZStack {
