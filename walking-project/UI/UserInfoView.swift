@@ -152,7 +152,7 @@ struct UserInfoView: View {
                                         RoundedRectangle(cornerRadius: 20)
                                             .stroke(Color("MainColor"), lineWidth: 1)
                                     )
-                                .keyboardType(.decimalPad)
+                                .keyboardType(.numberPad)
                                 .focused($focusedHeight)
                                 .onAppear{
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
