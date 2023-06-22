@@ -36,7 +36,7 @@ struct MainView: View {
     // MARK: - Body
     
     var body: some View {
-        ZStack (alignment: .top) {
+        ZStack {
             // MARK: - BG Color
             GeometryReader { metrics in
                 VStack{
@@ -247,7 +247,7 @@ struct MainView: View {
                             }
                         }
                     }
-                    .frame(maxWidth: metrics.size.width * 0.85)
+                    .frame(maxWidth: metrics.size.width * 0.8)
                     .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
                     .cornerRadius(20)
                     .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
