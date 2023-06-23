@@ -257,16 +257,15 @@ func calcCum() async {
     
     let cal = Calendar.current
     let now = Date()
+    // 86400 : seconds in a day
     let startDate = cal.startOfDay(for: now).advanced(by: -86400)
     let endDate = cal.date(byAdding: .day, value: 1, to: startDate)!
     let defaults = UserDefaults.standard
     let lastRunDate = defaults.object(forKey: "lastCumResetDate") as? Date ?? Date.distantPast
-    let today = cal.startOfDay(for: Date())
-    // 86400 : seconds in a day
-    let expectedRunDate = cal.startOfDay(for: lastRunDate).advanced(by: 86400 * 7)
+    let pastSunday = cal.nextDate(after: now, matching: .init(weekday: 1), matchingPolicy: .nextTime, direction: .backward) ?? Date.distantPast
     
-    if today > expectedRunDate {
-        UserDefaults.standard.set(Date.distantPast, forKey: "lastCumResetDate")
+    if lastRunDate < pastSunday {
+        UserDefaults.standard.set(pastSunday, forKey: "lastCumResetDate")
         if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
             myWalk.cum_walked = 0
         } else {
