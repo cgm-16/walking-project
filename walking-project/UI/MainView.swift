@@ -32,6 +32,8 @@ struct MainView: View {
     @State private var currentRank = 0
 
     @EnvironmentObject var router: Router<Path>
+
+    private let COUPON_ACTIVATION_POINTS = 50_0000
     
     // MARK: - Body
     
@@ -78,7 +80,7 @@ struct MainView: View {
                                         .padding(1)
                                 })
                                 #endif
-                                if let curPoint = myWalk.first?.current_point, curPoint > 30000, checkCoupon() {
+                                if let curPoint = myWalk.first?.current_point, curPoint >= COUPON_ACTIVATION_POINTS, checkCoupon() {
                                     Button(action: {router.push(.Coupon)}, label: {
                                         Image("TicketIcon")
                                             .resizable()

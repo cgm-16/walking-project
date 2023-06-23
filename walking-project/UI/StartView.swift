@@ -45,7 +45,7 @@ struct StartView: View {
     private func checkKakaoToken() {
         if (AuthApi.hasToken()) {
             UserApi.shared.accessTokenInfo { (_, error) in
-                if let error = error {
+                if error != nil {
                     router.updateRoot(root: .Home)
                     router.popToRoot()
                 }
@@ -81,6 +81,8 @@ struct StartView: View {
             switch credentialState {
             case .authorized:
                 print("User is already signed in with Apple")
+                loadFeverAndCoupon()
+                runOnceEveryFiveMin()
                 router.updateRoot(root: .AppleMain)
                 router.popToRoot()
             case .revoked:
