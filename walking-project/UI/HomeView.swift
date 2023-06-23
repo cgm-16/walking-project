@@ -171,7 +171,7 @@ struct HomeView: View {
         ZStack (alignment: .bottom) {
             Color("MainColor").ignoresSafeArea()
             
-            VStack {
+            VStack (spacing: 0) {
                 Text("Walking\nProject")
                     .font(.customFont(.home, size: 80))
                     .lineSpacing(15)
@@ -192,10 +192,12 @@ struct HomeView: View {
                     .scaledToFit()
                     .padding(.horizontal, 20)
                 })
+                .offset(y: -45)
                 
                 Spacer().frame(height: 20)
                 
                 appleLoginView()
+                    .offset(y: -45)
             }
         }
         .task {

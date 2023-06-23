@@ -30,6 +30,8 @@ struct MainAppleView: View {
     
     @EnvironmentObject var router: Router<Path>
     
+    private let COUPON_ACTIVATION_POINTS = 50_0000
+    
     // MARK: - Body
     
     var body: some View {
@@ -75,7 +77,7 @@ struct MainAppleView: View {
                                         .padding(1)
                                 })
                                 #endif
-                                if let curPoint = myWalk.first?.current_point, curPoint > 30000, checkCoupon() {
+                                if let curPoint = myWalk.first?.current_point, curPoint >= COUPON_ACTIVATION_POINTS, checkCoupon() {
                                     Button(action: {router.push(.Coupon)}, label: {
                                         Image("TicketIcon")
                                             .resizable()
@@ -174,16 +176,10 @@ struct MainAppleView: View {
                     
                     // MARK: - Ranking Zone
                     
-                    Image("CouponImg")
+                    Image("LeaderBoardImg")
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: metrics.size.width * 0.8)
-                    .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                    .cornerRadius(20)
-                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.white)
-                    )
-                    .shadow(color: .black, radius: 1, y: 1)
                 }
             }
             

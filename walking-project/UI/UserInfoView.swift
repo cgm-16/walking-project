@@ -307,6 +307,7 @@ struct ConfirmChangePopup: View {
                             Text("확인")
                                 .font(.customFont(.settings, size: 20))
                                 .frame(width: 124, height: 47)
+                                .foregroundColor(.white)
                                 .background(Color("MainColor"), in: RoundedRectangle(cornerRadius: 15))
                         }
                     )
