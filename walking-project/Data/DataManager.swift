@@ -99,6 +99,11 @@ public func firstTimeSetup() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
     
+    let cal = Calendar.current
+    let now = Date()
+    let pastSunday = cal.nextDate(after: now, matching: .init(weekday: 1), matchingPolicy: .nextTime, direction: .backward) ?? Date.distantPast
+    UserDefaults.standard.set(pastSunday, forKey: "lastCumResetDate")
+
     // To check if there is Kakao Token
     if (AuthApi.hasToken()) {
         UserApi.shared.accessTokenInfo { (_, error) in

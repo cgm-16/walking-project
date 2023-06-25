@@ -21,7 +21,7 @@ func HKRequestAuth() async {
                          HKObjectType.quantityType(forIdentifier: .stepCount)!])
     
     guard HKHealthStore.isHealthDataAvailable() else {
-        fatalError()
+        return
     }
     
     do {
