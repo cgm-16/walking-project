@@ -36,10 +36,12 @@ private func stepEnergyQuery(pred: String) async throws -> (HKStatistics?) {
         let healthStore = DataManager.shared.healthstore
         let stepCount = HKSampleType.quantityType(forIdentifier: .stepCount)!
         let autoAndToday = NSPredicate(format: pred)
+        let devicePredicate = HKQuery.predicateForObjects(withDeviceProperty: HKDevicePropertyKeyModel, allowedValues: [HKDevice.local().model!])
+        let pred = NSCompoundPredicate(andPredicateWithSubpredicates: [autoAndToday, devicePredicate])
         
         let stepEnergyQuery = HKStatisticsQuery(
             quantityType: stepCount,
-            quantitySamplePredicate: autoAndToday,
+            quantitySamplePredicate: pred,
             options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
                 if let error = errorOrNil {
                     continuation.resume(throwing: error)
@@ -56,10 +58,12 @@ private func distQuery(pred: String) async throws -> (HKStatistics?) {
         let healthStore = DataManager.shared.healthstore
         let totalDistance = HKSampleType.quantityType(forIdentifier: .distanceWalkingRunning)!
         let autoAndToday = NSPredicate(format: pred)
+        let devicePredicate = HKQuery.predicateForObjects(withDeviceProperty: HKDevicePropertyKeyModel, allowedValues: [HKDevice.local().model!])
+        let pred = NSCompoundPredicate(andPredicateWithSubpredicates: [autoAndToday, devicePredicate])
         
         let distQuery = HKStatisticsQuery(
             quantityType: totalDistance,
-            quantitySamplePredicate: autoAndToday,
+            quantitySamplePredicate: pred,
             options: .cumulativeSum) { (query, statisticsOrNil, errorOrNil) in
                 if let error = errorOrNil {
                     continuation.resume(throwing: error)
@@ -75,13 +79,15 @@ private func pointQuery(pred: String) async throws -> (HKStatisticsCollection?) 
     return try await withCheckedThrowingContinuation { continuation in
         let healthStore = DataManager.shared.healthstore
         let stepCount = HKSampleType.quantityType(forIdentifier: .stepCount)!
+        let devicePredicate = HKQuery.predicateForObjects(withDeviceProperty: HKDevicePropertyKeyModel, allowedValues: [HKDevice.local().model!])
         let autoAndToday = NSPredicate(format: pred)
+        let pred = NSCompoundPredicate(andPredicateWithSubpredicates: [autoAndToday, devicePredicate])
         let interval = DateComponents(minute: 5)
         let cal = Calendar.current
         let now = Date()
         let startDate = cal.startOfDay(for: now)
         
-        let pointQuery = HKStatisticsCollectionQuery(quantityType: stepCount, quantitySamplePredicate: autoAndToday, anchorDate: startDate, intervalComponents: interval)
+        let pointQuery = HKStatisticsCollectionQuery(quantityType: stepCount, quantitySamplePredicate: pred, anchorDate: startDate, intervalComponents: interval)
         
         pointQuery.initialResultsHandler = { query, results, error in
             // Handle errors here.
@@ -114,10 +120,11 @@ private func cumPointQuery() async throws -> (HKStatisticsCollection?) {
         let endDate = cal.date(byAdding: .day, value: 1, to: startDate)!
         let today = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
         let auto = NSPredicate(format: "metadata.%K != YES", HKMetadataKeyWasUserEntered)
-        let autoAndToday = NSCompoundPredicate(type: .and, subpredicates: [today, auto])
+        let devicePredicate = HKQuery.predicateForObjects(withDeviceProperty: HKDevicePropertyKeyModel, allowedValues: [HKDevice.local().model!])
+        let pred = NSCompoundPredicate(andPredicateWithSubpredicates: [today, auto, devicePredicate])
         let interval = DateComponents(minute: 5)
         
-        let pointQuery = HKStatisticsCollectionQuery(quantityType: stepCount, quantitySamplePredicate: autoAndToday, anchorDate: startDate, intervalComponents: interval)
+        let pointQuery = HKStatisticsCollectionQuery(quantityType: stepCount, quantitySamplePredicate: pred, anchorDate: startDate, intervalComponents: interval)
         
         pointQuery.initialResultsHandler = { query, results, error in
             // Handle errors here.
@@ -146,7 +153,6 @@ func healthDataSync() {
     let now = Date()
     let startDate = cal.startOfDay(for: now)
     let endDate = cal.date(byAdding: .day, value: 1, to: startDate)!
-    //let pred = "(startDate >= CAST(\(startDate.timeIntervalSinceReferenceDate), 'NSDate') AND startDate < CAST(\(endDate.timeIntervalSinceReferenceDate), 'NSDate')) AND metadata.HKWasUserEntered != 1"
     let pred = "(startDate >= CAST(\(startDate.timeIntervalSinceReferenceDate), 'NSDate') AND startDate < CAST(\(endDate.timeIntervalSinceReferenceDate), 'NSDate'))"
     
     Task (priority: .high) {
