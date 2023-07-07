@@ -215,6 +215,11 @@ func scoreSync() {
                             return nil
                         }
                         
+                        transaction.updateData([
+                            "name": name,
+                            "imgURL": profile
+                        ], forDocument: docRef)
+                        
                         if currentValue >= newValue {
                             // The current value is equal to or greater than the new value, so do not update
                             return nil
