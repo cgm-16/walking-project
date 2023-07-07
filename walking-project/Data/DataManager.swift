@@ -367,6 +367,22 @@ func runOnceEveryFiveMin() {
     RunLoop.current.add(timer, forMode: .common)
 }
 
+func runOnlyOnceADay() {
+    let defaults = UserDefaults.standard
+    let lastRunDate = defaults.object(forKey: "lastCalcCumRunDate") as? Date ?? Date.distantPast
+    
+    let calendar = Calendar.current
+    let today = calendar.startOfDay(for: Date())
+    let lastRunDay = calendar.startOfDay(for: lastRunDate)
+    
+    if today > lastRunDay {
+        defaults.set(Date(), forKey: "lastCalcCumRunDate")
+        calcCum()
+    } else {
+        return
+    }
+}
+
 func checkCoupon() -> Bool {
     let defaults = UserDefaults.standard
     let lastRunDate = defaults.object(forKey: "lastCouponDate") as? Date ?? Date.distantPast

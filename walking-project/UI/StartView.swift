@@ -50,6 +50,7 @@ struct StartView: View {
                     router.popToRoot()
                 }
                 else {
+                    runOnlyOnceADay()
                     loadFeverAndCoupon()
                     runOnceEveryFiveMin()
                 }
@@ -68,8 +69,6 @@ struct StartView: View {
             return
         }
         
-        print(userID, "**************")
-        
         let provider = ASAuthorizationAppleIDProvider()
         
         provider.getCredentialState(forUserID: userID) { credentialState, error in
@@ -81,6 +80,7 @@ struct StartView: View {
             switch credentialState {
             case .authorized:
                 print("User is already signed in with Apple")
+                runOnlyOnceADay()
                 loadFeverAndCoupon()
                 runOnceEveryFiveMin()
                 router.updateRoot(root: .AppleMain)
@@ -122,11 +122,6 @@ struct StartView: View {
             case nil:
                 router.updateRoot(root: .Home)
                 router.popToRoot()
-            }
-        }
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .background {
-                scheduleCumWalked()
             }
         }
     }

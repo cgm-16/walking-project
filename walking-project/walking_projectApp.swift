@@ -41,8 +41,5 @@ struct walking_projectApp: App {
                                 }
                             })
         }
-        .backgroundTask(.appRefresh("calc_cum")) {
-            await calcCum()
-        }
     }
 }

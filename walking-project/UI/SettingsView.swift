@@ -12,6 +12,14 @@ import KakaoSDKUser
 import FirebaseAuth
 
 struct SettingsView: View {
+    #if DEBUG
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.cum_walked, ascending: true)],
+        animation: .default)
+    private var myWalk: FetchedResults<My_Walk>
+    // TODO: Delete later
+    #endif
+    
     @EnvironmentObject var router: Router<Path>
     @State private var isPromptShown = false
     var body: some View {
@@ -36,6 +44,10 @@ struct SettingsView: View {
                             .padding(.leading, 35)
                 }
             )
+            #if DEBUG
+            Text("Cumulative walk: " + (myWalk.first?.cum_walked.description ?? "yesterday no walked"))
+            Text("Current ScoreBoard should be: " + ((myWalk.first?.cum_walked ?? 0) + (myWalk.first?.current_point ?? 0)).description)
+            #endif
             Spacer()
         }.overlay {
             DeleteAccPromptView(isShown: $isPromptShown.animation())

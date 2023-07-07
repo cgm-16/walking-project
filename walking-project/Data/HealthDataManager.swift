@@ -258,7 +258,7 @@ func healthDataSync() {
     }
 }
 
-func calcCum() async {
+func calcCum() {
     let viewContext = DataManager.shared.viewContext
     
     let cal = Calendar.current
@@ -267,10 +267,15 @@ func calcCum() async {
     let startDate = cal.startOfDay(for: now).advanced(by: -86400)
     let endDate = cal.date(byAdding: .day, value: 1, to: startDate)!
     let defaults = UserDefaults.standard
-    let lastRunDate = defaults.object(forKey: "lastCumResetDate") as? Date ?? Date.distantPast
+    var lastRunDate = defaults.object(forKey: "lastCumResetDate") as? Date
     let pastSunday = cal.nextDate(after: now, matching: .init(weekday: 1), matchingPolicy: .nextTime, direction: .backward) ?? Date.distantPast
     
-    if lastRunDate < pastSunday {
+    if lastRunDate == nil {
+        lastRunDate = pastSunday
+        UserDefaults.standard.set(pastSunday, forKey: "lastCumResetDate")
+    }
+    
+    if lastRunDate! < pastSunday {
         UserDefaults.standard.set(pastSunday, forKey: "lastCumResetDate")
         if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
             myWalk.cum_walked = 0
