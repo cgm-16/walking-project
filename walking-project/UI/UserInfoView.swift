@@ -48,12 +48,12 @@ struct UserInfoView: View {
                     Spacer().frame(idealHeight: 100, maxHeight: 100)
                     VStack(spacing: 20.0) {
                         HStack {
-                            Text("Name")
+                            Text("Nickname")
                                 .font(.system(size: 24))
                                 .fontWeight(.thin)
                             Spacer()
                         }
-                        TextField("Your Name", text: $userName)
+                        TextField("Your Nickname", text: $userName)
                             .font(.system(size: 35))
                             .multilineTextAlignment(.center)
                             .italic()
