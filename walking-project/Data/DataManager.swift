@@ -95,26 +95,7 @@ struct DataManager {
     }
 }
 
-public func firstTimeSetup() {
-    let db = Firestore.firestore()
-    let viewContext = DataManager.shared.viewContext
-    
-    let cal = Calendar.current
-    let now = Date()
-    let pastSunday = cal.nextDate(after: now, matching: .init(weekday: 1), matchingPolicy: .nextTime, direction: .backward) ?? Date.distantPast
-    UserDefaults.standard.set(pastSunday, forKey: "lastCumResetDate")
-
-    // To check if there is Kakao Token
-    if (AuthApi.hasToken()) {
-        UserApi.shared.accessTokenInfo { (_, error) in
-            if let error = error {
-                return
-            }
-        }
-    } else {
-        return
-    }
-    
+private func friendSync(_ viewContext: NSManagedObjectContext, _ db: Firestore) {
     UserApi.shared.me() { (user, error) in
         if let error = error {
             print(error)
@@ -161,6 +142,29 @@ public func firstTimeSetup() {
             }
         }
     }
+}
+
+public func firstTimeSetup() {
+    let db = Firestore.firestore()
+    let viewContext = DataManager.shared.viewContext
+    
+    let cal = Calendar.current
+    let now = Date()
+    let pastSunday = cal.nextDate(after: now, matching: .init(weekday: 1), matchingPolicy: .nextTime, direction: .backward) ?? Date.distantPast
+    UserDefaults.standard.set(pastSunday, forKey: "lastCumResetDate")
+
+    // To check if there is Kakao Token
+    if (AuthApi.hasToken()) {
+        UserApi.shared.accessTokenInfo { (_, error) in
+            if let error = error {
+                return
+            }
+        }
+    } else {
+        return
+    }
+    
+    friendSync(viewContext, db)
 }
 
 func scoreSync() {
@@ -300,6 +304,8 @@ func scoreSync() {
 func loadFeverAndCoupon() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
+    
+    friendSync(viewContext, db)
     
     db.collection("fever-times").document("fevertimes").getDocument { (document, error) in
         if let document = document, document.exists, let data = document.data(), let dat = data["times"] as? [String] {
