@@ -260,12 +260,14 @@ func scoreSync() {
                                     return
                                 }
                             }
-                            if let data = result?.data as? [String: Any], let perc = data["perc"] as? Int16 {
-                                if let rankPercent = try? viewContext.fetch(Rank_Percent.fetchRequest()).first {
-                                    rankPercent.top_percent = perc
+                            if let data = result?.data as? [String: Any], let perc = data["perc"] as? Int16 , let avg = data["avg"] as? Int64{
+                                if let rankInfo = try? viewContext.fetch(Rank_Info.fetchRequest()).first {
+                                    rankInfo.top_percent = perc
+                                    rankInfo.avg = avg
                                 } else {
-                                    let rankPercent = Rank_Percent(context: viewContext)
-                                    rankPercent.top_percent = perc
+                                    let rankInfo = Rank_Info(context: viewContext)
+                                    rankInfo.top_percent = perc
+                                    rankInfo.avg = avg
                                 }
                             }
                         }

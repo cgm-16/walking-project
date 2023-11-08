@@ -28,10 +28,10 @@ struct MainView: View {
     private var myWalk: FetchedResults<My_Walk>
     
     @FetchRequest(
-        entity: Rank_Percent.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Rank_Percent.top_percent, ascending: true)],
+        entity: Rank_Info.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Rank_Info.top_percent, ascending: true)],
         animation: .default)
-    private var rankPerc: FetchedResults<Rank_Percent>
+    private var rankInfo: FetchedResults<Rank_Info>
     
     // MARK: - Private Properties
     @State private var currentIndex = 0
@@ -185,27 +185,26 @@ struct MainView: View {
                             HStack{
                                 Text("당신의 걷기 점수는 상위").fixedSize()
                                     .fixedSize()
-                                    .font(.customFont(.main, size: 18))
+                                    .font(.customFont(.main, size: 20))
                                     .italic()
                                     .foregroundColor(Color("MainTxtColor"))
-                                Text(String(rankPerc.first?.top_percent ?? 1) + "%")
+                                Text(String(rankInfo.first?.top_percent ?? 1) + "%")
                                     .fixedSize()
                                     .font(.customFont(.main, size: 35))
                                     .italic()
                                     .foregroundColor(Color("MainTxtColor"))
                                 Text("입니다")
                                     .fixedSize()
-                                    .font(.customFont(.main, size: 18))
+                                    .font(.customFont(.main, size: 20))
                                     .italic()
                                     .foregroundColor(Color("MainTxtColor"))
                             }
                             Spacer()
-                            #if DEBUG
-                            Text("평균: 533,000")
+                            Text("평균: \(commaFormatter.string(for: rankInfo.first?.avg ?? 0) ?? "0")")
                                 .fixedSize()
-                                .font(.customFont(.main, size: 18))
+                                .font(.customFont(.main, size: 20))
+                                .italic()
                                 .foregroundColor(Color("MainTxtColor"))
-                            #endif
                             Spacer()
                         }
                         .tag(2)

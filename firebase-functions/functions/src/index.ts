@@ -37,11 +37,14 @@ export const showrankingpercentage = onCall(async (req) => {
   try {
     const snapshot = await scoreboardRef.orderBy("score", "desc").get();
     const rank =
-      snapshot.docs.findIndex((item) => (item.get("uuid") as number) === uuid) +
-      1;
+      snapshot.docs.findIndex(
+        (item) => (item.get("uuid") as number) === uuid) + 1;
     const perc = Math.round((rank * 100) / snapshot.size);
+    const sum = snapshot.docs.reduce(
+      (acc, cur) => acc + cur.get("score") as number, 0);
+    const avg = Math.trunc(sum / snapshot.size);
     if (rank > 0) {
-      return { perc };
+      return { perc, avg };
     } else {
       throw new HttpsError("not-found", "Perc not found");
     }
