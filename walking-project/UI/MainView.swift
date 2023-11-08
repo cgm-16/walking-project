@@ -210,7 +210,7 @@ struct MainView: View {
                         }
                         .tag(2)
                     }
-                    .frame(maxHeight: metrics.size.height * 0.27)
+                    .frame(maxHeight: metrics.size.height * 0.25)
                     .padding(.horizontal)
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .overlay(FancyIndexView(currentIndex: currentIndex), alignment: .top)
@@ -221,6 +221,10 @@ struct MainView: View {
                     VStack {
                         ScrollView{
                             VStack(spacing: 12) {
+                                Text("Weekly Ranking")
+                                    .fixedSize()
+                                    .font(.customFont(.main, size: 20))
+                                    .foregroundColor(Color("MainColor"))
                                 ForEach(walkInfo) { info in
                                     if info.id != myWalk.first?.my_id {
                                         WalkInfoView(info: info, metrics: metrics, isCurrentUser: false)
@@ -276,7 +280,7 @@ struct MainView: View {
                                             .multilineTextAlignment(.leading)
                                     }
                                 }
-                                .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.07)
+                                .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.065)
                                 .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
                                 .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
                                     .fill(rankColor(rank: info.rank)))
@@ -367,7 +371,7 @@ struct WalkInfoView: View {
                 .multilineTextAlignment(.leading)
                 .lineLimit(0)
         }
-        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.1)
+        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.07)
         .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
         .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
             .fill(rankColor(rank: info.rank)))
