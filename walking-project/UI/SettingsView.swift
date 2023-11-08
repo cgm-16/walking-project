@@ -20,13 +20,13 @@ struct SettingsView: View {
     // TODO: Delete later
     #endif
     
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     @State private var isPromptShown = false
     var body: some View {
         VStack (spacing: 0) {
             Text("설정").font(.customFont(.settings, size: 32))
             Spacer().frame(maxHeight: 100)
-            NavigationLink(value: Path.User) {
+            NavigationLink(value: Destinations.User) {
                 Text("인적사항 수정")
                     .font(.customFont(.settings, size: 20))
                     .frame(maxWidth: .infinity, maxHeight: 100, alignment: .leading)
@@ -57,7 +57,7 @@ struct SettingsView: View {
 
 struct DeleteAccPromptView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     @Binding var isShown: Bool
     @State private var didLogout = false
     

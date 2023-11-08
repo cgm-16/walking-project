@@ -1,51 +1,52 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { setGlobalOptions } from "firebase-functions/v2/options";
 
 admin.initializeApp();
 
-export const deleteAllDocuments = functions.pubsub
-  .schedule("0 4 * * 1")
-  .onRun((context) => {
-    const db = admin.firestore();
-    const scoreboardRef = db.collection("scoreboard");
+setGlobalOptions({ region: "asia-northeast3" });
 
-    scoreboardRef
-      .get()
-      .then((snapshot) => {
-        const batch = db.batch();
-        snapshot.forEach((doc) => {
-          batch.delete(doc.ref);
-        });
-        return batch.commit();
-      })
-      .then(() => {
-        return null;
-      })
-      .catch((err) => {
-        return null;
-      });
-  });
-
-export const showRankingPercentage = functions.https.onCall(async (req) => {
+export const deletealldocuments = onSchedule("0 4 * * 1", () => {
   const db = admin.firestore();
   const scoreboardRef = db.collection("scoreboard");
-  const uid = req.data.uid as number;
+
+  scoreboardRef
+    .get()
+    .then((snapshot) => {
+      const batch = db.batch();
+      snapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      return batch.commit();
+    })
+    .then(() => {
+      return null;
+    })
+    .catch((err) => {
+      console.error("Error deleting leaderboard:", err);
+      throw new HttpsError("internal", "Error in deleteAllDocuments");
+    });
+});
+
+export const showrankingpercentage = onCall(async (req) => {
+  const db = admin.firestore();
+  const scoreboardRef = db.collection("scoreboard");
+  const uuid = req.data.uuid as number;
+
   try {
     const snapshot = await scoreboardRef.orderBy("score", "desc").get();
-    const sortedData: any[] = [];
-    snapshot.forEach((doc) => sortedData.push(doc.data()));
-    const rank = sortedData.findIndex((item) => item.uid === uid) + 1;
-    const perc = Math.round((rank * 100) / sortedData.length);
+    const rank =
+      snapshot.docs.findIndex((item) => (item.get("uuid") as number) === uuid) +
+      1;
+    const perc = Math.round((rank * 100) / snapshot.size);
     if (rank > 0) {
-      return {perc};
+      return { perc };
     } else {
-      throw new functions.https.HttpsError(
-        "not-found",
-        "Score not found in the collection"
-      );
+      throw new HttpsError("not-found", "Perc not found");
     }
   } catch (error) {
     console.error("Error checking rank:", error);
-    throw new functions.https.HttpsError("internal", "Error checking rank");
+    throw new HttpsError("internal", "Error in showRankingPerc");
   }
 });

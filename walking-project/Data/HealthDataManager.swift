@@ -214,8 +214,6 @@ func healthDataSync() {
             }
         }
         
-        scoreSync()
-        
         let stepEnergyStats = try? await stepEnergyQuery(pred: pred)
         let distanceStats = try? await distQuery(pred: pred)
         var steps : Int64 = 0

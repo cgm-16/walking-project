@@ -27,11 +27,17 @@ struct MainView: View {
         animation: .default)
     private var myWalk: FetchedResults<My_Walk>
     
+    @FetchRequest(
+        entity: Rank_Percent.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Rank_Percent.top_percent, ascending: true)],
+        animation: .default)
+    private var rankPerc: FetchedResults<Rank_Percent>
+    
     // MARK: - Private Properties
     @State private var currentIndex = 0
     @State private var currentRank = 0
 
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
 
     private let COUPON_ACTIVATION_POINTS = 50_0000
     
@@ -42,7 +48,7 @@ struct MainView: View {
             // MARK: - BG Color
             GeometryReader { metrics in
                 VStack{
-                    RoundedRectangle(cornerRadius: CGFloat(15), style: .circular)
+                    RoundedCorner(radius: 15, corners: [.bottomLeft, .bottomRight])
                         .frame(height: metrics.size.height * 0.45)
                         .foregroundColor(Color("MainColor"))
                         .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.top/*@END_MENU_TOKEN@*/)
@@ -55,7 +61,7 @@ struct MainView: View {
                 VStack {
                     // MARK: - TabView Zone
                     TabView(selection: $currentIndex.animation()) {
-                        VStack{
+                        VStack(spacing: 0){
                             Spacer()
                             
                             HStack{
@@ -104,7 +110,7 @@ struct MainView: View {
                                     Image(systemName: "gearshape.fill")
                                         .foregroundColor(Color("MainTxtColor"))
                                         .imageScale(.large)
-                                    .font(.title2)})
+                                        .font(.title2)})
                                 Spacer().frame(width: 15)
                             }
                             HStack{
@@ -171,6 +177,36 @@ struct MainView: View {
                         }
                         .padding(.horizontal, 20.0)
                         .tag(1)
+                        
+                        VStack(alignment: .center){
+                            Spacer()
+                            HStack{
+                                Text("당신의 걷기 점수는 상위").fixedSize()
+                                    .fixedSize()
+                                    .font(.customFont(.main, size: 18))
+                                    .italic()
+                                    .foregroundColor(Color("MainTxtColor"))
+                                Text(String(rankPerc.first?.top_percent ?? 1) + "%")
+                                    .fixedSize()
+                                    .font(.customFont(.main, size: 35))
+                                    .italic()
+                                    .foregroundColor(Color("MainTxtColor"))
+                                Text("입니다")
+                                    .fixedSize()
+                                    .font(.customFont(.main, size: 18))
+                                    .italic()
+                                    .foregroundColor(Color("MainTxtColor"))
+                            }
+                            Spacer()
+                            #if DEBUG
+                            Text("평균: 533,000")
+                                .fixedSize()
+                                .font(.customFont(.main, size: 18))
+                                .foregroundColor(Color("MainTxtColor"))
+                            #endif
+                            Spacer()
+                        }
+                        .tag(2)
                     }
                     .frame(maxHeight: metrics.size.height * 0.27)
                     .padding(.horizontal)
@@ -371,6 +407,16 @@ struct FancyIndexView: View {
                     .id(index)
             }
         }
+    }
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
     }
 }
 

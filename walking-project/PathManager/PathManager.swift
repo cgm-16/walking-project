@@ -67,7 +67,7 @@ final class Router<T: Hashable>: ObservableObject {
     }
 }
 
-enum Path {
+enum Destinations {
     case Home
     case Main
     case AppleMain

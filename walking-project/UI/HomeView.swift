@@ -15,7 +15,7 @@ import FirebaseAuth
 
 struct HomeView: View {
     @State private var isLogin = false
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(

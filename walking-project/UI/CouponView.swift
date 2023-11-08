@@ -17,7 +17,7 @@ struct CouponView: View {
         animation: .default)
     private var couponInfo: FetchedResults<Coupon_Info>
     
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     
     @State private var isVisibleConfirm: Bool = false
     @State private var isVisibleAlert: Bool = false

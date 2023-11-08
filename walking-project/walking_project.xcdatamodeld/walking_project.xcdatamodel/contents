@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F82" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Coupon_Info" representedClassName="Coupon_Info" syncable="YES" codeGenerationType="class">
         <attribute name="coupon_discount" optional="YES" attributeType="String"/>
         <attribute name="coupon_id" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -25,6 +25,9 @@
         <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="my_id" optional="YES" attributeType="String"/>
         <attribute name="total_walk" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="Rank_Percent" representedClassName="Rank_Percent" syncable="YES" codeGenerationType="class">
+        <attribute name="top_percent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="Walk_Info" representedClassName="Walk_Info" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="String"/>

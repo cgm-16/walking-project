@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     
     @FetchRequest(entity: My_Info.entity(), sortDescriptors: [], predicate: nil)
     private var myInfo: FetchedResults<My_Info>
@@ -47,7 +47,8 @@ struct WelcomeView: View {
              }
              firstTimeSetup()
              loadFeverAndCoupon()
-             runOnceEveryFiveMin()
+             runOnceEvery5Sec()
+             runOnceEveryOneMin()
              
              DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                  router.popToRoot()

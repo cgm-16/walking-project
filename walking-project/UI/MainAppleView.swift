@@ -28,7 +28,7 @@ struct MainAppleView: View {
     @State private var currentIndex = 0
     @State private var currentRank = 0
     
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     
     private let COUPON_ACTIVATION_POINTS = 50_0000
     
@@ -191,7 +191,7 @@ struct MainAppleView: View {
 
 struct C2AView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     @State private var didLogout = false
     
     var body: some View {

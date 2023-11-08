@@ -11,6 +11,7 @@ import KakaoSDKTalk
 import KakaoSDKUser
 import KakaoSDKAuth
 import FirebaseFirestore
+import FirebaseFunctions
 
 struct DataManager {
     static let shared = DataManager()
@@ -170,6 +171,7 @@ public func firstTimeSetup() {
 func scoreSync() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
+    lazy var functions = Functions.functions(region: "asia-northeast3")
     
     var name : String = ""
     var score : Int = 0
@@ -249,6 +251,24 @@ func scoreSync() {
                     } else {
                         // Transaction was successful
                         readScoreboard(uuid: uuid)
+                        functions.httpsCallable("showrankingpercentage").call(["uuid": uuid]) { result, error in
+                            if let error = error as NSError? {
+                                if error.domain == FunctionsErrorDomain {
+                                    let code = FunctionsErrorCode(rawValue: error.code)
+                                    let message = error.localizedDescription
+                                    print(code, message)
+                                    return
+                                }
+                            }
+                            if let data = result?.data as? [String: Any], let perc = data["perc"] as? Int16 {
+                                if let rankPercent = try? viewContext.fetch(Rank_Percent.fetchRequest()).first {
+                                    rankPercent.top_percent = perc
+                                } else {
+                                    let rankPercent = Rank_Percent(context: viewContext)
+                                    rankPercent.top_percent = perc
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -319,7 +339,6 @@ func loadFeverAndCoupon() {
             }
             
             do {
-                healthDataSync()
                 try viewContext.save()
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
@@ -364,8 +383,19 @@ func loadFeverAndCoupon() {
     
 }
 
-func runOnceEveryFiveMin() {
-    let timer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in
+func runOnceEvery5Sec() {
+    healthDataSync()
+    let timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+        DispatchQueue.global().async {
+            healthDataSync()
+        }
+    }
+    RunLoop.current.add(timer, forMode: .common)
+}
+
+func runOnceEveryOneMin() {
+    scoreSync()
+    let timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
         DispatchQueue.global().async {
             scoreSync()
         }

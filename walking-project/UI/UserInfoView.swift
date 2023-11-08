@@ -15,7 +15,7 @@ struct UserInfoView: View {
     @FetchRequest(entity: My_Info.entity(), sortDescriptors: [], predicate: nil)
     private var myInfo: FetchedResults<My_Info>
     
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     
     @State private var userName: String = ""
     @State private var userData = UserData(isFemale: -1, userWeight: "", userHeight: "")
@@ -283,7 +283,7 @@ struct UserInfoView: View {
 
 struct ConfirmChangePopup: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject var router: Router<Path>
+    @EnvironmentObject var router: Router<Destinations>
     @Binding var isShown: Bool
     @Binding var userName : String
     @State private var didLogout = false

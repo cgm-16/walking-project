@@ -16,7 +16,7 @@ struct StartView: View {
     //Note: Scene Phase has some dumb bug when in App level and makes the router not work
     @Environment(\.scenePhase) private var scenePhase
     @ObservedObject
-    var router = Router<Path>(root: .Main)
+    var router = Router<Destinations>(root: .Main)
     
     @FetchRequest(
         entity: Login_Info.entity(),
@@ -52,7 +52,8 @@ struct StartView: View {
                 else {
                     runOnlyOnceADay()
                     loadFeverAndCoupon()
-                    runOnceEveryFiveMin()
+                    runOnceEvery5Sec()
+                    runOnceEveryOneMin()
                 }
             }
         }
@@ -82,7 +83,8 @@ struct StartView: View {
                 print("User is already signed in with Apple")
                 runOnlyOnceADay()
                 loadFeverAndCoupon()
-                runOnceEveryFiveMin()
+                runOnceEvery5Sec()
+                runOnceEveryOneMin()
                 router.updateRoot(root: .AppleMain)
                 router.popToRoot()
             case .revoked:
