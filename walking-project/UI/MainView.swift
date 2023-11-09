@@ -296,6 +296,7 @@ struct MainView: View {
                     .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(Color.white)
                     )
+                    .compositingGroup()
                     .shadow(color: .black, radius: 1, y: 1)
                 }
             }
@@ -379,8 +380,6 @@ struct WalkInfoView: View {
             .stroke(Color("MainColor"), lineWidth: 1) :
                     nil)
     }
-    
-    
 }
 
 
