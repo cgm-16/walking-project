@@ -41,13 +41,13 @@ struct CouponView: View {
                             .scaledToFill()
                         
                         VStack {
-                            VStack (spacing: 20) {
+                            VStack (spacing: metrics.size.height * 0.02) {
                                 Text(info.coupon_name ?? "").font(.system(size: 35))
                                 if let imageURL = info.coupon_url, let url = URL(string: imageURL) {
                                     AsyncImage(url: url) { image in
                                         image
                                             .resizable()
-                                            .frame(width: 220, height: 220)
+                                            .frame(width: metrics.size.height * 0.3, height: metrics.size.height * 0.3)
                                             .scaledToFit()
                                     } placeholder: {
                                         ProgressView()
@@ -55,6 +55,7 @@ struct CouponView: View {
                                 }
                                 Text(info.coupon_discount ?? "").font(.system(size: 35))
                             }
+                            
                             
                             Button(action: {
                                 if checkCoupon() {
@@ -73,9 +74,9 @@ struct CouponView: View {
                             .alert("쿠폰을 사용할 수 없습니다.", isPresented: $isVisibleAlert) {}
                             .font(.system(size: 28))
                             .padding(20.0)
-                            .frame(width: metrics.size.width * 0.5)
+                            .padding(.horizontal, 25)
                             .background(Color("MainColor"))
-                            .offset(y: 50)
+                            .offset(y: metrics.size.height * 0.05)
                         }
                     }
                 }
