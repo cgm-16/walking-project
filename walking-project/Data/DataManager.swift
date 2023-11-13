@@ -404,9 +404,9 @@ func setName(uid: String, name: String) async {
     }
 }
 
-func runOnceEvery5Sec() {
+func runOnceEvery10Sec() {
     healthDataSync()
-    let timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+    let timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
         Task {
             healthDataSync()
         }

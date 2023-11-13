@@ -293,7 +293,7 @@ func calcCum() {
         return
     }
     
-    Task (priority: .high) {
+    Task (priority: .high) { @MainActor in
         await HKRequestAuth()
         let pointStats = try? await cumPointQuery()
         

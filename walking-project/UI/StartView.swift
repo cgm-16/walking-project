@@ -54,7 +54,7 @@ struct StartView: View {
                     loadFeverAndCoupon()
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        runOnceEvery5Sec()
+                        runOnceEvery10Sec()
                         runOnceEveryOneMin()
                     }
                 }
@@ -87,7 +87,7 @@ struct StartView: View {
                 runOnlyOnceADay()
                 loadFeverAndCoupon()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    runOnceEvery5Sec()
+                    runOnceEvery10Sec()
                     runOnceEveryOneMin()
                 }
                 router.updateRoot(root: .AppleMain)

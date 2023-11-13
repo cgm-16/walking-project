@@ -45,11 +45,11 @@ struct WelcomeView: View {
              case nil:
                  router.updateRoot(root: .Main)
              }
-             firstTimeSetup()
              loadFeverAndCoupon()
              
              DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                 runOnceEvery5Sec()
+                 firstTimeSetup()
+                 runOnceEvery10Sec()
                  runOnceEveryOneMin()
              }
              
