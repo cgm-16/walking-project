@@ -155,7 +155,7 @@ func healthDataSync() {
     let endDate = cal.date(byAdding: .day, value: 1, to: startDate)!
     let pred = "(startDate >= CAST(\(startDate.timeIntervalSinceReferenceDate), 'NSDate') AND startDate < CAST(\(endDate.timeIntervalSinceReferenceDate), 'NSDate'))"
     
-    Task (priority: .high) {
+    Task { @MainActor in
         await HKRequestAuth()
         let pointStats = try? await pointQuery(pred: pred)
         
@@ -245,13 +245,14 @@ func healthDataSync() {
             myWalk.distance = distance
         }
         
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                print("Unresolved error \(nsError), \(nsError.userInfo)")
+                return
+            }
         }
     }
 }
@@ -285,10 +286,9 @@ func calcCum() {
         do {
             try viewContext.save()
         } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            print("Unresolved error \(nsError), \(nsError.userInfo)")
+            return
         }
         return
     }
@@ -354,10 +354,9 @@ func calcCum() {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                print("Unresolved error \(nsError), \(nsError.userInfo)")
+                return
             }
         }
     }

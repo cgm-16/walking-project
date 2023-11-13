@@ -20,7 +20,7 @@ struct MainAppleView: View {
     
     @FetchRequest(
         entity: My_Walk.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.my_id, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.current_point, ascending: true)],
         animation: .default)
     private var myWalk: FetchedResults<My_Walk>
     

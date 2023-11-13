@@ -258,13 +258,17 @@ struct UserInfoView: View {
             myInfo.isFemale = Int16(self.userData.isFemale)
             myInfo.height = Int16(self.userData.userHeight) ?? 0
             myInfo.weight = Int16(self.userData.userWeight) ?? 0
+            if router.getLoginType() == .Kakao, let uid = myInfo.my_id {
+                Task {
+                    await setName(uid: uid, name: self.userName)
+                }
+            }
             do {
                 try self.viewContext.save()
-                isPopupShown.toggle()
             } catch {
                 print("Error saving myInfo: \(error.localizedDescription)")
             }
-            
+            isPopupShown.toggle()
         } else {
             let newMyInfo = My_Info(context: viewContext)
             newMyInfo.name = self.userName
@@ -273,10 +277,10 @@ struct UserInfoView: View {
             newMyInfo.weight = Int16(self.userData.userWeight) ?? 0
             do {
                 try self.viewContext.save()
-                router.push(.Welcome)
             } catch {
                 print("Error saving myInfo: \(error.localizedDescription)")
             }
+            router.push(.Welcome)
         }
     }
 }

@@ -15,6 +15,8 @@
     <entity name="My_Info" representedClassName="My_Info" syncable="YES">
         <attribute name="height" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="isFemale" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="my_id" optional="YES" attributeType="String"/>
+        <attribute name="my_thumb" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="weight" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
@@ -23,7 +25,6 @@
         <attribute name="cum_walked" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="current_point" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="my_id" optional="YES" attributeType="String"/>
         <attribute name="total_walk" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="Rank_Info" representedClassName="Rank_Info" syncable="YES" codeGenerationType="class">

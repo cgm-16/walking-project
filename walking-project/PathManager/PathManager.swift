@@ -65,6 +65,10 @@ final class Router<T: Hashable>: ObservableObject {
             self.loginAccount = type
         }
     }
+    
+    func getLoginType() -> LoginType? {
+        return loginAccount
+    }
 }
 
 enum Destinations {

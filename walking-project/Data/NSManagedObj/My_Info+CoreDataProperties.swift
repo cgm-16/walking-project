@@ -20,6 +20,8 @@ extension My_Info {
     @NSManaged public var isFemale: Int16
     @NSManaged public var name: String?
     @NSManaged public var weight: Int16
+    @NSManaged public var my_id: String?
+    @NSManaged public var my_thumb: String?
 
 }
 

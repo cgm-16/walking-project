@@ -27,9 +27,11 @@ struct DataManager {
         
         let couponNames: [String] = ["빙고 앤 샐러드", "꿀꿀이와 닭갈비"]
         let couponDatas: [Data] = [Data(), Data()]
-        let myWalk = My_Walk(context: viewContext)
         
-        myWalk.my_id = "AAAAA"
+        let myInfo = My_Info(context: viewContext)
+        myInfo.my_id = "AAAAA"
+        
+        let myWalk = My_Walk(context: viewContext)
         myWalk.calories = 1237
         myWalk.total_walk = 12303
         myWalk.distance = 13.8
@@ -51,14 +53,11 @@ struct DataManager {
             walkInfo.rank = Int16(6-i)
         }
         
-        
         do {
             try viewContext.save()
         } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            print("Unresolved error \(nsError), \(nsError.userInfo)")
         }
         return result
     }()
@@ -74,18 +73,8 @@ struct DataManager {
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("Unresolved error \(error), \(error.userInfo)")
+                return
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
@@ -96,181 +85,178 @@ struct DataManager {
     }
 }
 
-private func friendSync(_ viewContext: NSManagedObjectContext, _ db: Firestore) {
-    UserApi.shared.me() { (user, error) in
-        if let error = error {
-            print(error)
-        }
-        else {
-            if let uid = user?.id {
-                if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
-                    myWalk.my_id = String(uid)
-                } else {
-                    let entityDescription = NSEntityDescription.entity(forEntityName: "My_Walk", in: viewContext)!
-                    let myWalk = My_Walk(entity: entityDescription, insertInto: viewContext)
-                    myWalk.my_id = String(uid)
-                }
-                kkoDataWriteToFirebase(uid: String(uid))
+struct KakaoUserResult {
+    var uid : String
+    var thumb : String
+}
+
+struct KakaoFriendResult {
+    var FUids : [String]
+    var FThumbs : [String]
+}
+
+private func findUidThumb() async throws -> (KakaoUserResult) {
+    return try await withCheckedThrowingContinuation { continuation in
+        UserApi.shared.me() { (user, error) in
+            if let error = error {
+                continuation.resume(throwing: error)
+            }
+            if let uid = user?.id, let link = user?.kakaoAccount?.profile?.thumbnailImageUrl?.absoluteString {
+                let res = KakaoUserResult(uid: String(uid), thumb: link)
+                continuation.resume(returning: res)
             }
         }
     }
-    
-    func kkoDataWriteToFirebase(uid : String) {
-        TalkApi.shared.friends {(friends, error) in
+}
+
+private func findFriendInfo() async throws -> (KakaoFriendResult) {
+    return try await withCheckedThrowingContinuation { continuation in
+        TalkApi.shared.friends { (friends, error) in
             if let error = error {
-                print(error)
+                continuation.resume(throwing: error)
             }
-            else {
-                //do something
-                let frPfps = friends?.elements
+            if let frPfps = friends?.elements {
+                var fUuids: [String] = []
+                var fPfpUrls: [String] = []
                 
-                var fUuids: [String] = [uid]
-                
-                if let _frPfps = frPfps {
-                    for i in _frPfps {
-                        fUuids.append(String(i.id ?? 0))
-                    }
+                for i in frPfps {
+                    fUuids.append(String(i.id ?? 0))
+                    fPfpUrls.append(i.profileThumbnailImage?.absoluteString ?? "")
                 }
-                
-                db.collection("friendlist").document(uid).setData([
-                    "friend-uuids": fUuids,
-                    "uuid": uid
-                ]) { err in
-                    if let err = err {
-                        print("Error writing document: \(err)")
-                    }
-                }
+                let res = KakaoFriendResult(FUids: fUuids, FThumbs: fPfpUrls)
+                continuation.resume(returning: res)
+            }
+        }
+    }
+}
+
+private func friendSync(_ viewContext: NSManagedObjectContext, _ db: Firestore) {
+    Task { @MainActor in
+        let uRes = try? await findUidThumb()
+        let fRes = try? await findFriendInfo()
+        
+        if let uInfo = uRes, let fInfo = fRes {
+            let uids = [uInfo.uid] + fInfo.FUids
+            let thumbs = [uInfo.thumb] + fInfo.FThumbs
+            try await db.collection("friendlist").document(uInfo.uid).setData([
+                "friend-uuids": uids,
+                "friend-thumbs": thumbs,
+                "uuid": uInfo.uid
+            ])
+        }
+        
+        if let uInfo = uRes {
+            if let myInfo = try? viewContext.fetch(My_Info.fetchRequest()).first {
+                myInfo.my_id = uInfo.uid
+                myInfo.my_thumb = uInfo.thumb
+            } else {
+                let myInfo = My_Info(context: viewContext)
+                myInfo.my_id = uInfo.uid
+                myInfo.my_thumb = uInfo.thumb
+            }
+        }
+        
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                print("Unresolved error \(nsError), \(nsError.userInfo)")
+                return
             }
         }
     }
 }
 
 public func firstTimeSetup() {
-    let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
     
     let cal = Calendar.current
     let now = Date()
     let pastSunday = cal.nextDate(after: now, matching: .init(weekday: 1), matchingPolicy: .nextTime, direction: .backward) ?? Date.distantPast
     UserDefaults.standard.set(pastSunday, forKey: "lastCumResetDate")
-
-    // To check if there is Kakao Token
-    if (AuthApi.hasToken()) {
-        UserApi.shared.accessTokenInfo { (_, error) in
-            if let error = error {
-                return
-            }
-        }
-    } else {
-        return
-    }
     
-    friendSync(viewContext, db)
+    Task { @MainActor in
+        if let myInfo = try? viewContext.fetch(My_Info.fetchRequest()).first, let uid = myInfo.my_id, let name = myInfo.name {
+            await setName(uid: uid, name: name)
+        }
+    }
 }
 
+@MainActor
 func scoreSync() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
     lazy var functions = Functions.functions(region: "asia-northeast3")
     
-    var name : String = ""
     var score : Int = 0
     
-    if let myInfo = try? viewContext.fetch(My_Info.fetchRequest()).first {
-        name = myInfo.name ?? ""
+    guard let uid = try? viewContext.fetch(My_Info.fetchRequest()).first?.my_id else {
+        return
     }
     
     if let myWalk = try? viewContext.fetch(My_Walk.fetchRequest()).first {
         score = Int(myWalk.current_point+myWalk.cum_walked)
     }
     
-    // To check if there is Kakao Token
-    if (AuthApi.hasToken()) {
-        UserApi.shared.accessTokenInfo { (_, error) in
-            if let error = error {
-                return
-            }
-        }
-    } else {
-        return
-    }
+    let docRef = db.collection("scoreboard").document(uid)
+    let newValue = score
     
-    UserApi.shared.me() { (user, error) in
-        if let error = error {
-            print(error)
-            return
+    db.runTransaction({ (transaction, errorPointer) -> Any? in
+        let documentSnapshot: DocumentSnapshot
+        do {
+            try documentSnapshot = transaction.getDocument(docRef)
+        } catch let fetchError as NSError {
+            errorPointer?.pointee = fetchError
+            return nil
         }
-        else {
-            if let userInfo = user, let uid = userInfo.id, let profile = user?.kakaoAccount?.profile?.thumbnailImageUrl?.absoluteString {
-                let uuid = String(uid)
-                let docRef = db.collection("scoreboard").document(uuid)
-                let newValue = score
-                
-                db.runTransaction({ (transaction, errorPointer) -> Any? in
-                    let documentSnapshot: DocumentSnapshot
-                    do {
-                        try documentSnapshot = transaction.getDocument(docRef)
-                    } catch let fetchError as NSError {
-                        errorPointer?.pointee = fetchError
-                        return nil
+        
+        if documentSnapshot.exists {
+            guard let currentValue = documentSnapshot.data()?["score"] as? Int else {
+                errorPointer?.pointee = NSError(domain: "MyDomain", code: -1, userInfo: ["message": "Document snapshot does not contain a value"])
+                return nil
+            }
+            
+            if currentValue >= newValue {
+                // The current value is equal to or greater than the new value, so do not update
+                return nil
+            } else {
+                // The current value is less than the new value, so update to the new value
+                transaction.updateData(["score": newValue], forDocument: docRef)
+                return nil
+            }
+        } else {
+            // The document does not exist, so create a new one with the specified data
+            transaction.setData([
+                "score": score,
+                "uuid": uid
+            ], forDocument: docRef, merge: true)
+            return nil
+        }
+    }) { (result, error) in
+        if let error = error {
+            // Handle error
+            print("Transaction failed with error: \(error.localizedDescription)")
+        } else {
+            // Transaction was successful
+            readScoreboard(uuid: uid)
+            functions.httpsCallable("showrankingpercentage").call(["uuid": uid]) { result, error in
+                if let error = error as NSError? {
+                    if error.domain == FunctionsErrorDomain {
+                        let code = FunctionsErrorCode(rawValue: error.code)
+                        let message = error.localizedDescription
+                        print(code!, message)
+                        return
                     }
-                    
-                    if documentSnapshot.exists {
-                        guard let currentValue = documentSnapshot.data()?["score"] as? Int else {
-                            errorPointer?.pointee = NSError(domain: "MyDomain", code: -1, userInfo: ["message": "Document snapshot does not contain a value"])
-                            return nil
-                        }
-                        
-                        transaction.updateData([
-                            "name": name,
-                            "imgURL": profile
-                        ], forDocument: docRef)
-                        
-                        if currentValue >= newValue {
-                            // The current value is equal to or greater than the new value, so do not update
-                            return nil
-                        } else {
-                            // The current value is less than the new value, so update to the new value
-                            transaction.updateData(["score": newValue], forDocument: docRef)
-                            return nil
-                        }
+                }
+                if let data = result?.data as? [String: Any], let perc = data["perc"] as? Int16 , let avg = data["avg"] as? Int64{
+                    if let rankInfo = try? viewContext.fetch(Rank_Info.fetchRequest()).first {
+                        rankInfo.top_percent = perc
+                        rankInfo.avg = avg
                     } else {
-                        // The document does not exist, so create a new one with the specified data
-                        transaction.setData([
-                            "score": score,
-                            "name": name,
-                            "uuid": uuid,
-                            "imgURL": profile
-                        ], forDocument: docRef, merge: true)
-                        return nil
-                    }
-                }) { (result, error) in
-                    if let error = error {
-                        // Handle error
-                        print("Transaction failed with error: \(error.localizedDescription)")
-                    } else {
-                        // Transaction was successful
-                        readScoreboard(uuid: uuid)
-                        functions.httpsCallable("showrankingpercentage").call(["uuid": uuid]) { result, error in
-                            if let error = error as NSError? {
-                                if error.domain == FunctionsErrorDomain {
-                                    let code = FunctionsErrorCode(rawValue: error.code)
-                                    let message = error.localizedDescription
-                                    print(code, message)
-                                    return
-                                }
-                            }
-                            if let data = result?.data as? [String: Any], let perc = data["perc"] as? Int16 , let avg = data["avg"] as? Int64{
-                                if let rankInfo = try? viewContext.fetch(Rank_Info.fetchRequest()).first {
-                                    rankInfo.top_percent = perc
-                                    rankInfo.avg = avg
-                                } else {
-                                    let rankInfo = Rank_Info(context: viewContext)
-                                    rankInfo.top_percent = perc
-                                    rankInfo.avg = avg
-                                }
-                            }
-                        }
+                        let rankInfo = Rank_Info(context: viewContext)
+                        rankInfo.top_percent = perc
+                        rankInfo.avg = avg
                     }
                 }
             }
@@ -278,44 +264,76 @@ func scoreSync() {
     }
     
     func readScoreboard(uuid: String) {
-        db.collection("friendlist").document(uuid).getDocument { (document, error) in
-            if let document = document, document.exists {
-                if let friendUuids: [String] = document.get("friend-uuids") as? [String] {
-                    db.collection("scoreboard")
-                    .whereField("uuid", in: friendUuids)
-                    .order(by: "score", descending: true)
-                    .limit(to: 20)
-                    .getDocuments() { (querySnapshot, err) in
-                        if let err = err {
-                            print("Error getting documents: \(err)")
-                        } else {
-                            var rank: Int16 = 1
-                            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Walk_Info")
-                            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-                            try! viewContext.executeAndMergeChanges(using: deleteRequest)
-                            viewContext.reset()
-                            
-                            for document in querySnapshot!.documents {
-                                let dat = document.data()
-                                let entityDescription = NSEntityDescription.entity(forEntityName: "Walk_Info", in: viewContext)!
-                                let walkInfo = Walk_Info(entity: entityDescription, insertInto: viewContext)
-                                walkInfo.setValue(rank, forKey: "rank")
-                                walkInfo.setValue(dat["score"] as? Int64 ?? 0, forKey: "score")
-                                walkInfo.setValue(dat["name"] as? String ?? "", forKey: "name")
-                                walkInfo.setValue(dat["uuid"] as? String ?? "", forKey: "id")
-                                walkInfo.setValue(dat["imgURL"] as? String ?? "", forKey: "imgURL")
-                                rank += 1
-                            }
-                            
-                            do {
-                                try viewContext.save()
-                            } catch {
-                                // Replace this implementation with code to handle the error appropriately.
-                                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                                let nsError = error as NSError
-                                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-                            }
-                        }
+        Task { @MainActor in
+            let friendRes = try? await db.collection("friendlist").document(uuid).getDocument()
+            guard let friendDocs = friendRes, friendDocs.exists,
+                  let friendUuids = friendDocs.get("friend-uuids") as? [String],
+                  let friendThumbs = friendDocs.get("friend-thumbs") as? [String] else {
+                return
+            }
+            
+            let friendDict : Dictionary<String, String> = Dictionary(uniqueKeysWithValues: zip(friendUuids, friendThumbs))
+            
+            let scoreRes = try? await db.collection("scoreboard")
+                .whereField("uuid", in: friendUuids)
+                .order(by: "score", descending: true)
+                .limit(to: 20)
+                .getDocuments()
+            
+            let nameRes = try? await db.collection("namelist")
+                .whereField("uuid", in: friendUuids)
+                .getDocuments()
+            
+            if let scoreSnap = scoreRes, let nameSnap = nameRes {
+                let nameDict : Dictionary<String, String> = Dictionary(uniqueKeysWithValues: nameSnap.documents.map({ e in
+                    let dat = e.data()
+                    return (dat["uuid"] as? String ?? "", dat["name"] as? String ?? "")
+                }))
+                
+                var rank: Int16 = 1
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Walk_Info")
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                try! viewContext.executeAndMergeChanges(using: deleteRequest)
+                var uuids : Set<String> = Set()
+                viewContext.reset()
+                
+                for document in scoreSnap.documents {
+                    let dat = document.data()
+                    let score = dat["score"] as? Int64 ?? 0
+                    let name = dat["name"] as? String ?? ""
+                    let uId = dat["uuid"] as? String ?? ""
+                    let uThumb = friendDict[uId]
+                    uuids.insert(uId)
+                    
+                    let entityDescription = NSEntityDescription.entity(forEntityName: "Walk_Info", in: viewContext)!
+                    let walkInfo = Walk_Info(entity: entityDescription, insertInto: viewContext)
+                    walkInfo.setValue(rank, forKey: "rank")
+                    walkInfo.setValue(score, forKey: "score")
+                    walkInfo.setValue(name, forKey: "name")
+                    walkInfo.setValue(uId, forKey: "id")
+                    walkInfo.setValue(uThumb, forKey: "imgURL")
+                    rank += 1
+                }
+                
+                let rest = Set(friendUuids).subtracting(uuids).sorted()
+                for _id in rest {
+                    let entityDescription = NSEntityDescription.entity(forEntityName: "Walk_Info", in: viewContext)!
+                    let walkInfo = Walk_Info(entity: entityDescription, insertInto: viewContext)
+                    walkInfo.setValue(rank, forKey: "rank")
+                    walkInfo.setValue(0, forKey: "score")
+                    walkInfo.setValue(nameDict[_id], forKey: "name")
+                    walkInfo.setValue(_id, forKey: "id")
+                    walkInfo.setValue(friendDict[_id], forKey: "imgURL")
+                    rank += 1
+                }
+                
+                if viewContext.hasChanges {
+                    do {
+                        try viewContext.save()
+                    } catch {
+                        let nsError = error as NSError
+                        print("Unresolved error \(nsError), \(nsError.userInfo)")
+                        return
                     }
                 }
             }
@@ -329,8 +347,11 @@ func loadFeverAndCoupon() {
     
     friendSync(viewContext, db)
     
-    db.collection("fever-times").document("fevertimes").getDocument { (document, error) in
-        if let document = document, document.exists, let data = document.data(), let dat = data["times"] as? [String] {
+    Task { @MainActor in
+        let feverRes = try? await db.collection("fever-times").document("fevertimes").getDocument()
+        let couponRes = try? await db.collection("coupondata").getDocuments()
+        
+        if let feverDocs = feverRes, feverDocs.exists, let data = feverDocs.data(), let dat = data["times"] as? [String] {
             let feverDel = NSBatchDeleteRequest(fetchRequest: Fever_Times.fetchRequest())
             try! viewContext.executeAndMergeChanges(using: feverDel)
             
@@ -339,56 +360,54 @@ func loadFeverAndCoupon() {
                 let feverTimes = Fever_Times(entity: entityDescription, insertInto: viewContext)
                 feverTimes.times = i
             }
+        }
+        
+        if let couponDocs = couponRes {
+            let couDel = NSBatchDeleteRequest(fetchRequest: Coupon_Info.fetchRequest())
+            try! viewContext.executeAndMergeChanges(using: couDel)
+            var id: Int16 = 0
             
+            for document in couponDocs.documents {
+                let dat = document.data()
+                let entityDescription = NSEntityDescription.entity(forEntityName: "Coupon_Info", in: viewContext)!
+                let couponInfo = Coupon_Info(entity: entityDescription, insertInto: viewContext)
+                couponInfo.coupon_id = id
+                couponInfo.coupon_discount = dat["coupon-discount"] as? String ?? ""
+                couponInfo.coupon_url = dat["coupon-url"] as? String ?? ""
+                couponInfo.coupon_name = dat["coupon-name"] as? String ?? ""
+                id += 1
+            }
+        }
+        
+        if viewContext.hasChanges {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                print("Unresolved error \(nsError), \(nsError.userInfo)")
+                return
             }
         }
     }
-    
-    db.collection("coupondata")
-        .getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-            } else {
-                let couDel = NSBatchDeleteRequest(fetchRequest: Coupon_Info.fetchRequest())
-                try! viewContext.executeAndMergeChanges(using: couDel)
-                var id: Int16 = 0
-                
-                for document in querySnapshot!.documents {
-                    let dat = document.data()
-                    let entityDescription = NSEntityDescription.entity(forEntityName: "Coupon_Info", in: viewContext)!
-                    let couponInfo = Coupon_Info(entity: entityDescription, insertInto: viewContext)
-                    couponInfo.coupon_id = id
-                    couponInfo.coupon_discount = dat["coupon-discount"] as? String ?? ""
-                    couponInfo.coupon_url = dat["coupon-url"] as? String ?? ""
-                    couponInfo.coupon_name = dat["coupon-name"] as? String ?? ""
-                    id += 1
-                }
-                
-                do {
-                    try viewContext.save()
-                } catch {
-                    // Replace this implementation with code to handle the error appropriately.
-                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                    let nsError = error as NSError
-                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-                }
-            }
-        }
-    
-    
+}
+
+@MainActor
+func setName(uid: String, name: String) async {
+    let db = Firestore.firestore()
+    do {
+        try await db.collection("namelist").document(uid).setData([
+            "name" : name,
+            "uuid" : uid
+        ])
+    } catch {
+        print(error)
+    }
 }
 
 func runOnceEvery5Sec() {
     healthDataSync()
     let timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-        DispatchQueue.global().async {
+        Task {
             healthDataSync()
         }
     }
@@ -396,10 +415,12 @@ func runOnceEvery5Sec() {
 }
 
 func runOnceEveryOneMin() {
-    scoreSync()
+    Task {
+        await scoreSync()
+    }
     let timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
-        DispatchQueue.global().async {
-            scoreSync()
+        Task {
+            await scoreSync()
         }
     }
     RunLoop.current.add(timer, forMode: .common)

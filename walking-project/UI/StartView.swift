@@ -52,8 +52,11 @@ struct StartView: View {
                 else {
                     runOnlyOnceADay()
                     loadFeverAndCoupon()
-                    runOnceEvery5Sec()
-                    runOnceEveryOneMin()
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        runOnceEvery5Sec()
+                        runOnceEveryOneMin()
+                    }
                 }
             }
         }
@@ -83,8 +86,10 @@ struct StartView: View {
                 print("User is already signed in with Apple")
                 runOnlyOnceADay()
                 loadFeverAndCoupon()
-                runOnceEvery5Sec()
-                runOnceEveryOneMin()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    runOnceEvery5Sec()
+                    runOnceEveryOneMin()
+                }
                 router.updateRoot(root: .AppleMain)
                 router.popToRoot()
             case .revoked:

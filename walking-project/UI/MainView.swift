@@ -16,6 +16,12 @@ struct MainView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
+        entity: My_Info.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \My_Info.my_id, ascending: true)],
+        animation: .default)
+    private var myInfo: FetchedResults<My_Info>
+    
+    @FetchRequest(
         entity: Walk_Info.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Walk_Info.rank, ascending: true)],
         animation: .default)
@@ -23,7 +29,7 @@ struct MainView: View {
     
     @FetchRequest(
         entity: My_Walk.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.my_id, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \My_Walk.current_point, ascending: true)],
         animation: .default)
     private var myWalk: FetchedResults<My_Walk>
     
@@ -225,7 +231,7 @@ struct MainView: View {
                                     .font(.customFont(.main, size: 20))
                                     .foregroundColor(Color("MainColor"))
                                 ForEach(walkInfo) { info in
-                                    if info.id != myWalk.first?.my_id {
+                                    if info.id != myInfo.first?.my_id {
                                         WalkInfoView(info: info, metrics: metrics, isCurrentUser: false)
                                     } else {
                                         WalkInfoView(info: info, metrics: metrics, isCurrentUser: true)
@@ -236,7 +242,7 @@ struct MainView: View {
                         }
                         
                         ForEach(walkInfo) { info in
-                            if info.id == myWalk.first?.my_id {
+                            if info.id == myInfo.first?.my_id {
                                 HStack{
                                     VStack(spacing: 0){
                                         HStack{

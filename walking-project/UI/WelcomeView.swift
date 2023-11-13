@@ -47,8 +47,11 @@ struct WelcomeView: View {
              }
              firstTimeSetup()
              loadFeverAndCoupon()
-             runOnceEvery5Sec()
-             runOnceEveryOneMin()
+             
+             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                 runOnceEvery5Sec()
+                 runOnceEveryOneMin()
+             }
              
              DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                  router.popToRoot()
