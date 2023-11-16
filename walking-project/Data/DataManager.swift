@@ -300,8 +300,8 @@ func scoreSync() {
                 for document in scoreSnap.documents {
                     let dat = document.data()
                     let score = dat["score"] as? Int64 ?? 0
-                    let name = dat["name"] as? String ?? ""
                     let uId = dat["uuid"] as? String ?? ""
+                    let name = nameDict[uId]
                     let uThumb = friendDict[uId]
                     uuids.insert(uId)
                     
