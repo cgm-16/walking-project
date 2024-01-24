@@ -408,7 +408,7 @@ struct FancyIndexView: View {
     
     var body: some View {
         HStack(spacing: circleSpacing) {
-            ForEach(0..<2) { index in
+            ForEach(0..<3) { index in
                 Circle()
                     .fill(currentIndex == index ? primaryColor : secondaryColor)
                     .scaleEffect(currentIndex == index ? 1 : smallScale)
