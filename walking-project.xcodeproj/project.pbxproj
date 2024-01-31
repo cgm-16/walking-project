@@ -38,12 +38,8 @@
 		C17BF92529A615CB00EEFF97 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* HomeView.swift */; };
 		C17C070E2B6A23DF001A3F10 /* firestore.rules in Resources */ = {isa = PBXBuildFile; fileRef = C17C06FE2B6A23DF001A3F10 /* firestore.rules */; };
 		C17C070F2B6A23DF001A3F10 /* .firebaserc in Resources */ = {isa = PBXBuildFile; fileRef = C17C06FF2B6A23DF001A3F10 /* .firebaserc */; };
-		C17C07102B6A23DF001A3F10 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = C17C07002B6A23DF001A3F10 /* .gitignore */; };
 		C17C07112B6A23DF001A3F10 /* package-lock.json in Resources */ = {isa = PBXBuildFile; fileRef = C17C07012B6A23DF001A3F10 /* package-lock.json */; };
-		C17C07122B6A23DF001A3F10 /* package.json in Resources */ = {isa = PBXBuildFile; fileRef = C17C07022B6A23DF001A3F10 /* package.json */; };
 		C17C07132B6A23DF001A3F10 /* tsconfig.dev.json in Resources */ = {isa = PBXBuildFile; fileRef = C17C07042B6A23DF001A3F10 /* tsconfig.dev.json */; };
-		C17C07142B6A23DF001A3F10 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = C17C07052B6A23DF001A3F10 /* .gitignore */; };
-		C17C07152B6A23DF001A3F10 /* package-lock.json in Resources */ = {isa = PBXBuildFile; fileRef = C17C07062B6A23DF001A3F10 /* package-lock.json */; };
 		C17C07162B6A23DF001A3F10 /* package.json in Resources */ = {isa = PBXBuildFile; fileRef = C17C07072B6A23DF001A3F10 /* package.json */; };
 		C17C07172B6A23DF001A3F10 /* .eslintrc.js in Resources */ = {isa = PBXBuildFile; fileRef = C17C07082B6A23DF001A3F10 /* .eslintrc.js */; };
 		C17C07182B6A23DF001A3F10 /* tsconfig.json in Resources */ = {isa = PBXBuildFile; fileRef = C17C07092B6A23DF001A3F10 /* tsconfig.json */; };
@@ -109,7 +105,7 @@
 		C17C07072B6A23DF001A3F10 /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = package.json; sourceTree = "<group>"; };
 		C17C07082B6A23DF001A3F10 /* .eslintrc.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = .eslintrc.js; sourceTree = "<group>"; };
 		C17C07092B6A23DF001A3F10 /* tsconfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tsconfig.json; sourceTree = "<group>"; };
-		C17C070B2B6A23DF001A3F10 /* index.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = index.ts; sourceTree = "<group>"; };
+		C17C070B2B6A23DF001A3F10 /* index.ts */ = {isa = PBXFileReference; explicitFileType = sourcecode.typescript; fileEncoding = 4; path = index.ts; sourceTree = "<group>"; };
 		C17C070C2B6A23DF001A3F10 /* firebase.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = firebase.json; sourceTree = "<group>"; };
 		C17C070D2B6A23DF001A3F10 /* firestore.indexes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = firestore.indexes.json; sourceTree = "<group>"; };
 		C18FA91E2A17586500B7A60B /* LuckiestGuy-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LuckiestGuy-Regular.ttf"; sourceTree = "<group>"; };
@@ -410,7 +406,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C17C07142B6A23DF001A3F10 /* .gitignore in Resources */,
 				C17C070F2B6A23DF001A3F10 /* .firebaserc in Resources */,
 				C17C07172B6A23DF001A3F10 /* .eslintrc.js in Resources */,
 				C17C07162B6A23DF001A3F10 /* package.json in Resources */,
@@ -419,7 +414,6 @@
 				C17C070E2B6A23DF001A3F10 /* firestore.rules in Resources */,
 				C1D3986B2A0E5B8800C7DF4D /* CoffeeHealingItalic.ttf in Resources */,
 				C17C07132B6A23DF001A3F10 /* tsconfig.dev.json in Resources */,
-				C17C07102B6A23DF001A3F10 /* .gitignore in Resources */,
 				C17C07182B6A23DF001A3F10 /* tsconfig.json in Resources */,
 				C17C071A2B6A23DF001A3F10 /* firestore.indexes.json in Resources */,
 				C18FA91F2A17586500B7A60B /* LuckiestGuy-Regular.ttf in Resources */,
@@ -429,9 +423,7 @@
 				C12D571B29B876C700ADE5F9 /* LaunchScreen.storyboard in Resources */,
 				C1144177298107CF00B3ACB5 /* Assets.xcassets in Resources */,
 				C1D3986A2A0E5B8500C7DF4D /* CoffeeHealing.ttf in Resources */,
-				C17C07122B6A23DF001A3F10 /* package.json in Resources */,
 				C1437F9D29CB092800138BBC /* GoogleService-Info.plist in Resources */,
-				C17C07152B6A23DF001A3F10 /* package-lock.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
