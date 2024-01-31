@@ -36,6 +36,7 @@
 		C156898C29B01D2700A547B5 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C156898B29B01D2700A547B5 /* WelcomeView.swift */; };
 		C17BF92329A6144700EEFF97 /* CouponView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92229A6144700EEFF97 /* CouponView.swift */; };
 		C17BF92529A615CB00EEFF97 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17BF92429A615CB00EEFF97 /* HomeView.swift */; };
+		C1898CAE2B6397FA005E79DA /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C1898CAD2B6397FA005E79DA /* FirebaseMessaging */; };
 		C18FA91F2A17586500B7A60B /* LuckiestGuy-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C18FA91E2A17586500B7A60B /* LuckiestGuy-Regular.ttf */; };
 		C197725129B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197724F29B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg */; };
 		C197725229B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197725029B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg */; };
@@ -43,7 +44,6 @@
 		C1D398692A0E572300C7DF4D /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D398682A0E572300C7DF4D /* FontManager.swift */; };
 		C1D3986A2A0E5B8500C7DF4D /* CoffeeHealing.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1D398672A0E570F00C7DF4D /* CoffeeHealing.ttf */; };
 		C1D3986B2A0E5B8800C7DF4D /* CoffeeHealingItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1D398662A0E570F00C7DF4D /* CoffeeHealingItalic.ttf */; };
-		C1D72DF52AF23F4E0072D42E /* firebase-functions in Resources */ = {isa = PBXBuildFile; fileRef = C1D72DF42AF23F4E0072D42E /* firebase-functions */; };
 		C1D72DF72AF38C710072D42E /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = C1D72DF62AF38C710072D42E /* FirebaseFunctions */; };
 		C1F2D8B929CEF0E400796CCC /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C1F2D8B829CEF0E400796CCC /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
@@ -92,7 +92,6 @@
 		C1D398662A0E570F00C7DF4D /* CoffeeHealingItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CoffeeHealingItalic.ttf; sourceTree = "<group>"; };
 		C1D398672A0E570F00C7DF4D /* CoffeeHealing.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CoffeeHealing.ttf; sourceTree = "<group>"; };
 		C1D398682A0E572300C7DF4D /* FontManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
-		C1D72DF42AF23F4E0072D42E /* firebase-functions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "firebase-functions"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +108,7 @@
 			files = (
 				C12D571829B871B200ADE5F9 /* KakaoSDKUser in Frameworks */,
 				C12D571229B871B200ADE5F9 /* KakaoSDK in Frameworks */,
+				C1898CAE2B6397FA005E79DA /* FirebaseMessaging in Frameworks */,
 				C1437FA029CB09F500138BBC /* FirebaseAnalytics in Frameworks */,
 				C1D72DF72AF38C710072D42E /* FirebaseFunctions in Frameworks */,
 				C10E0FAC29B87EED00496938 /* KakaoSDKTalk in Frameworks */,
@@ -140,7 +140,6 @@
 		C1144166298107CD00B3ACB5 = {
 			isa = PBXGroup;
 			children = (
-				C1D72DF42AF23F4E0072D42E /* firebase-functions */,
 				C1144171298107CD00B3ACB5 /* walking-project */,
 				C112372E2A29D44900AC1329 /* walking-projectTests */,
 				C1144170298107CD00B3ACB5 /* Products */,
@@ -286,6 +285,7 @@
 				C1F2D8B829CEF0E400796CCC /* FirebaseFirestore */,
 				C13E3CF72A209EF300E77E21 /* FirebaseAuth */,
 				C1D72DF62AF38C710072D42E /* FirebaseFunctions */,
+				C1898CAD2B6397FA005E79DA /* FirebaseMessaging */,
 			);
 			productName = "walking-project";
 			productReference = C114416F298107CD00B3ACB5 /* walking-project.app */;
@@ -352,7 +352,6 @@
 				C197725229B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg in Resources */,
 				C12D571B29B876C700ADE5F9 /* LaunchScreen.storyboard in Resources */,
 				C1144177298107CF00B3ACB5 /* Assets.xcassets in Resources */,
-				C1D72DF52AF23F4E0072D42E /* firebase-functions in Resources */,
 				C1D3986A2A0E5B8500C7DF4D /* CoffeeHealing.ttf in Resources */,
 				C1437F9D29CB092800138BBC /* GoogleService-Info.plist in Resources */,
 			);
@@ -736,6 +735,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C1437F9E29CB09F500138BBC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
+		};
+		C1898CAD2B6397FA005E79DA /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C1437F9E29CB09F500138BBC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		C1D72DF62AF38C710072D42E /* FirebaseFunctions */ = {
 			isa = XCSwiftPackageProductDependency;

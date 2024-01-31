@@ -305,6 +305,13 @@ func scoreSync() {
                     let uThumb = friendDict[uId]
                     uuids.insert(uId)
                     
+                    if uId == uuid {
+                        print(uId, uuid)
+                        if let pastRank = try? viewContext.fetch(Past_Rank.fetchRequest()).first {
+                            pastRank.current = rank
+                        }
+                    }
+                    
                     let entityDescription = NSEntityDescription.entity(forEntityName: "Walk_Info", in: viewContext)!
                     let walkInfo = Walk_Info(entity: entityDescription, insertInto: viewContext)
                     walkInfo.setValue(rank, forKey: "rank")
