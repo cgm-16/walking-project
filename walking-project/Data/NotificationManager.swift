@@ -99,9 +99,13 @@ public func pushEveningNotif() {
     
     Task { @MainActor in
         let perms = await getUNPerms()
+        print("perms are \(perms.authorizationStatus.rawValue.description)")
         guard perms.authorizationStatus == .authorized else { return }
         let viewContext = DataManager.shared.viewContext
-        guard let pastRank = try? viewContext.fetch(Past_Rank.fetchRequest()).first else { return }
+        guard let pastRank = try? viewContext.fetch(Past_Rank.fetchRequest()).first else {
+            print("cant find pastRank. Sorry!")
+            return
+        }
         
         if pastRank.morning == 0 {
             content.body = PushTextString.InitText.text
