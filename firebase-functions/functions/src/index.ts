@@ -6,6 +6,7 @@ import { setGlobalOptions } from "firebase-functions/v2/options";
 
 admin.initializeApp();
 
+const EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 60;
 const db = admin.firestore();
 const batch = db.batch();
 const messaging = getMessaging();
@@ -246,4 +247,15 @@ export const sendevenfcm = onSchedule("30 8 * * *", async () => {
     console.error("Error sendevenfcm:", error);
     throw new HttpsError("internal", "Error in sendevenfcm");
   }
+});
+
+export const prunetokens = onSchedule("every 24 hours", async () => {
+  const staleTokensResult = await db
+    .collection("fcmtokens")
+    .where("timestamp", "<", Date.now() - EXPIRATION_TIME)
+    .get();
+  // Delete devices with stale tokens
+  staleTokensResult.forEach((doc) => {
+    doc.ref.delete();
+  });
 });
