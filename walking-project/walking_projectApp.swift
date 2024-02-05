@@ -10,6 +10,7 @@ import BackgroundTasks
 import KakaoSDKCommon
 import KakaoSDKAuth
 import FirebaseCore
+import FirebaseFirestore
 import FirebaseMessaging
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,24 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         
         return true
-    }
-    
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-        // If you are receiving a notification message while your app is in the background,
-        // this callback will not be fired till the user taps on the notification launching the application.
-        // TODO: Handle data of notification
-        
-        // With swizzling disabled you must let Messaging know about the message, for Analytics
-        Messaging.messaging().appDidReceiveMessage(userInfo)
-        
-        // Print message ID.
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
-        }
-        
-        // Print full message.
-        print(userInfo)
     }
     
     // [START receive_message]
@@ -63,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // Print full message.
-        print(userInfo)
+        print("userInfo in didReceiveRemoteNotification is \(userInfo), noti is \(userInfo["noti"] as? String ?? "well that is fucked")")
         
         return UIBackgroundFetchResult.newData
     }
@@ -171,6 +154,8 @@ extension AppDelegate: MessagingDelegate {
         )
         // TODO: If necessary send token to application server.
         // Note: This callback is fired at each app startup and whenever a new token is generated.
+        
+        FCMInfo.fcmToken = fcmToken ?? ""
         
         Messaging.messaging().subscribe(toTopic: "walkers")
     }
