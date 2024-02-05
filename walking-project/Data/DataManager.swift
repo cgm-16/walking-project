@@ -95,6 +95,10 @@ struct KakaoFriendResult {
     var FThumbs : [String]
 }
 
+struct FCMInfo {
+    static var fcmToken : String = ""
+}
+
 private func findUidThumb() async throws -> (KakaoUserResult) {
     return try await withCheckedThrowingContinuation { continuation in
         UserApi.shared.me() { (user, error) in
@@ -154,6 +158,7 @@ private func friendSync(_ viewContext: NSManagedObjectContext, _ db: Firestore) 
                 myInfo.my_id = uInfo.uid
                 myInfo.my_thumb = uInfo.thumb
             }
+            await fcmSync(uid: uInfo.uid, fcmToken: FCMInfo.fcmToken, db: db)
         }
         
         if viewContext.hasChanges {
@@ -165,6 +170,15 @@ private func friendSync(_ viewContext: NSManagedObjectContext, _ db: Firestore) 
                 return
             }
         }
+    }
+    
+    @Sendable
+    func fcmSync(uid: String, fcmToken: String, db: Firestore) async {
+        try? await db.collection("fcmtokens").document(uid).setData([
+            "token" : fcmToken,
+            "timestamp" : FieldValue.serverTimestamp(),
+            "uuid" : uid
+        ])
     }
 }
 
@@ -304,13 +318,6 @@ func scoreSync() {
                     let name = nameDict[uId]
                     let uThumb = friendDict[uId]
                     uuids.insert(uId)
-                    
-                    if uId == uuid {
-                        print(uId, uuid)
-                        if let pastRank = try? viewContext.fetch(Past_Rank.fetchRequest()).first {
-                            pastRank.current = rank
-                        }
-                    }
                     
                     let entityDescription = NSEntityDescription.entity(forEntityName: "Walk_Info", in: viewContext)!
                     let walkInfo = Walk_Info(entity: entityDescription, insertInto: viewContext)

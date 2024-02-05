@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { ApnsPayload, getMessaging, Message } from "firebase-admin/messaging";
+import { getMessaging, Message } from "firebase-admin/messaging";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { setGlobalOptions } from "firebase-functions/v2/options";
@@ -7,14 +7,28 @@ import { setGlobalOptions } from "firebase-functions/v2/options";
 admin.initializeApp();
 
 const db = admin.firestore();
+const batch = db.batch();
 const messaging = getMessaging();
-const walkers = "walkers";
-const silent: ApnsPayload = { aps: { contentAvailable: true } };
+const mornNoti = (body: string) => new Notification("아침 알림", { body });
+const evenNoti = (body: string) => new Notification("저녁 알림", { body });
 
 setGlobalOptions({ region: "asia-northeast3" });
 
+enum PushTextString {
+  FirstMorning = "1등을 유지 중이네요 굿~~",
+  FirstEvening = "여전히 1등을 유지 중이네요 굿~~",
+  SameMorning = "같은 순위를 유지중이네요! 오늘도 화이팅!",
+  SameEvening = "같은 순위를 유지중이네요! 오늘도 화이팅!",
+  DiffPreMorning = "어제보다 순위가",
+  DiffPreEvening = "아침보다 순위가",
+  DiffSufHigher = "계단 상승했어요! 굿~~",
+  DiffSufLower = "계단 하락했어요! ㅠㅠ 분발하세여",
+  NoPastRecordMorning = "어제 기록이 없네요 ㅠㅠ 분발하세여",
+  CanNotCompare = "다음 알림 부터는 순위를 알려줄 거에요!",
+}
+
 // Function to delete all docs every monday 4am
-export const deletealldocuments = onSchedule("0 4 * * 1", () => {
+export const deletealldocuments = onSchedule("0 19 * * 0", () => {
   const scoreboardRef = db.collection("scoreboard");
 
   scoreboardRef
@@ -37,7 +51,6 @@ export const deletealldocuments = onSchedule("0 4 * * 1", () => {
 
 // Function to show ranking percentage
 export const showrankingpercentage = onCall(async (req) => {
-  const db = admin.firestore();
   const scoreboardRef = db.collection("scoreboard");
   const uuid = req.data.uuid as number;
 
@@ -63,42 +76,174 @@ export const showrankingpercentage = onCall(async (req) => {
   }
 });
 
-// Function to send silent notification on 11:30am everyday
-export const sendmornfcm = onSchedule("30 11 * * *", () => {
-  const message: Message = {
-    topic: walkers,
-    apns: {
-      payload: silent,
-    },
-    data: { noti: "morning" },
-  };
+// Function to send notification on 11:30am everyday
+// copies the contents of scoreboard to lastboard at execution
+export const sendmornfcm = onSchedule("30 2 * * *", async () => {
+  const fcmtokensRef = db.collection("fcmtokens");
+  const scoreboardRef = db.collection("scoreboard");
+  const lastboardRef = db.collection("lastboard");
 
-  messaging
-    .send(message)
-    .then((res) => {
-      console.log("Morning notification done", res);
-    })
-    .catch((err) => {
-      console.log("Error sending notification", err);
-    });
+  try {
+    const fcmsnap = await fcmtokensRef.get();
+    const scoresnap = await scoreboardRef.orderBy("score", "desc").get();
+    const lastsnap = await lastboardRef.orderBy("score", "desc").get();
+
+    for (const doc of fcmsnap.docs) {
+      const uuid = doc.get("uuid") as number;
+
+      const rank =
+        scoresnap.docs.findIndex((item) => {
+          (item.get("uuid") as number) === uuid;
+        }) + 1;
+      const lastRank =
+        lastsnap.docs.findIndex((item) => {
+          (item.get("uuid") as number) === uuid;
+        }) + 1;
+
+      const message: Message = {
+        token: doc.get("token") as string,
+      };
+
+      if (rank === 0 || lastRank === 0) {
+        message.notification = mornNoti(PushTextString.CanNotCompare);
+      } else if (rank === 1 && lastRank === 1) {
+        message.notification = mornNoti(PushTextString.FirstMorning);
+      } else if (rank !== 1 && rank < lastRank) {
+        message.notification = mornNoti(
+          `${PushTextString.DiffPreMorning} ${lastRank - rank}${
+            PushTextString.DiffSufHigher
+          }`
+        );
+      } else if (rank !== 1 && rank > lastRank) {
+        message.notification = mornNoti(
+          `${PushTextString.DiffPreMorning} ${rank - lastRank}${
+            PushTextString.DiffSufLower
+          }`
+        );
+      } else {
+        message.notification = mornNoti(PushTextString.SameMorning);
+      }
+
+      try {
+        await messaging.send(message);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log("Error sending notification", err);
+        } else {
+          console.log("Error sending notification", String(err));
+        }
+      }
+    }
+
+    let count = 0;
+    const docs = lastsnap.docs;
+    for (const doc of docs) {
+      if (count <= 450) {
+        batch.delete(doc.ref);
+        count += 1;
+      } else {
+        count = 0;
+        await batch.commit();
+      }
+    }
+    for (const doc of scoresnap.docs) {
+      if (count <= 450) {
+        batch.create(lastboardRef.doc(doc.get("uuid") as string), doc.data);
+        count += 1;
+      } else {
+        count = 0;
+        await batch.commit();
+      }
+    }
+    await batch.commit();
+  } catch (error) {
+    console.error("Error sendmornfcm:", error);
+    throw new HttpsError("internal", "Error in sendmornfcm");
+  }
 });
 
-// Function to send silent notification on 5:30pm everyday
-export const sendevenfcm = onSchedule("30 17 * * *", () => {
-  const message: Message = {
-    topic: walkers,
-    apns: {
-      payload: silent,
-    },
-    data: { noti: "evening" },
-  };
+// Function to send notification on 5:30pm everyday
+// copies the contents of scoreboard to lastboard at execution
+export const sendevenfcm = onSchedule("30 8 * * *", async () => {
+  const fcmtokensRef = db.collection("fcmtokens");
+  const scoreboardRef = db.collection("scoreboard");
+  const lastboardRef = db.collection("lastboard");
 
-  messaging
-    .send(message)
-    .then((res) => {
-      console.log("Evening notification done", res);
-    })
-    .catch((err) => {
-      console.log("Error sending notification", err);
-    });
+  try {
+    const fcmsnap = await fcmtokensRef.get();
+    const scoresnap = await scoreboardRef.orderBy("score", "desc").get();
+    const lastsnap = await lastboardRef.orderBy("score", "desc").get();
+
+    for (const doc of fcmsnap.docs) {
+      const uuid = doc.get("uuid") as number;
+
+      const rank =
+        scoresnap.docs.findIndex((item) => {
+          (item.get("uuid") as number) === uuid;
+        }) + 1;
+      const lastRank =
+        lastsnap.docs.findIndex((item) => {
+          (item.get("uuid") as number) === uuid;
+        }) + 1;
+
+      const message: Message = {
+        token: doc.get("token") as string,
+      };
+
+      if (rank === 0 || lastRank === 0) {
+        message.notification = evenNoti(PushTextString.CanNotCompare);
+      } else if (rank === 1 && lastRank === 1) {
+        message.notification = evenNoti(PushTextString.FirstEvening);
+      } else if (rank !== 1 && rank < lastRank) {
+        message.notification = evenNoti(
+          `${PushTextString.DiffPreEvening} ${lastRank - rank}${
+            PushTextString.DiffSufHigher
+          }`
+        );
+      } else if (rank !== 1 && rank > lastRank) {
+        message.notification = evenNoti(
+          `${PushTextString.DiffPreEvening} ${rank - lastRank}${
+            PushTextString.DiffSufLower
+          }`
+        );
+      } else {
+        message.notification = evenNoti(PushTextString.SameEvening);
+      }
+
+      try {
+        await messaging.send(message);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log("Error sending notification", err);
+        } else {
+          console.log("Error sending notification", String(err));
+        }
+      }
+    }
+
+    let count = 0;
+    const docs = lastsnap.docs;
+    for (const doc of docs) {
+      if (count <= 450) {
+        batch.delete(doc.ref);
+        count += 1;
+      } else {
+        count = 0;
+        await batch.commit();
+      }
+    }
+    for (const doc of scoresnap.docs) {
+      if (count <= 450) {
+        batch.create(lastboardRef.doc(doc.get("uuid") as string), doc.data);
+        count += 1;
+      } else {
+        count = 0;
+        await batch.commit();
+      }
+    }
+    await batch.commit();
+  } catch (error) {
+    console.error("Error sendevenfcm:", error);
+    throw new HttpsError("internal", "Error in sendevenfcm");
+  }
 });
