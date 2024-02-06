@@ -155,7 +155,10 @@ export const sendmornfcm = onSchedule("30 2 * * *", async () => {
     }
     for (const doc of scoresnap.docs) {
       if (count <= 450) {
-        batch.create(lastboardRef.doc(doc.get("uuid") as string), doc.data);
+        batch.create(lastboardRef.doc(doc.get("uuid") as string), {
+          "uuid": doc.get("uuid") as string,
+          "score": doc.get("score") as string,
+        });
         count += 1;
       } else {
         count = 0;
@@ -239,9 +242,14 @@ export const sendevenfcm = onSchedule("30 8 * * *", async () => {
         await batch.commit();
       }
     }
+    await batch.commit();
+
     for (const doc of scoresnap.docs) {
       if (count <= 450) {
-        batch.create(lastboardRef.doc(doc.get("uuid") as string), doc.data);
+        batch.create(lastboardRef.doc(doc.get("uuid") as string), {
+          "uuid": doc.get("uuid") as string,
+          "score": doc.get("score") as string,
+        });
         count += 1;
       } else {
         count = 0;
