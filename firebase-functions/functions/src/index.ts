@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { getMessaging, Message } from "firebase-admin/messaging";
+import { getMessaging, Message, Notification } from "firebase-admin/messaging";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { setGlobalOptions } from "firebase-functions/v2/options";
@@ -10,8 +10,14 @@ const EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 60;
 const db = admin.firestore();
 const batch = db.batch();
 const messaging = getMessaging();
-const mornNoti = (body: string) => new Notification("아침 알림", { body });
-const evenNoti = (body: string) => new Notification("저녁 알림", { body });
+const mornNoti = (body: string): Notification => ({
+  title: "점심 알림",
+  body,
+});
+const evenNoti = (body: string): Notification => ({
+  title: "저녁 알림",
+  body,
+});
 
 setGlobalOptions({ region: "asia-northeast3" });
 
@@ -215,9 +221,9 @@ export const sendevenfcm = onSchedule("30 8 * * *", async () => {
         await messaging.send(message);
       } catch (err) {
         if (err instanceof Error) {
-          console.log("Error sending notification", err);
+          console.error("Error sending notification", err);
         } else {
-          console.log("Error sending notification", String(err));
+          console.error("Error sending notification", String(err));
         }
       }
     }
