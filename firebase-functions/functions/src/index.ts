@@ -3,12 +3,12 @@ import { getMessaging, Message, Notification } from "firebase-admin/messaging";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { setGlobalOptions } from "firebase-functions/v2/options";
+import { Firestore, WriteBatch } from "firebase-admin/firestore";
 
 admin.initializeApp();
 
 const EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 60;
 const db = admin.firestore();
-const batch = db.batch();
 const messaging = getMessaging();
 const mornNoti = (body: string): Notification => ({
   title: "점심 알림",
@@ -33,6 +33,24 @@ enum PushTextString {
   NoPastRecordMorning = "어제 기록이 없네요 ㅠㅠ 분발하세여",
   CanNotCompare = "다음 알림 부터는 순위를 알려줄 거에요!",
 }
+
+const commit = async (
+  batch: WriteBatch,
+  db: Firestore
+): Promise<admin.firestore.WriteBatch> => {
+  try {
+    await batch.commit();
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error("Error commiting writebatch", err);
+      throw err;
+    } else {
+      console.error("Error commiting writebatch", String(err));
+      throw err;
+    }
+  }
+  return db.batch();
+};
 
 // Function to delete all docs every monday 4am
 export const deletealldocuments = onSchedule("0 19 * * 0", () => {
@@ -94,6 +112,7 @@ export const sendmornfcm = onSchedule("30 2 * * *", async () => {
     const fcmsnap = await fcmtokensRef.get();
     const scoresnap = await scoreboardRef.orderBy("score", "desc").get();
     const lastsnap = await lastboardRef.orderBy("score", "desc").get();
+    let batch = db.batch();
 
     for (const doc of fcmsnap.docs) {
       const uuid = doc.get("uuid") as number;
@@ -135,9 +154,9 @@ export const sendmornfcm = onSchedule("30 2 * * *", async () => {
         await messaging.send(message);
       } catch (err) {
         if (err instanceof Error) {
-          console.log("Error sending notification", err);
+          console.error("Error sending notification", err);
         } else {
-          console.log("Error sending notification", String(err));
+          console.error("Error sending notification", String(err));
         }
       }
     }
@@ -145,24 +164,24 @@ export const sendmornfcm = onSchedule("30 2 * * *", async () => {
     let count = 0;
     const docs = lastsnap.docs;
     for (const doc of docs) {
-      if (count <= 450) {
+      if (count <= 490) {
         batch.delete(doc.ref);
         count += 1;
       } else {
         count = 0;
-        await batch.commit();
+        batch = await commit(batch, db);
       }
     }
     for (const doc of scoresnap.docs) {
-      if (count <= 450) {
+      if (count <= 490) {
         batch.create(lastboardRef.doc(doc.get("uuid") as string), {
-          "uuid": doc.get("uuid") as string,
-          "score": doc.get("score") as string,
+          uuid: doc.get("uuid") as string,
+          score: doc.get("score") as string,
         });
         count += 1;
       } else {
         count = 0;
-        await batch.commit();
+        batch = await commit(batch, db);
       }
     }
     await batch.commit();
@@ -183,6 +202,7 @@ export const sendevenfcm = onSchedule("30 8 * * *", async () => {
     const fcmsnap = await fcmtokensRef.get();
     const scoresnap = await scoreboardRef.orderBy("score", "desc").get();
     const lastsnap = await lastboardRef.orderBy("score", "desc").get();
+    let batch = db.batch();
 
     for (const doc of fcmsnap.docs) {
       const uuid = doc.get("uuid") as number;
@@ -234,26 +254,24 @@ export const sendevenfcm = onSchedule("30 8 * * *", async () => {
     let count = 0;
     const docs = lastsnap.docs;
     for (const doc of docs) {
-      if (count <= 450) {
+      if (count <= 490) {
         batch.delete(doc.ref);
         count += 1;
       } else {
         count = 0;
-        await batch.commit();
+        batch = await commit(batch, db);
       }
     }
-    await batch.commit();
-
     for (const doc of scoresnap.docs) {
-      if (count <= 450) {
+      if (count <= 490) {
         batch.create(lastboardRef.doc(doc.get("uuid") as string), {
-          "uuid": doc.get("uuid") as string,
-          "score": doc.get("score") as string,
+          uuid: doc.get("uuid") as string,
+          score: doc.get("score") as string,
         });
         count += 1;
       } else {
         count = 0;
-        await batch.commit();
+        batch = await commit(batch, db);
       }
     }
     await batch.commit();
