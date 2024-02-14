@@ -350,7 +350,7 @@ func calcCum() {
                     myWalk.cum_walked = Int64(score * STEPSTOPOINTS)
                 }
             }
-
+            
             do {
                 try viewContext.save()
             } catch {

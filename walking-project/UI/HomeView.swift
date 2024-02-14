@@ -188,9 +188,9 @@ struct HomeView: View {
                     kkoLoginAction()
                 }, label: {
                     Image("KkoLogin")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(.horizontal, 20)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.horizontal, 20)
                 })
                 .offset(y: -45)
                 

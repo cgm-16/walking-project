@@ -15,7 +15,7 @@ import FirebaseFunctions
 
 struct DataManager {
     static let shared = DataManager()
-
+    
     // MARK: - Remove in production - Placeholder only !!!!
     static var preview: DataManager = {
         let result = DataManager(inMemory: true)

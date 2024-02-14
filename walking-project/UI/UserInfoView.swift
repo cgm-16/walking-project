@@ -150,9 +150,9 @@ struct UserInfoView: View {
                                 .italic()
                                 .frame(maxWidth: 100, maxHeight: 40)
                                 .overlay(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke(Color("MainColor"), lineWidth: 1)
-                                    )
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color("MainColor"), lineWidth: 1)
+                                )
                                 .keyboardType(.numberPad)
                                 .focused($focusedHeight)
                                 .onAppear{
@@ -181,9 +181,9 @@ struct UserInfoView: View {
                                 .italic()
                                 .frame(maxWidth: 120, maxHeight: 40)
                                 .overlay(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke(Color("MainColor"), lineWidth: 1)
-                                    )
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color("MainColor"), lineWidth: 1)
+                                )
                                 .keyboardType(.numberPad)
                                 .onChange(of: userData.userWeight) {newValue in
                                     let value = String(newValue.replacingOccurrences(

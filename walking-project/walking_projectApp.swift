@@ -78,7 +78,7 @@ struct walking_projectApp: App {
     }
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
+    
     let dataManager = DataManager.shared
     
     var body: some Scene {
@@ -86,10 +86,10 @@ struct walking_projectApp: App {
             StartView()
                 .environment(\.managedObjectContext, dataManager.container.viewContext)
                 .onOpenURL(perform: { url in
-                                if (AuthApi.isKakaoTalkLoginUrl(url)) {
-                                    AuthController.handleOpenUrl(url: url)
-                                }
-                            })
+                    if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                        AuthController.handleOpenUrl(url: url)
+                    }
+                })
         }
     }
 }
@@ -161,4 +161,4 @@ extension AppDelegate: MessagingDelegate {
     }
     
     // [END refresh_token]
-    }
+}

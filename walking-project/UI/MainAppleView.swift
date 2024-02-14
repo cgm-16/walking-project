@@ -57,7 +57,7 @@ struct MainAppleView: View {
                             
                             HStack{
                                 Spacer()
-                                #if DEBUG
+#if DEBUG
                                 Button(action: {
                                     resetCoupon()
                                 }, label: {
@@ -76,7 +76,7 @@ struct MainAppleView: View {
                                         .foregroundColor(Color("AccentColor"))
                                         .padding(1)
                                 })
-                                #endif
+#endif
                                 if let curPoint = myWalk.first?.current_point, curPoint >= COUPON_ACTIVATION_POINTS, checkCoupon() {
                                     Button(action: {router.push(.Coupon)}, label: {
                                         Image("TicketIcon")
@@ -177,9 +177,9 @@ struct MainAppleView: View {
                     // MARK: - Ranking Zone
                     
                     Image("LeaderBoardImg")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: metrics.size.width * 0.8)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: metrics.size.width * 0.8)
                 }
             }
             

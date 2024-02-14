@@ -11,7 +11,7 @@ import CoreData
 
 struct CouponView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+    
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Coupon_Info.coupon_id, ascending: true)],
         animation: .default)
