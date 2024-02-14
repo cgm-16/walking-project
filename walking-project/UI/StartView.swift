@@ -51,7 +51,7 @@ struct StartView: View {
                 }
                 else {
                     runOnlyOnceADay()
-                    loadFeverAndCoupon()
+                    onAppStartRun()
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         runOnceEvery10Sec()
@@ -85,7 +85,7 @@ struct StartView: View {
             case .authorized:
                 print("User is already signed in with Apple")
                 runOnlyOnceADay()
-                loadFeverAndCoupon()
+                onAppStartRun()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     runOnceEvery10Sec()
                     runOnceEveryOneMin()

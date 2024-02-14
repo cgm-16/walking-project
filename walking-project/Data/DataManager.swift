@@ -355,7 +355,7 @@ func scoreSync() {
     }
 }
 
-func loadFeverAndCoupon() {
+func onAppStartRun() {
     let db = Firestore.firestore()
     let viewContext = DataManager.shared.viewContext
     

@@ -45,7 +45,7 @@ struct WelcomeView: View {
              case nil:
                  router.updateRoot(root: .Main)
              }
-             loadFeverAndCoupon()
+             onAppStartRun()
              
              DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                  firstTimeSetup()
