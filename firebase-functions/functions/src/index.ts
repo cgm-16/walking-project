@@ -22,17 +22,33 @@ const evenNoti = (body: string): Notification => ({
 setGlobalOptions({ region: "asia-northeast3" });
 
 enum PushTextString {
-  FirstMorning = "1등을 유지 중이네요 굿~~",
-  FirstEvening = "여전히 1등을 유지 중이네요 굿~~",
-  SameMorning = "같은 순위를 유지중이네요! 오늘도 화이팅!",
-  SameEvening = "같은 순위를 유지중이네요! 오늘도 화이팅!",
-  DiffPreMorning = "어제보다 순위가",
-  DiffPreEvening = "아침보다 순위가",
-  DiffSufHigher = "계단 상승했어요! 굿~~",
-  DiffSufLower = "계단 하락했어요! ㅠㅠ 분발하세여",
-  NoPastRecordMorning = "어제 기록이 없네요 ㅠㅠ 분발하세여",
-  CanNotCompare = "다음 알림 부터는 순위를 알려줄 거에요!",
+  FIRSTMORNING = "1등을 유지 중이네요 굿~~",
+  FIRSTEVENING = "여전히 1등을 유지 중이네요 굿~~",
+  SAMEMORNING = "같은 순위를 유지중이네요! 오늘도 화이팅!",
+  SAMEEVENING = "같은 순위를 유지중이네요! 오늘도 화이팅!",
+  DIFFPREMORNING = "어제보다 순위가",
+  DIFFPREEVENING = "아침보다 순위가",
+  DIFFSUFHIGHER = "계단 상승했어요! 굿~~",
+  DIFFSUFLOWER = "계단 하락했어요! ㅠㅠ 분발하세여",
+  NOPASTRECORDMORNING = "어제 기록이 없네요 ㅠㅠ 분발하세여",
+  CANNOTCOMPARE = "다음 알림 부터는 순위를 알려줄 거에요!",
 }
+
+type EmoteDict = Record<keyof typeof Emotes, string>;
+
+enum Emotes {
+  HEARTEYES,
+  TAUNTFACE,
+  WOWFACE,
+  SUNGLASSES,
+}
+
+const emoteDict: EmoteDict = {
+  HEARTEYES: "\uD83D\uDE0D",
+  TAUNTFACE: "\uD83D\uDE1C",
+  WOWFACE: "\uD83D\uDE32",
+  SUNGLASSES: "\uD83D\uDE0E",
+};
 
 const commit = async (
   batch: WriteBatch,
@@ -75,6 +91,7 @@ export const deletealldocuments = onSchedule("0 19 * * 0", () => {
 });
 
 // Function to show ranking percentage
+// req.data.uuid: the uuid of requester
 export const showrankingpercentage = onCall(async (req) => {
   const scoreboardRef = db.collection("scoreboard");
   const uuid = req.data.uuid as number;
@@ -118,36 +135,36 @@ export const sendmornfcm = onSchedule("30 2 * * *", async () => {
       const uuid = doc.get("uuid") as number;
 
       const rank =
-        scoresnap.docs.findIndex((item) => {
-          (item.get("uuid") as number) === uuid;
-        }) + 1;
+        scoresnap.docs.findIndex(
+          (item) => (item.get("uuid") as number) === uuid
+        ) + 1;
       const lastRank =
-        lastsnap.docs.findIndex((item) => {
-          (item.get("uuid") as number) === uuid;
-        }) + 1;
+        lastsnap.docs.findIndex(
+          (item) => (item.get("uuid") as number) === uuid
+        ) + 1;
 
       const message: Message = {
         token: doc.get("token") as string,
       };
 
       if (rank === 0 || lastRank === 0) {
-        message.notification = mornNoti(PushTextString.CanNotCompare);
+        message.notification = mornNoti(PushTextString.CANNOTCOMPARE);
       } else if (rank === 1 && lastRank === 1) {
-        message.notification = mornNoti(PushTextString.FirstMorning);
+        message.notification = mornNoti(PushTextString.FIRSTMORNING);
       } else if (rank !== 1 && rank < lastRank) {
         message.notification = mornNoti(
-          `${PushTextString.DiffPreMorning} ${lastRank - rank}${
-            PushTextString.DiffSufHigher
+          `${PushTextString.DIFFPREMORNING} ${lastRank - rank}${
+            PushTextString.DIFFSUFHIGHER
           }`
         );
       } else if (rank !== 1 && rank > lastRank) {
         message.notification = mornNoti(
-          `${PushTextString.DiffPreMorning} ${rank - lastRank}${
-            PushTextString.DiffSufLower
+          `${PushTextString.DIFFPREMORNING} ${rank - lastRank}${
+            PushTextString.DIFFSUFLOWER
           }`
         );
       } else {
-        message.notification = mornNoti(PushTextString.SameMorning);
+        message.notification = mornNoti(PushTextString.SAMEMORNING);
       }
 
       try {
@@ -208,36 +225,36 @@ export const sendevenfcm = onSchedule("30 8 * * *", async () => {
       const uuid = doc.get("uuid") as number;
 
       const rank =
-        scoresnap.docs.findIndex((item) => {
-          (item.get("uuid") as number) === uuid;
-        }) + 1;
+        scoresnap.docs.findIndex(
+          (item) => (item.get("uuid") as number) === uuid
+        ) + 1;
       const lastRank =
-        lastsnap.docs.findIndex((item) => {
-          (item.get("uuid") as number) === uuid;
-        }) + 1;
+        lastsnap.docs.findIndex(
+          (item) => (item.get("uuid") as number) === uuid
+        ) + 1;
 
       const message: Message = {
         token: doc.get("token") as string,
       };
 
       if (rank === 0 || lastRank === 0) {
-        message.notification = evenNoti(PushTextString.CanNotCompare);
+        message.notification = evenNoti(PushTextString.CANNOTCOMPARE);
       } else if (rank === 1 && lastRank === 1) {
-        message.notification = evenNoti(PushTextString.FirstEvening);
+        message.notification = evenNoti(PushTextString.FIRSTEVENING);
       } else if (rank !== 1 && rank < lastRank) {
         message.notification = evenNoti(
-          `${PushTextString.DiffPreEvening} ${lastRank - rank}${
-            PushTextString.DiffSufHigher
+          `${PushTextString.DIFFPREEVENING} ${lastRank - rank}${
+            PushTextString.DIFFSUFHIGHER
           }`
         );
       } else if (rank !== 1 && rank > lastRank) {
         message.notification = evenNoti(
-          `${PushTextString.DiffPreEvening} ${rank - lastRank}${
-            PushTextString.DiffSufLower
+          `${PushTextString.DIFFPREEVENING} ${rank - lastRank}${
+            PushTextString.DIFFSUFLOWER
           }`
         );
       } else {
-        message.notification = evenNoti(PushTextString.SameEvening);
+        message.notification = evenNoti(PushTextString.SAMEEVENING);
       }
 
       try {
@@ -290,4 +307,55 @@ export const prunetokens = onSchedule("every 24 hours", async () => {
   staleTokensResult.forEach((doc) => {
     doc.ref.delete();
   });
+});
+
+// Function to request sending emotes to other users
+// req.data - .uuid: the uuid of the requester
+//            .emote: the type of emote to send
+//            .target: the uuid of the target - for token
+export const sendemote = onCall(async (req) => {
+  const uuid = req.data.uuid as number;
+  const emoteType = req.data.emote as string;
+  const target = req.data.target as number;
+
+  const fcmtokensRef = db.collection("fcmtokens");
+  const namelistRef = db.collection("namelist");
+  const scoreboardRef = db.collection("scoreboard");
+
+  try {
+    const fcmtokensSnap = await fcmtokensRef.get();
+    const namelistSnap = await namelistRef.get();
+    const scoresnap = await scoreboardRef.orderBy("score", "desc").get();
+
+    const token =
+      (fcmtokensSnap.docs
+        .find((item) => (item.get("uuid") as number) === target)
+        ?.get("token") as string) ?? "";
+
+    const fromName =
+      (namelistSnap.docs
+        .find((item) => (item.get("uuid") as number) === uuid)
+        ?.get("name") as string) ?? "";
+    const toName =
+      (namelistSnap.docs
+        .find((item) => (item.get("uuid") as number) === target)
+        ?.get("name") as string) ?? "";
+
+    const fromRank =
+      scoresnap.docs.findIndex(
+        (item) => (item.get("uuid") as number) === uuid
+      ) + 1;
+    const toRank =
+      scoresnap.docs.findIndex(
+        (item) => (item.get("uuid") as number) === target
+      ) + 1;
+
+    const message: Message = {
+      token: token,
+    };
+    // TODO: Finish the rest of the code
+  } catch (error) {
+    console.error("Error sendemote:", error);
+    throw new HttpsError("internal", "Error in sendemote");
+  }
 });
