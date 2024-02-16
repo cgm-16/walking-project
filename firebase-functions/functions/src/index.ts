@@ -7,20 +7,13 @@ import { Firestore, WriteBatch } from "firebase-admin/firestore";
 
 admin.initializeApp();
 
-const EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 60;
-const db = admin.firestore();
-const messaging = getMessaging();
-const mornNoti = (body: string): Notification => ({
-  title: "점심 알림",
-  body,
-});
-const evenNoti = (body: string): Notification => ({
-  title: "저녁 알림",
-  body,
-});
-
+// Options for Firebase
 setGlobalOptions({ region: "asia-northeast3" });
 
+// Types
+type EmoteDict = Record<keyof typeof NotificationEmotes, string>;
+
+// Enums
 enum PushTextString {
   FIRSTMORNING = "1등을 유지 중이네요 굿~~",
   FIRSTEVENING = "여전히 1등을 유지 중이네요 굿~~",
@@ -34,15 +27,23 @@ enum PushTextString {
   CANNOTCOMPARE = "다음 알림 부터는 순위를 알려줄 거에요!",
 }
 
-type EmoteDict = Record<keyof typeof Emotes, string>;
-
 enum Emotes {
+  HEARTEYES,
+  TAUNTFACE,
+  WOWFACE,
+}
+
+enum NotificationEmotes {
   HEARTEYES,
   TAUNTFACE,
   WOWFACE,
   SUNGLASSES,
 }
 
+// Constants
+const EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 60;
+const db = admin.firestore();
+const messaging = getMessaging();
 const emoteDict: EmoteDict = {
   HEARTEYES: "\uD83D\uDE0D",
   TAUNTFACE: "\uD83D\uDE1C",
@@ -50,24 +51,7 @@ const emoteDict: EmoteDict = {
   SUNGLASSES: "\uD83D\uDE0E",
 };
 
-const commit = async (
-  batch: WriteBatch,
-  db: Firestore
-): Promise<admin.firestore.WriteBatch> => {
-  try {
-    await batch.commit();
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("Error commiting writebatch", err);
-      throw err;
-    } else {
-      console.error("Error commiting writebatch", String(err));
-      throw err;
-    }
-  }
-  return db.batch();
-};
-
+// Firebase Functions
 // Function to delete all docs every monday 4am
 export const deletealldocuments = onSchedule("0 19 * * 0", () => {
   const scoreboardRef = db.collection("scoreboard");
@@ -315,7 +299,7 @@ export const prunetokens = onSchedule("every 24 hours", async () => {
 //            .target: the uuid of the target - for token
 export const sendemote = onCall(async (req) => {
   const uuid = req.data.uuid as number;
-  const emoteType = req.data.emote as string;
+  const emoteType = req.data.emote as keyof typeof Emotes;
   const target = req.data.target as number;
 
   const fcmtokensRef = db.collection("fcmtokens");
@@ -352,10 +336,95 @@ export const sendemote = onCall(async (req) => {
 
     const message: Message = {
       token: token,
+      notification: handleEmoteNotifications(
+        emoteType,
+        fromName,
+        toName,
+        fromRank,
+        toRank
+      ),
     };
-    // TODO: Finish the rest of the code
+
+    try {
+      await messaging.send(message);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error sending notification", err);
+      } else {
+        console.error("Error sending notification", String(err));
+      }
+    }
   } catch (error) {
     console.error("Error sendemote:", error);
     throw new HttpsError("internal", "Error in sendemote");
   }
 });
+
+// Private functions
+const mornNoti = (body: string): Notification => ({
+  title: "점심 알림",
+  body,
+});
+
+const evenNoti = (body: string): Notification => ({
+  title: "저녁 알림",
+  body,
+});
+
+const commit = async (
+  batch: WriteBatch,
+  db: Firestore
+): Promise<admin.firestore.WriteBatch> => {
+  try {
+    await batch.commit();
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error("Error commiting writebatch", err);
+      throw err;
+    } else {
+      console.error("Error commiting writebatch", String(err));
+      throw err;
+    }
+  }
+  return db.batch();
+};
+
+const handleEmoteNotifications = (
+  emoteType: keyof typeof Emotes,
+  fromName: string,
+  toName: string,
+  fromRank: number,
+  toRank: number
+): Notification => {
+  switch (emoteType) {
+    case "HEARTEYES":
+      return {
+        title: `${fromName} 님이 ${toName} 님에게 ${emoteDict[emoteType]}을 표시했어요.`,
+        body: "걷기 마스터네요! 멋있어요!",
+      };
+    case "TAUNTFACE":
+      if (fromRank < toRank) {
+        return {
+          title: `${fromName} 님이 ${toName} 님에게 도발을 날렸어요.`,
+          body: "아직 많이 부족하네요. 분발하세요!",
+        };
+      } else {
+        return {
+          title: `${fromName} 님이 ${toName} 님에게 도발을 날렸어요.`,
+          body: `그정도면 금방 따라잡겠네요${emoteDict["SUNGLASSES"]}`,
+        };
+      }
+    case "WOWFACE":
+      if (fromRank < toRank) {
+        return {
+          title: `${fromName} 님이 ${toName} 님에게 ${emoteDict[emoteType]}을 표시했어요.`,
+          body: "점수를 많이 쌓았네요! 화이팅하세요!",
+        };
+      } else {
+        return {
+          title: `${fromName} 님이 ${toName} 님에게 ${emoteDict[emoteType]}을 표시했어요.`,
+          body: "어메이징한 점수네요...",
+        };
+      }
+  }
+};
