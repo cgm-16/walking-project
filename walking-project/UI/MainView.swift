@@ -42,6 +42,7 @@ struct MainView: View {
     // MARK: - Private Properties
     @State private var currentIndex = 0
     @State private var currentRank = 0
+    @State private var emoteViewShown = false
 
     @EnvironmentObject var router: Router<Destinations>
 
@@ -397,6 +398,13 @@ struct WalkInfoView: View {
     }
 }
 
+struct EmotesView: View {
+    var body: some View {
+        HStack {
+            
+        }
+    }
+}
 
 struct FancyIndexView: View {
     

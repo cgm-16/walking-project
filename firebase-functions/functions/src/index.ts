@@ -403,7 +403,7 @@ const handleEmoteNotifications = (
         body: "걷기 마스터네요! 멋있어요!",
       };
     case "TAUNTFACE":
-      if (fromRank < toRank) {
+      if (fromRank < toRank || toRank === 0) {
         return {
           title: `${fromName} 님이 ${toName} 님에게 도발을 날렸어요.`,
           body: "아직 많이 부족하네요. 분발하세요!",
@@ -415,7 +415,7 @@ const handleEmoteNotifications = (
         };
       }
     case "WOWFACE":
-      if (fromRank < toRank) {
+      if (fromRank < toRank || toRank === 0) {
         return {
           title: `${fromName} 님이 ${toName} 님에게 ${emoteDict[emoteType]}을 표시했어요.`,
           body: "점수를 많이 쌓았네요! 화이팅하세요!",
