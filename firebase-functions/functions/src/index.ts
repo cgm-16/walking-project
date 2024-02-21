@@ -24,6 +24,7 @@ enum PushTextString {
   DIFFSUFHIGHER = "계단 상승했어요! 굿~~",
   DIFFSUFLOWER = "계단 하락했어요! ㅠㅠ 분발하세여",
   NOPASTRECORDMORNING = "어제 기록이 없네요 ㅠㅠ 분발하세여",
+  NOPASTRECORDEVENING = "아침 기록이 없네요 ㅠㅠ 분발하세여",
   CANNOTCOMPARE = "다음 알림 부터는 순위를 알려줄 거에요!",
 }
 
@@ -53,25 +54,20 @@ const emoteDict: EmoteDict = {
 
 // Firebase Functions
 // Function to delete all docs every monday 4am
-export const deletealldocuments = onSchedule("0 19 * * 0", () => {
+export const deletealldocuments = onSchedule("0 19 * * 0", async () => {
   const scoreboardRef = db.collection("scoreboard");
+  const batch = db.batch();
 
-  scoreboardRef
-    .get()
-    .then((snapshot) => {
-      const batch = db.batch();
-      snapshot.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
-      return batch.commit();
-    })
-    .then(() => {
-      return null;
-    })
-    .catch((err) => {
-      console.error("Error deleting leaderboard:", err);
-      throw new HttpsError("internal", "Error in deleteAllDocuments");
+  try {
+    const snap = await scoreboardRef.get();
+    snap.forEach((doc) => {
+      batch.delete(doc.ref);
     });
+    await batch.commit();
+  } catch (err) {
+    console.error("Error deleting leaderboard:", err);
+    throw new HttpsError("internal", "Error in deleteAllDocuments");
+  }
 });
 
 // Function to show ranking percentage
@@ -131,8 +127,10 @@ export const sendmornfcm = onSchedule("30 2 * * *", async () => {
         token: doc.get("token") as string,
       };
 
-      if (rank === 0 || lastRank === 0) {
+      if (lastRank === 0) {
         message.notification = mornNoti(PushTextString.CANNOTCOMPARE);
+      } else if (rank === 0) {
+        message.notification = mornNoti(PushTextString.NOPASTRECORDMORNING);
       } else if (rank === 1 && lastRank === 1) {
         message.notification = mornNoti(PushTextString.FIRSTMORNING);
       } else if (rank !== 1 && rank < lastRank) {
@@ -221,8 +219,10 @@ export const sendevenfcm = onSchedule("30 8 * * *", async () => {
         token: doc.get("token") as string,
       };
 
-      if (rank === 0 || lastRank === 0) {
+      if (lastRank === 0) {
         message.notification = evenNoti(PushTextString.CANNOTCOMPARE);
+      } else if (rank === 0) {
+        message.notification = evenNoti(PushTextString.NOPASTRECORDEVENING);
       } else if (rank === 1 && lastRank === 1) {
         message.notification = evenNoti(PushTextString.FIRSTEVENING);
       } else if (rank !== 1 && rank < lastRank) {
