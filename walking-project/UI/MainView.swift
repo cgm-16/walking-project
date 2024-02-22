@@ -242,9 +242,9 @@ struct MainView: View {
                                     .foregroundColor(Color("MainColor"))
                                 ForEach(walkInfo) { info in
                                     if info.id != myInfo.first?.my_id {
-                                        WalkInfoView(info: info, metrics: metrics, isCurrentUser: false)
+                                        WalkInfoView(info: info, metrics: metrics, isCurrentUser: false, myId: myInfo.first?.my_id ?? "")
                                     } else {
-                                        WalkInfoView(info: info, metrics: metrics, isCurrentUser: true)
+                                        WalkInfoView(info: info, metrics: metrics, isCurrentUser: true, myId: myInfo.first?.my_id ?? "")
                                     }
                                 }
                             }
@@ -324,6 +324,7 @@ struct WalkInfoView: View {
     let info: Walk_Info
     let metrics: GeometryProxy
     let isCurrentUser: Bool
+    let myId: String
     
     @State private var isReactShown = false
     @State private var dragLocation : CGFloat = 0
@@ -374,7 +375,7 @@ struct WalkInfoView: View {
             .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(rankColor(rank: info.rank)))
             
-            EmotesView(info: info, metrics: metrics, isShown: isReactShown, dragLocation: dragLocation)
+            EmotesView(info: info, metrics: metrics, isShown: isReactShown, dragLocation: dragLocation, myId: myId)
                 .animation(.easeInOut, value: isReactShown)
                 .gesture(
                     DragGesture()
@@ -405,24 +406,45 @@ struct EmotesView: View {
     let metrics: GeometryProxy
     let isShown: Bool
     let dragLocation: CGFloat
+    let myId: String
+    
+    @State private var isTapped = false
     
     var body: some View {
         HStack (alignment: .center, spacing: 10) {
             Text(isShown ? ">>" : "<<")
                 .font(.system(size: 13))
             Spacer()
-            Button(action: {}, label: {
+            Button(action: {
+                isTapped = true
+                sendEmote(emoteType: EmoteType.hearteyes, from: myId, to: info.id ?? "")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    isTapped = false
+                }
+            }, label: {
                 Text("😍").font(.system(size: 40))
             })
-            .disabled(!isShown)
-            Button(action: {}, label: {
+            .disabled(!isShown || isTapped)
+            Button(action: {
+                isTapped = true
+                sendEmote(emoteType: EmoteType.tauntface, from: myId, to: info.id ?? "")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    isTapped = false
+                }
+            }, label: {
                 Text("😜").font(.system(size: 40))
             })
-            .disabled(!isShown)
-            Button(action: {}, label: {
+            .disabled(!isShown || isTapped)
+            Button(action: {
+                isTapped = true
+                sendEmote(emoteType: EmoteType.wowface, from: myId, to: info.id ?? "")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    isTapped = false
+                }
+            }, label: {
                 Text("😯").font(.system(size: 40))
             })
-            .disabled(!isShown)
+            .disabled(!isShown || isTapped)
         }
         .frame(maxWidth: metrics.size.width * 0.55, maxHeight: metrics.size.height * 0.07)
         .padding(EdgeInsets(top: 20, leading: 5, bottom: 20, trailing: 15))

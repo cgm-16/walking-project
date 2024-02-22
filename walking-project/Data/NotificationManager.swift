@@ -6,7 +6,9 @@
 //
 
 import UserNotifications
+import FirebaseFunctions
 
+/*
 enum PushTextString {
     case FirstMorning
     case FirstEvening
@@ -41,6 +43,24 @@ enum PushTextString {
         }
     }
 }
+*/
+
+public enum EmoteType {
+    case hearteyes
+    case tauntface
+    case wowface
+    
+    var text: String {
+        switch self {
+        case .hearteyes:
+            return "HEARTEYES"
+        case .tauntface:
+            return "TAUNTFACE"
+        case .wowface:
+            return "WOWFACE"
+        }
+    }
+}
 
 @MainActor
 public func requestUNPerms() async throws -> Bool {
@@ -57,6 +77,21 @@ public func getUNPerms() async -> UNNotificationSettings {
     return await UNUserNotificationCenter.current().notificationSettings()
 }
 
+public func sendEmote(emoteType : EmoteType, from: String, to: String) {
+    lazy var functions = Functions.functions(region: "asia-northeast3")
+    functions.httpsCallable("sendemote").call(["uuid": from, "emote": emoteType.text, "target": to]) { result, error in
+        if let error = error as NSError? {
+            if error.domain == FunctionsErrorDomain {
+                let code = FunctionsErrorCode(rawValue: error.code)
+                let message = error.localizedDescription
+                print(code!, message)
+                return
+            }
+        }
+    }
+}
+
+/*
 public func pushMorningNotif() {
     let content = UNMutableNotificationContent()
     content.title = "아침 랭킹"
@@ -130,3 +165,4 @@ public func pushEveningNotif() {
         }
     }
 }
+*/
