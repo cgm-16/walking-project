@@ -199,7 +199,7 @@ struct MainView: View {
                         VStack(alignment: .center){
                             Spacer()
                             HStack{
-                                Text("당신의 걷기 점수는 상위").fixedSize()
+                                Text("당신의 걷기 점수는 상위")
                                     .fixedSize()
                                     .font(.customFont(.main, size: 20))
                                     .italic()
@@ -320,89 +320,115 @@ struct MainView: View {
     }
 }
 
-let commaFormatter: NumberFormatter = {
-    let numberFormatter = NumberFormatter()
-    numberFormatter.numberStyle = .decimal
-    numberFormatter.maximumFractionDigits = 0
-    return numberFormatter
-}()
-
-func rankColor(rank : Int16) -> Color {
-    switch(rank) {
-    case 1:
-        return Color("Gold")
-    case 2:
-        return Color("Silver")
-    case 3:
-        return Color("Bronze")
-    default:
-        return Color("Default")
-    }
-}
-
 struct WalkInfoView: View {
     let info: Walk_Info
     let metrics: GeometryProxy
     let isCurrentUser: Bool
     
+    @State private var isReactShown = false
+    @State private var dragLocation : CGFloat = 0
+    
     var body: some View {
-        HStack {
-            VStack(spacing: 0) {
-                HStack {
-                    Text(String(info.rank))
-                        .font(.system(size: 18))
-                    Spacer()
-                }
-                HStack {
-                    Spacer()
-                    if let imageURL = info.imgURL, let url = URL(string: imageURL) {
-                        AsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .cornerRadius(20)
+        ZStack(alignment: .trailing) {
+            HStack(spacing: 0) {
+                VStack(spacing: 0) {
+                    HStack {
+                        Text(String(info.rank))
+                            .font(.system(size: 18))
+                        Spacer()
+                    }
+                    HStack {
+                        Spacer()
+                        if let imageURL = info.imgURL, let url = URL(string: imageURL) {
+                            AsyncImage(url: url) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .cornerRadius(20)
+                                    .frame(width: 50, height: 50)
+                                    .offset(y: -8)
+                            } placeholder: {
+                                ProgressView()
+                            }
+                        } else {
+                            RoundedRectangle(cornerRadius: 20)
                                 .frame(width: 50, height: 50)
                                 .offset(y: -8)
-                        } placeholder: {
-                            ProgressView()
                         }
-                    } else {
-                        RoundedRectangle(cornerRadius: 20)
-                            .frame(width: 50, height: 50)
-                            .offset(y: -8)
                     }
                 }
+                .frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
+                
+                Text(isCurrentUser ? "Me" : info.name ?? "")
+                    .frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
+                
+                Spacer()
+                
+                Text(commaFormatter.string(for: info.score) ?? "0")
+                    .font(.system(size: 28))
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(0)
+                    .offset(x: metrics.size.width * -0.06)
             }
-            .frame(maxWidth: metrics.size.width * 0.15, maxHeight: metrics.size.height * 0.07)
+            .padding(.horizontal, 10)
+            .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(rankColor(rank: info.rank)))
             
-            Spacer().frame(width: 5)
+            EmotesView(info: info, metrics: metrics, isShown: isReactShown, dragLocation: dragLocation)
+                .animation(.easeInOut, value: isReactShown)
+                .gesture(
+                    DragGesture()
+                        .onChanged { v in
+                            dragLocation = v.translation.width
+                        }
+                        .onEnded { v in
+                            if !isReactShown && v.location.x <= metrics.size.width * 0.3 {
+                                isReactShown = true
+                            } else if isReactShown {
+                                isReactShown = false
+                            }
+                            dragLocation = 0
+                        }
+                )
             
-            Text(isCurrentUser ? "Me" : info.name ?? "")
-                .frame(maxWidth: metrics.size.width * 0.2, maxHeight: metrics.size.height * 0.15)
-            
-            Spacer()
-            
-            Text(commaFormatter.string(for: info.score) ?? "0")
-                .font(.system(size: 28))
-                .multilineTextAlignment(.leading)
-                .lineLimit(0)
+            if isCurrentUser {
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color("MainColor"), lineWidth: 1)
+            }
         }
-        .frame(maxWidth: metrics.size.width * 0.8, maxHeight: metrics.size.height * 0.07)
-        .padding(EdgeInsets(top: 20, leading: 10, bottom: 20, trailing: 10))
-        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
-            .fill(rankColor(rank: info.rank)))
-        .overlay(isCurrentUser ?
-                 RoundedRectangle(cornerRadius: 20)
-            .stroke(Color("MainColor"), lineWidth: 1) :
-                    nil)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 }
 
 struct EmotesView: View {
+    let info: Walk_Info
+    let metrics: GeometryProxy
+    let isShown: Bool
+    let dragLocation: CGFloat
+    
     var body: some View {
-        HStack {
-            
+        HStack (alignment: .center, spacing: 10) {
+            Text(isShown ? ">>" : "<<")
+                .font(.system(size: 13))
+            Spacer()
+            Button(action: {}, label: {
+                Text("😍").font(.system(size: 40))
+            })
+            .disabled(!isShown)
+            Button(action: {}, label: {
+                Text("😜").font(.system(size: 40))
+            })
+            .disabled(!isShown)
+            Button(action: {}, label: {
+                Text("😯").font(.system(size: 40))
+            })
+            .disabled(!isShown)
         }
+        .frame(maxWidth: metrics.size.width * 0.55, maxHeight: metrics.size.height * 0.07)
+        .padding(EdgeInsets(top: 20, leading: 5, bottom: 20, trailing: 15))
+        .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(reactColor(rank: info.rank)))
+        .offset(x:isShown ? 0 + (dragLocation <= 0 ? 0 : dragLocation) : (metrics.size.width * 0.53) + (-dragLocation <= metrics.size.width * 0.53 ? dragLocation : -metrics.size.width * 0.53))
     }
 }
 
@@ -450,5 +476,38 @@ struct RoundedCorner: Shape {
 struct Main_Screen_Previews: PreviewProvider {
     static var previews: some View {
         MainView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
+    }
+}
+
+let commaFormatter: NumberFormatter = {
+    let numberFormatter = NumberFormatter()
+    numberFormatter.numberStyle = .decimal
+    numberFormatter.maximumFractionDigits = 0
+    return numberFormatter
+}()
+
+func rankColor(rank : Int16) -> Color {
+    switch(rank) {
+    case 1:
+        return Color("Gold")
+    case 2:
+        return Color("Silver")
+    case 3:
+        return Color("Bronze")
+    default:
+        return Color("Default")
+    }
+}
+
+func reactColor(rank : Int16) -> Color {
+    switch(rank) {
+    case 1:
+        return Color("GoldReact")
+    case 2:
+        return Color("SilverReact")
+    case 3:
+        return Color("BronzeReact")
+    default:
+        return Color("DefaultReact")
     }
 }
