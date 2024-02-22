@@ -375,28 +375,31 @@ struct WalkInfoView: View {
             .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(rankColor(rank: info.rank)))
             
-            EmotesView(info: info, metrics: metrics, isShown: isReactShown, dragLocation: dragLocation, myId: myId)
-                .animation(.easeInOut, value: isReactShown)
-                .gesture(
-                    DragGesture()
-                        .onChanged { v in
-                            dragLocation = v.translation.width
-                        }
-                        .onEnded { v in
-                            if !isReactShown && v.location.x <= metrics.size.width * 0.3 {
-                                isReactShown = true
-                            } else if isReactShown {
-                                isReactShown = false
+            if !isCurrentUser {
+                EmotesView(info: info, metrics: metrics, isShown: isReactShown, dragLocation: dragLocation, myId: myId)
+                    .animation(.easeInOut, value: isReactShown)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { v in
+                                dragLocation = v.translation.width
                             }
-                            dragLocation = 0
-                        }
-                )
+                            .onEnded { v in
+                                if !isReactShown && v.location.x <= metrics.size.width * 0.3 {
+                                    isReactShown = true
+                                } else if isReactShown {
+                                    isReactShown = false
+                                }
+                                dragLocation = 0
+                            }
+                    )
+            }
             
             if isCurrentUser {
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(Color("MainColor"), lineWidth: 1)
             }
         }
+        .frame(minHeight: metrics.size.height * 0.1)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 }
@@ -447,7 +450,7 @@ struct EmotesView: View {
             .disabled(!isShown || isTapped)
         }
         .frame(maxWidth: metrics.size.width * 0.55, maxHeight: metrics.size.height * 0.07)
-        .padding(EdgeInsets(top: 20, leading: 5, bottom: 20, trailing: 15))
+        .padding(EdgeInsets(top: 15, leading: 5, bottom: 15, trailing: 15))
         .background(RoundedRectangle(cornerRadius: 20, style: .continuous)
             .fill(reactColor(rank: info.rank)))
         .offset(x:isShown ? 0 + (dragLocation <= 0 ? 0 : dragLocation) : (metrics.size.width * 0.53) + (-dragLocation <= metrics.size.width * 0.53 ? dragLocation : -metrics.size.width * 0.53))
