@@ -343,6 +343,7 @@ export const sendemote = onCall(async (req) => {
         fromRank,
         toRank
       ),
+      data: { Emote: emoteType },
     };
 
     try {
