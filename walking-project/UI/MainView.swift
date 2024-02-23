@@ -43,7 +43,8 @@ struct MainView: View {
     @State private var currentIndex = 0
     @State private var currentRank = 0
     @State private var emoteViewShown = false
-
+    @State private var reactionsShown = true
+    
     @EnvironmentObject var router: Router<Destinations>
 
     private let COUPON_ACTIVATION_POINTS = 50_0000
@@ -316,6 +317,11 @@ struct MainView: View {
                     .shadow(color: .black, radius: 1, y: 1)
                 }
             }
+            
+            // MARK: - Effect Layer
+            if reactionsShown {
+                RainView().allowsHitTesting(false)
+            }
         }
     }
 }
@@ -458,7 +464,6 @@ struct EmotesView: View {
 }
 
 struct FancyIndexView: View {
-    
     // MARK: - Public Properties
     let currentIndex: Int
     
@@ -485,6 +490,16 @@ struct FancyIndexView: View {
                     .id(index)
             }
         }
+    }
+}
+
+struct RainView: UIViewRepresentable {
+    func makeUIView(context: Context) -> some UIView {
+        let viewController = EmojiShowerViewController()
+        return viewController.view
+    }
+    
+    func updateUIView(_ uiView: UIViewType, context: Context) {
     }
 }
 

@@ -50,6 +50,7 @@
 		C197725129B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197724F29B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg */; };
 		C197725229B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C197725029B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg */; };
 		C1D09F1729BB29B700B52C08 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D09F1629BB29B700B52C08 /* StartView.swift */; };
+		C1D234032B88687C0053FC22 /* AnimationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D234022B88687C0053FC22 /* AnimationManager.swift */; };
 		C1D398692A0E572300C7DF4D /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D398682A0E572300C7DF4D /* FontManager.swift */; };
 		C1D3986A2A0E5B8500C7DF4D /* CoffeeHealing.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1D398672A0E570F00C7DF4D /* CoffeeHealing.ttf */; };
 		C1D3986B2A0E5B8800C7DF4D /* CoffeeHealingItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C1D398662A0E570F00C7DF4D /* CoffeeHealingItalic.ttf */; };
@@ -112,6 +113,7 @@
 		C197724F29B9D34F0016F8D2 /* KakaoTalk_20230309_170111877.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = KakaoTalk_20230309_170111877.jpg; sourceTree = "<group>"; };
 		C197725029B9D34F0016F8D2 /* KakaoTalk_20230226_222948198.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = KakaoTalk_20230226_222948198.jpg; sourceTree = "<group>"; };
 		C1D09F1629BB29B700B52C08 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
+		C1D234022B88687C0053FC22 /* AnimationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationManager.swift; sourceTree = "<group>"; };
 		C1D398662A0E570F00C7DF4D /* CoffeeHealingItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CoffeeHealingItalic.ttf; sourceTree = "<group>"; };
 		C1D398672A0E570F00C7DF4D /* CoffeeHealing.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CoffeeHealing.ttf; sourceTree = "<group>"; };
 		C1D398682A0E572300C7DF4D /* FontManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				C114417B298107CF00B3ACB5 /* DataManager.swift */,
 				C11237372A2A264300AC1329 /* HealthDataManager.swift */,
 				C11C45982B5A5689004DCEF2 /* NotificationManager.swift */,
+				C1D234022B88687C0053FC22 /* AnimationManager.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -446,6 +449,7 @@
 				C12DB5EA2A3C56B6006F0578 /* SettingsView.swift in Sources */,
 				C17BF92529A615CB00EEFF97 /* HomeView.swift in Sources */,
 				C156898C29B01D2700A547B5 /* WelcomeView.swift in Sources */,
+				C1D234032B88687C0053FC22 /* AnimationManager.swift in Sources */,
 				C1144175298107CD00B3ACB5 /* MainView.swift in Sources */,
 				C155A48A29C44653009C539B /* My_Info+CoreDataProperties.swift in Sources */,
 				C14451EC2A43F91C003B01CD /* MainAppleView.swift in Sources */,

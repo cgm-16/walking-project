@@ -102,6 +102,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 willPresent notification: UNNotification) async
     -> UNNotificationPresentationOptions {
         let userInfo = notification.request.content.userInfo
+        let viewContext = DataManager.shared.viewContext
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
         Messaging.messaging().appDidReceiveMessage(userInfo)
@@ -112,6 +113,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             print("Message ID: \(messageID)")
         }
         // [END_EXCLUDE]
+        
+        if let emoteToAppend = notification.request.content.userInfo["Emote"] as? String {
+            let emotes = Emotes(context: viewContext)
+            print("got emote!!")
+            emotes.emote = emoteToAppend
+            
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                print("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
         
         // Print full message.
         print(userInfo)
