@@ -44,6 +44,7 @@ struct MainView: View {
     @State private var currentRank = 0
     @State private var emoteViewShown = false
     
+    @StateObject var emojiShowerViewControllerManager = EmojiShowerViewControllerManager()
     @EnvironmentObject var router: Router<Destinations>
 
     private let COUPON_ACTIVATION_POINTS = 50_0000
@@ -322,6 +323,7 @@ struct MainView: View {
                 .ignoresSafeArea(.all)
                 .allowsHitTesting(false)
         }
+        .environmentObject(emojiShowerViewControllerManager)
     }
 }
 
@@ -417,6 +419,7 @@ struct EmotesView: View {
     let myId: String
     
     @State private var isTapped = false
+    @EnvironmentObject var emojiShowerViewControllerManager: EmojiShowerViewControllerManager
     
     var body: some View {
         HStack (alignment: .center, spacing: 10) {
@@ -426,9 +429,10 @@ struct EmotesView: View {
             Button(action: {
                 isTapped = true
                 sendEmote(emoteType: EmoteType.hearteyes, from: myId, to: info.id ?? "")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                     isTapped = false
                 }
+                emojiShowerViewControllerManager.emojiShowerViewController.startEmojiBubble(emoteType: .hearteyes)
             }, label: {
                 Text("😍").font(.system(size: 40))
             })
@@ -436,9 +440,10 @@ struct EmotesView: View {
             Button(action: {
                 isTapped = true
                 sendEmote(emoteType: EmoteType.tauntface, from: myId, to: info.id ?? "")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                     isTapped = false
                 }
+                emojiShowerViewControllerManager.emojiShowerViewController.startEmojiBubble(emoteType: .tauntface)
             }, label: {
                 Text("😜").font(.system(size: 40))
             })
@@ -446,9 +451,10 @@ struct EmotesView: View {
             Button(action: {
                 isTapped = true
                 sendEmote(emoteType: EmoteType.wowface, from: myId, to: info.id ?? "")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                     isTapped = false
                 }
+                emojiShowerViewControllerManager.emojiShowerViewController.startEmojiBubble(emoteType: .wowface)
             }, label: {
                 Text("😯").font(.system(size: 40))
             })
@@ -492,13 +498,33 @@ struct FancyIndexView: View {
     }
 }
 
-struct RainView: UIViewRepresentable {
-    func makeUIView(context: Context) -> some UIView {
-        let viewController = EmojiShowerViewController()
-        return viewController.view
+struct RainView: UIViewControllerRepresentable {
+    typealias UIViewControllerType = EmojiShowerViewController
+    @EnvironmentObject var emojiShowerViewControllerManager: EmojiShowerViewControllerManager
+    
+    class Coordinator {
+        var parent: RainView
+        
+        init(_ parent: RainView) {
+            self.parent = parent
+        }
+        
+        func startEmojiBubble(emoteType: EmoteType) {
+            parent.emojiShowerViewControllerManager.emojiShowerViewController.startEmojiBubble(emoteType: emoteType)
+        }
     }
     
-    func updateUIView(_ uiView: UIViewType, context: Context) {
+    func makeUIViewController(context: Context) -> EmojiShowerViewController {
+        let viewController = emojiShowerViewControllerManager.emojiShowerViewController
+        return viewController
+    }
+    
+    func updateUIViewController(_ uiViewController: EmojiShowerViewController, context: Context) {
+        // Update the view controller if needed
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
     }
 }
 

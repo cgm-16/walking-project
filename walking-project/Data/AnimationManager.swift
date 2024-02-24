@@ -8,8 +8,17 @@
 import UIKit
 import CoreData
 
+enum Direction {
+    case up, down
+}
+
+class EmojiShowerViewControllerManager: ObservableObject {
+    @Published var emojiShowerViewController = EmojiShowerViewController()
+}
+
 class EmojiShowerViewController: UIViewController {
-    let emojiEmitter = CAEmitterLayer()
+    let emojiShower = CAEmitterLayer()
+    let emojiBubble = CAEmitterLayer()
     let viewContext = DataManager.shared.viewContext
     let emojiDict: [String : String] = [
         "HEARTEYES" : "😍",
@@ -23,26 +32,54 @@ class EmojiShowerViewController: UIViewController {
         if let emotes = try? viewContext.fetch(Emotes.fetchRequest()) {
             createEmojiShower(emoteList: emotes)
         }
+        createEmojiBubble()
+    }
+    
+    func startEmojiBubble(emoteType: EmoteType, duration: CGFloat = 3) {
+        emojiBubble.emitterCells = [
+            makeEmojiEmitterCell(
+            emoji: emojiDict[emoteType.text] ?? "",
+            totalCount: 1,
+            direction: .up)
+        ]
+        
+        emojiBubble.birthRate = 1
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            self.endEmojiBubble()
+        }
+    }
+    
+    private func createEmojiBubble() {
+        emojiBubble.emitterPosition = CGPoint(x: view.center.x, y: 1000)
+        emojiBubble.emitterShape = .line
+        emojiBubble.emitterSize = CGSize(width: view.frame.size.width, height: 1)
+        
+        view.layer.addSublayer(emojiBubble)
     }
     
     // Function to create the emoji shower effect
-    func createEmojiShower(emoteList: [Emotes], duration: CGFloat = 5.0) {
-        emojiEmitter.emitterPosition = CGPoint(x: view.center.x, y: -700)
-        emojiEmitter.emitterShape = .line
-        emojiEmitter.emitterSize = CGSize(width: view.frame.size.width, height: 1)
+    private func createEmojiShower(emoteList: [Emotes], duration: CGFloat = 5.0) {
+        emojiShower.emitterPosition = CGPoint(x: view.center.x, y: -1000)
+        emojiShower.emitterShape = .line
+        emojiShower.emitterSize = CGSize(width: view.frame.size.width, height: 1)
         
         var emojiCells = [CAEmitterCell]()
 
         for emote in emoteList {
-            let cell = makeEmojiEmitterCell(emoji: emojiDict[emote.emote ?? "HEARTEYES"] ?? "", totalCount: emoteList.count)
+            let cell = makeEmojiEmitterCell(
+                emoji: emojiDict[emote.emote ?? "HEARTEYES"] ?? "",
+                totalCount: emoteList.count,
+                direction: .down
+            )
             emojiCells.append(cell)
         }
         
         // Set the emitter cells for the emoji emitter
-        emojiEmitter.emitterCells = emojiCells
+        emojiShower.emitterCells = emojiCells
         
         // Add the emoji emitter to the view's layer
-        view.layer.addSublayer(emojiEmitter)
+        view.layer.addSublayer(emojiShower)
         
         let emojiDel = NSBatchDeleteRequest(fetchRequest: Emotes.fetchRequest())
         try! viewContext.executeAndMergeChanges(using: emojiDel)
@@ -60,28 +97,27 @@ class EmojiShowerViewController: UIViewController {
     }
     
     // Function to create an emitter cell for a specific emoji
-    func makeEmojiEmitterCell(emoji: String, totalCount: Int) -> CAEmitterCell {
+    private func makeEmojiEmitterCell(emoji: String, totalCount: Int, direction: Direction) -> CAEmitterCell {
         let cell = CAEmitterCell()
         
         // Set the birth rate (how frequently emojis appear) and lifetime (how long they last)
         cell.birthRate = 24.0/Float(totalCount) > 8.0 ? 24.0/Float(totalCount) : 8.0
-        cell.lifetime = Float.random(in: 10.0...15.0)
+        cell.lifetime = 5
         cell.lifetimeRange = 0
         
         // Set the initial velocity and velocity range for the emojis
-        cell.velocity = CGFloat.random(in: 300...500)
-        cell.velocityRange = -50
+        cell.velocity = 1000
+        cell.velocityRange = 200
         
         // Configure the direction and range of emoji emission
-        cell.emissionLongitude = -CGFloat.pi
-        cell.emissionRange = CGFloat.pi
+        cell.emissionLongitude = direction == .down ? -CGFloat.pi : 0
+        cell.emissionRange = 0
         
         // Set rotation and scale properties for emojis
-        cell.spin = 1
-        cell.spinRange = 3
-        cell.scaleRange = 0.5
-        cell.scaleSpeed = -0.05
-        cell.alphaSpeed = -0.05
+        cell.spin = 0
+        cell.spinRange = 0
+        cell.scaleRange = 0
+        cell.alphaSpeed = 0
         
         // Create the emoji image from the text
         if let emojiImage = imageFrom(emoji: emoji) {
@@ -92,9 +128,9 @@ class EmojiShowerViewController: UIViewController {
     }
     
     // Function to create an image from emoji text
-    func imageFrom(emoji: String) -> UIImage? {
+    private func imageFrom(emoji: String) -> UIImage? {
         let nsString = emoji as NSString
-        let font = UIFont.systemFont(ofSize: 30) // you can change your font size here
+        let font = UIFont.systemFont(ofSize: 20) // you can change your font size here
         let stringAttributes = [NSAttributedString.Key.font: font]
         let imageSize = nsString.size(withAttributes: stringAttributes)
         
@@ -107,12 +143,12 @@ class EmojiShowerViewController: UIViewController {
         
         return image ?? UIImage()
     }
-    
-    func startEmojiShower() {
-        emojiEmitter.birthRate = 1
+
+    private func endEmojiShower() {
+        emojiShower.birthRate = 0
     }
     
-    func endEmojiShower() {
-        emojiEmitter.birthRate = 0
+    private func endEmojiBubble() {
+        emojiBubble.birthRate = 0
     }
 }
