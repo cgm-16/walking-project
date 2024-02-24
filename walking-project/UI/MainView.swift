@@ -43,7 +43,6 @@ struct MainView: View {
     @State private var currentIndex = 0
     @State private var currentRank = 0
     @State private var emoteViewShown = false
-    @State private var reactionsShown = true
     
     @EnvironmentObject var router: Router<Destinations>
 
@@ -319,9 +318,9 @@ struct MainView: View {
             }
             
             // MARK: - Effect Layer
-            if reactionsShown {
-                RainView().allowsHitTesting(false)
-            }
+            RainView()
+                .ignoresSafeArea(.all)
+                .allowsHitTesting(false)
         }
     }
 }
