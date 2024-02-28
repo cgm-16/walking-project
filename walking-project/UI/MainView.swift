@@ -62,15 +62,6 @@ struct MainView: View {
                         .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.top/*@END_MENU_TOKEN@*/)
                 }
             }
-            // MARK: test code for UNperms
-            .task {
-                do {
-                    let finished = try await requestUNPerms()
-                    print("finished is \(finished)")
-                } catch {
-                    print(error)
-                }
-            }
             
             // MARK: - Foreground
             

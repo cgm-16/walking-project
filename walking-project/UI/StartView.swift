@@ -110,12 +110,13 @@ struct StartView: View {
         RouterView(router: router) { path in
             switch path {
             case .Home: HomeView().navigationBarBackButtonHidden()
-            case .Main : MainView().navigationBarBackButtonHidden()
-            case .AppleMain : MainAppleView().navigationBarBackButtonHidden()
-            case .User : UserInfoView().navigationBarBackButtonHidden()
-            case .Welcome : WelcomeView().navigationBarBackButtonHidden()
-            case .Coupon : CouponView()
-            case .Settings : SettingsView()
+            case .Main: MainView().navigationBarBackButtonHidden()
+            case .AppleMain: MainAppleView().navigationBarBackButtonHidden()
+            case .Tutorial: TutorialView().navigationBarBackButtonHidden()
+            case .User: UserInfoView().navigationBarBackButtonHidden()
+            case .Welcome: WelcomeView().navigationBarBackButtonHidden()
+            case .Coupon: CouponView()
+            case .Settings: SettingsView()
             }
         }
         .onAppear() {

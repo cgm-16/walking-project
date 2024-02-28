@@ -75,6 +75,7 @@ enum Destinations {
     case Home
     case Main
     case AppleMain
+    case Tutorial
     case User
     case Welcome
     case Coupon

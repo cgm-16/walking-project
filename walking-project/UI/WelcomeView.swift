@@ -54,7 +54,7 @@ struct WelcomeView: View {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                router.popToRoot()
+                router.push(.Tutorial)
             }
         }
     }
