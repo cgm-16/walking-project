@@ -88,8 +88,6 @@ struct CouponView: View {
     }
 }
 
-struct Coupon_Page_Previews: PreviewProvider {
-    static var previews: some View {
-        CouponView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
-    }
+#Preview {
+    CouponView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
 }

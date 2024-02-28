@@ -538,12 +538,6 @@ struct RoundedCorner: Shape {
     }
 }
 
-struct Main_Screen_Previews: PreviewProvider {
-    static var previews: some View {
-        MainView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
-    }
-}
-
 let commaFormatter: NumberFormatter = {
     let numberFormatter = NumberFormatter()
     numberFormatter.numberStyle = .decimal
@@ -575,4 +569,8 @@ func reactColor(rank : Int16) -> Color {
     default:
         return Color("DefaultReact")
     }
+}
+
+#Preview {
+    MainView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
 }

@@ -268,9 +268,6 @@ struct C2AView: View {
     }
 }
 
-
-struct MainAppleViewPreviews: PreviewProvider {
-    static var previews: some View {
-        MainAppleView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
-    }
+#Preview {
+    MainAppleView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
 }

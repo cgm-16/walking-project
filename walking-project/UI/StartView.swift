@@ -134,8 +134,6 @@ struct StartView: View {
     }
 }
 
-struct Start_View_Previews: PreviewProvider {
-    static var previews: some View {
-        StartView()
-    }
+#Preview {
+    StartView()
 }

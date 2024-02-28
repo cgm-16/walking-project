@@ -385,8 +385,6 @@ extension View {
     }
 }
 
-struct User_Info_Screen_Previews: PreviewProvider {
-    static var previews: some View {
-        UserInfoView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
-    }
+#Preview {
+    UserInfoView().environment(\.managedObjectContext, DataManager.preview.container.viewContext)
 }
