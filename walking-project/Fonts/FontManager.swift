@@ -15,6 +15,7 @@ extension Font {
         case coupon
         case settings
         case button
+        case tutorial
         
         var value: String {
             switch self {
@@ -28,6 +29,8 @@ extension Font {
                 return ""
             case .button:
                 return ""
+            case .tutorial:
+                return "서울한강체 B"
             }
         }
     }

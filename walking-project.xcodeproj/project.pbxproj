@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C10485082B8F09260005CDDD /* SeoulHangang B.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C10485072B8F09260005CDDD /* SeoulHangang B.ttf */; };
 		C10E0FAC29B87EED00496938 /* KakaoSDKTalk in Frameworks */ = {isa = PBXBuildFile; productRef = C10E0FAB29B87EED00496938 /* KakaoSDKTalk */; };
 		C11237302A29D44900AC1329 /* walking_projectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C112372F2A29D44900AC1329 /* walking_projectTests.swift */; };
 		C11237382A2A264300AC1329 /* HealthDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11237372A2A264300AC1329 /* HealthDataManager.swift */; };
@@ -69,6 +70,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C10485072B8F09260005CDDD /* SeoulHangang B.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SeoulHangang B.ttf"; sourceTree = "<group>"; };
 		C112372D2A29D44900AC1329 /* walking-projectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "walking-projectTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C112372F2A29D44900AC1329 /* walking_projectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = walking_projectTests.swift; sourceTree = "<group>"; };
 		C11237372A2A264300AC1329 /* HealthDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataManager.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 		C1D398652A0E56A500C7DF4D /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				C10485072B8F09260005CDDD /* SeoulHangang B.ttf */,
 				C1D398672A0E570F00C7DF4D /* CoffeeHealing.ttf */,
 				C1D398662A0E570F00C7DF4D /* CoffeeHealingItalic.ttf */,
 				C18FA91E2A17586500B7A60B /* LuckiestGuy-Regular.ttf */,
@@ -409,6 +412,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C10485082B8F09260005CDDD /* SeoulHangang B.ttf in Resources */,
 				C17C070F2B6A23DF001A3F10 /* .firebaserc in Resources */,
 				C17C07172B6A23DF001A3F10 /* .eslintrc.js in Resources */,
 				C17C07162B6A23DF001A3F10 /* package.json in Resources */,
